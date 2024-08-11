@@ -13,9 +13,7 @@ npm install
 
 #### Step 1: Clone the Algorithm repository to a separate location
 
-#### Step 2: Clone the UI repository to a separate location
-
-#### Step 3: Symlink the Algorithm repository into `src/main/ALGO-NWS`
+#### Step 2: Symlink the Algorithm repository into `src/main/ALGO-NWS`
 
 (the path name, just like these build steps is only temporary)
 
@@ -25,20 +23,19 @@ ln -s <FULL PATH TO ALGO REPO> ./src/main/ALGO-NWS
 ```
 
 
-#### Step 4: Build the UI
+#### Step 3: Build the UI
 
 ```
-# In the UI repo's directory
+# In the src/renderer directory
 npm install
 npm run build
 ```
 
 this'll output the compiled UI files into the `dist` directory.
 
-#### Step 5: Symlink the UI build output into this repo as `src/renderer/dist`
+
+#### Step 4: Start the application
 
 ```
-# In this repo's directory
-
-ln -s <FULL PATH TO UI REPO>/dist ./src/renderer/dist
+npm start
 ```
