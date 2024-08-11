@@ -1,0 +1,234 @@
+#root {
+  /* max-width: 1280px; */
+  /* margin: 0 auto; */
+  /* padding: 2rem; */
+  /* text-align: center; */
+
+
+  /* padding: 0.5em; */
+  display: grid;
+  grid-template-rows: 5em 1fr;
+  height:100vh;
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
+
+/* ************************** */
+
+.dropTarget {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 9999;
+
+  /* background-color: rgba(255,255,255, 0.95); */
+  background-color: #eee;
+  display: grid;
+  grid-template-columns: 1fr;
+  /* align-content: center; */
+}
+.dropTarget .dropTargetInner {
+  border: 2rem dashed #999;
+  margin: 1rem;
+  border-radius: 5rem;
+  align-content: center;
+  text-align: center;
+  font-size: 3em;
+  color: #999;
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+
+.bigButton { color: #242424; font-size: 1.4rem; padding: 1rem 2rem; border-radius: 1.5rem; font-weight: bold; }
+.bigButton:hover { text-decoration: underline;}
+
+
+.Navbar { display: grid; grid-template-columns: 1fr 30em; background-color: #377bb7; color: white;  padding: 0.5em; align-items: center; }
+
+.Navbar .backButton { padding: 0.5em 5em 0 0; }
+.Navbar .backButton a {
+  display: inline-block;
+  background: #fff;
+  color: #377bb7;
+  font-weight: bold;
+  border-radius: 2em;
+  padding: .5em 2em;
+}
+
+.VersionInfo { width: 100%;  display: grid; grid-template-columns: 15em 1fr; }
+
+.VersionInfo .configVersion {}
+.VersionInfo .help { }
+.VersionInfo .data { font-weight: bold; }
+
+.VersionInfo.usingBackupConfig { /* color: #ff8787; */ }
+
+.VersionInfo .backupVersionMarker { background-color: #ff8787; color: #fff; grid-column: 1 / 3; text-align: center; border-radius: 0.5em; }
+
+
+.appScreen {  }
+
+.MainScreen { position: relative; display: grid; grid-template-rows: 3em 1fr 5em; align-items:center }
+.MainScreen .mainDragAndDropArea { text-align:center; max-width: 40em; margin: 0 auto;  }
+.MainScreen .mainDragAndDropArea .large,
+.MainScreen .mainDragAndDropArea .small { display: block;  }
+.MainScreen .mainDragAndDropArea .large { font-size: 4em; font-weight: bold; }
+.MainScreen .mainDragAndDropArea .small {  font-size: 1.5em; }
+
+.updateConfig {
+  text-align:center;
+}
+
+.ConfigUpdated,
+.ProcessingCanceled {
+  height: 10em;
+  margin: auto auto;
+  width: 40em;
+  text-align:center;
+}
+
+.ConfigUpdated .version { font-weight:bold; display: block; font-size:1.4em; }
+
+
+.SheetTabs { width: 100%; overflow: auto; background: #eee; border-radius: 1em; padding: 1rem; }
+/* By setting a max-height here the overflow seems to be contained inside the grid's allowed space */
+.SheetTab { max-height: 0px; }
+
+.ValidationSuccess, .ValidationFailed,
+.ProcessingFinished {
+  display: grid;
+}
+
+.ValidationSuccess {
+  grid-template-rows: 4em 1fr 4em 5em 5em;
+}
+
+
+.ValidationFailed {
+  grid-template-rows: 4em 1fr 8em 5em 5em;
+}
+
+.ProcessingFinished {
+  grid-template-rows: 4em 1fr 8em;
+}
+
+.FileInfo { text-align: right; padding: 0.2em 1em;}
+.FileInfo .help { color: #999; }
+.FileInfo .fileName { font-size: 1.5em; font-weight: bold; line-height: 1em; }
+.FileInfo .fileName a { /* border-bottom: 0.15em dashed; color: #242424; */ text-decoration: underline; }
+
+
+.validationResult { text-align: center; }
+.validationResult.ok {}
+.validationResult.error {}
+
+
+.validationResult .validationState { font-size: 1.6em; text-transform: uppercase; font-weight: bold; }
+.validationResult .validationState .help { font-size: 0.62em; text-transform: none; color: #999; }
+.validationResult.error .validationState { color: #ff8787;  text-align: left; }
+.validationResult.ok .validationState { color: #0b9e01; }
+.validationResult .validationErrors { max-width: 40em; display: grid; grid-template-columns: 1fr 15em; margin: 1em auto;  }
+
+.validationResult .validationErrors .openErrorList { align-content: center; }
+.validationResult .validationErrors .OpenErrorListButton { background-color: #ff8787; }
+
+.retryButton, .processButton, .doneButton { text-align: center; }
+.retryButton button { background-color: #ffec99; }
+.processButton button,
+.doneButton button { background-color: #b2f2bb;}
+
+.doneButton { margin-top: 1em; }
+
+.bigButton.openFile { padding: .5rem 1rem; background-color: #377bb7; color: white; padding: 0.5em 2em; }
+
+.bigButton.openConfigFile {
+  font-size: .9em;
+  padding: .5rem 1rem;
+  background-color: #db8e3b;
+  border: 0.2em solid;
+  background-color: white;
+  color: #377bb7;
+}
+
+.openFileRegion { align-content: center; text-align: center; }
+
+
+.progressIndicator {
+  align-content: center;
+  text-align:center;
+  font-weight: bold;
+}
+
+.progressIndicator .help { font-size: 1.3em; color: #999; }
+.progressIndicator .fileName { font-size: 0.8em; font-weight: bold; color: #242424; }
+
+
+
+
+
+
+
+
+
+
+
+
+.loader {
+  width: 48px;
+  height: 48px;
+  border: 5px solid #999;
+  border-bottom-color: transparent;
+  border-radius: 50%;
+  display: inline-block;
+  box-sizing: border-box;
+  animation: rotation 1s linear infinite;
+  }
+
+  @keyframes rotation {
+  0% {
+      transform: rotate(0deg);
+  }
+  100% {
+      transform: rotate(360deg);
+  }
+}
+
+.Error {  }
+.Error .errorBackButton {  background-color: #ff8787; }
