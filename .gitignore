@@ -1,5 +1,6 @@
-
+.neveradd
 node_modules
 test_files
 src/renderer/dist
 src/main/ALGO-NWS
+out/

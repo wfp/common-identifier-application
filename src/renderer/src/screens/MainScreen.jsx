@@ -2,7 +2,6 @@ import { useState } from 'react';
 
 
 import OpenFileRegion from "../components/OpenFileRegion";
-import VersionInfo from "../components/VersionInfo";
 import { useAppStore } from '../store';
 
 
@@ -10,7 +9,6 @@ function MainScreen({config}) {
 
     // is anything dragged over the screen?
     const [isDraggedOver, setIasDraggedOver] = useState(false);
-    // const [isDraggedOver, setIasDraggedOver] = useState(true);
 
     const startPreProcessingFile = useAppStore((store) => store.startPreProcessingFile);
 
@@ -63,11 +61,7 @@ function MainScreen({config}) {
         if (pathArr.length === 1) {
             // TODO: Electron will have access to the file path, use it here
             const draggedPath = pathArr[0];
-            // const draggedPath = "/Users/gyulalaszlo/Developer/starschema/wfp/common-id-project/uscadi/ALGO-NWS/test_files/uscadi_input_data.xlsx"
             startPreProcessingFile(draggedPath)
-
-            // const ret = electronAPI.startDrag(pathArr);
-            // console.log(ret);
         }
     }
 

@@ -9,8 +9,17 @@ function resolveHtmlPath(htmlFileName) {
     //   return url.href;
     // }
     return `file://${path.resolve(__dirname, '../renderer/', htmlFileName)}`;
-  }
+}
+
+
+// Returns the "base name" (the plain file name, the last component of the path, without any directories)
+function baseFileName(filePath) {
+    const splitName = filePath.split(/[\\/]/);
+    const lastComponent = splitName[splitName.length - 1].split(/\.+/);
+    return lastComponent.slice(0,-1).join('.')
+}
 
 module.exports = {
-    resolveHtmlPath
+    resolveHtmlPath,
+    baseFileName,
 }

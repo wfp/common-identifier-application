@@ -1,7 +1,7 @@
 function WelcomeScreen() {
     return (
         <div className="WelcomeScreen appScreen">
-            Lorem ipsum
+            Terms and conditions lorem ipsum....
         </div>
     );
 }

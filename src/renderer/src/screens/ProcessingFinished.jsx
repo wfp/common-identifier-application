@@ -1,7 +1,5 @@
 
 import FileInfo from "../components/FileInfo";
-import OpenFileRegion from "../components/OpenFileRegion";
-import VersionInfo from "../components/VersionInfo";
 import SheetTabs from "../components/SheetTabs";
 import { useAppStore } from "../store";
 

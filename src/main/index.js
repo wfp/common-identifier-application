@@ -4,10 +4,9 @@ const { app, BrowserWindow, ipcMain } = require('electron/main')
 const { dialog, shell } = require('electron')
 const path = require('node:path')
 
-const { resolveHtmlPath } = require('./util')
+const { resolveHtmlPath, baseFileName } = require('./util')
 
 const processing = require('./ALGO-NWS/processing')
-// const Config = require('./ALGO-NWS/config');
 const makeConfigStore = require('./ALGO-NWS/config/ConfigStore');
 
 const createWindow = () => {
@@ -28,7 +27,7 @@ const createWindow = () => {
     })
 
     // and load the index.html of the app.
-    mainWindow.loadURL(resolveHtmlPath('index.html'))
+    mainWindow.loadURL(resolveHtmlPath('renderer.html'))
 
 
 
@@ -155,9 +154,6 @@ const createWindow = () => {
 
             console.log("===== using:", {outputFormat, outputBasePath})
 
-            // TODO: open a path picker
-            // const outputPath = "/tmp/";
-
             processing.processFile(config, outputBasePath, filePath, limit, outputFormat)
                 .then(({ outputData, outputFilePath }) => {
 
@@ -238,11 +234,6 @@ app.whenReady().then(() => {
 })
 
 
-// ipcMain.on('dropped-file', (event, arg) => {
-//     console.log('Dropped File(s):', arg);
-//     event.returnValue = `Received ${arg.length} paths.`; // Synchronous reply
-// })
-
 // Quit when all windows are closed, except on macOS. There, it's common
 // for applications and their menu bar to stay active until the user quits
 // explicitly with Cmd + Q.
@@ -251,10 +242,3 @@ app.on('window-all-closed', () => {
 })
 
 
-
-// Returns the "base name" (the plain file name, the last component of the path, without any directories)
-function baseFileName(filePath) {
-    const splitName = filePath.split(/[\\/]/);
-    const lastComponent = splitName[splitName.length - 1].split(/\.+/);
-    return lastComponent.slice(0,-1).join('.')
-}

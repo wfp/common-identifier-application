@@ -6,7 +6,6 @@ function OpenFileRegion({label}) {
 
         <div className="openFileRegion">
             <OpenFileButton label={label}/>
-            {/* <div className="help">(or drop a new config file to update the configuration)</div> */}
         </div>
     );
 }

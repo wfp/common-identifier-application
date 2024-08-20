@@ -72,7 +72,6 @@ export const useAppStore = createStore((set) => ({
 
         // if the load was canceled go to the main screen with the old config
         if (canceled) {
-            console.log("AFTER CANCEL", state.config);
             // handle cancelation of inital load when there was an error booting
             if (state.config.isInitial && state.errorMessage) {
                 return {
@@ -140,10 +139,9 @@ export const useAppStore = createStore((set) => ({
         return {
             // keep the config
             config: state.config,
-
             // update the screen type to FileLoading
             screen: SCREEN_FILE_LOADING,
-            // pass the file name
+            // clean the file name
             inputFilePath: "",
         }
 
@@ -157,7 +155,6 @@ export const useAppStore = createStore((set) => ({
         return {
             // keep the config
             config: state.config,
-
             // update the screen type to FileLoading
             screen: SCREEN_FILE_LOADING,
             // pass the file name

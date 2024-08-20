@@ -4,9 +4,6 @@ function Error({error}) {
     const backToMainScreen = useAppStore(store => store.backToMainScreen);
 
     return (<div className="Error appScreen progressIndicator">
-        {/* <div className="loaderWrapper">
-            <span class="loader"></span>
-        </div> */}
         <div className="help">
             ERROR
             <pre>{error}</pre>

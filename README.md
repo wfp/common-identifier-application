@@ -1,20 +1,43 @@
-# Introduction 
-TODO: Give a short introduction of your project. Let this section explain the objectives or the motivation behind this project. 
+# WIP
 
-# Getting Started
-TODO: Guide users through getting your code up and running on their own system. In this section you can talk about:
-1.	Installation process
-2.	Software dependencies
-3.	Latest releases
-4.	API references
+# Setting up the current development environment
 
-# Build and Test
-TODO: Describe and show how to build your code and run the tests. 
+Until the repository separation and build system is completed there are a number
+of manual steps that need to be done to get this repository working on your machine.
 
-# Contribute
-TODO: Explain how other users and developers can contribute to make your code better. 
 
-If you want to learn more about creating good readme files then refer the following [guidelines](https://docs.microsoft.com/en-us/azure/devops/repos/git/create-a-readme?view=azure-devops). You can also seek inspiration from the below readme files:
-- [ASP.NET Core](https://github.com/aspnet/Home)
-- [Visual Studio Code](https://github.com/Microsoft/vscode)
-- [Chakra Core](https://github.com/Microsoft/ChakraCore)
+#### Step 0: Clone & init this repo
+
+```
+git clone ....
+npm install
+```
+
+#### Step 1: Clone the Algorithm repository to a separate location
+
+#### Step 2: Symlink the Algorithm repository into `src/main/ALGO-NWS`
+
+(the path name, just like these build steps is only temporary)
+
+```
+# In this repo's directory
+ln -s <FULL PATH TO ALGO REPO> ./src/main/ALGO-NWS
+```
+
+
+#### Step 3: Build the UI
+
+```
+# In the src/renderer directory
+npm install
+npm run build
+```
+
+this'll output the compiled UI files into the `dist` directory.
+
+
+#### Step 4: Start the application
+
+```
+npm start
+```
