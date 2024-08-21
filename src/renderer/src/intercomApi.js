@@ -60,16 +60,18 @@ withElectronAPI("registerCallbacks", (electronAPI) => {
     // preprocessing done hook
     electronAPI.onPreprocessingDone((value) => {
         console.log("Received preprocessing done with: ", value);
-        const { inputFilePath, inputData, validationResult, validationErrorsOutputFile} = value;
-        preprocessingDoneCallback(inputFilePath, inputData, validationResult, validationErrorsOutputFile)
+        // const { inputFilePath, inputData, validationResult, validationErrorsOutputFile, validationResultDocument} = value;
+        preprocessingDoneCallback(value)
     });
 
     // preprocessing done hook
     electronAPI.onProcessingDone((value) => {
         console.log("Received processing done with: ", value);
-        const {outputFilePath, outputData} = value;
+        // const {outputFilePath, outputData, mappingFilePaths} = value;
         // preprocessingDoneCallback(inputFilePath, inputData, validationResult)
-        processingDoneCallback(outputFilePath[0], outputData);
+        // processingDoneCallback(outputFilePath[0], outputData, mappingFilePaths[0]);
+        useAppStore.getState().processingDone(value);
+
     });
 
     // Config changes

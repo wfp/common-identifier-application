@@ -2,6 +2,7 @@ import {create as createStore} from 'zustand'
 import * as intercomApi from './intercomApi'
 
 export const SCREEN_BOOT = "Boot";
+export const SCREEN_WELCOME = "Welcome";
 export const SCREEN_MAIN = "Main";
 export const SCREEN_FILE_LOADING = "FileLoading";
 
@@ -27,8 +28,8 @@ export const useAppStore = createStore((set) => ({
         lastUpdated: new Date(),
         data: {
             meta: {
-                region: "NWS",
-                version: "1.0.8",
+                region: "UNKNOWN",
+                version: "0.0.0",
             },
         },
         isBackup: false,
@@ -85,6 +86,15 @@ export const useAppStore = createStore((set) => ({
             };
         }
 
+        // If we still have the initial config this means there is no valid config present
+        // so fall back to the invalid config screen
+        if (state.config.isInitial) {
+            return {
+                screen: SCREEN_INVALID_CONFIG,
+                errorMessage: error,
+            }
+        }
+
         // we had some errors -- show the error screen
         return {
             config: state.config,
@@ -109,7 +119,8 @@ export const useAppStore = createStore((set) => ({
                 lastUpdated,
                 isBackup,
             },
-            screen: SCREEN_MAIN,
+            screen: SCREEN_WELCOME,
+            // screen: SCREEN_MAIN,
         }
     }),
 
@@ -163,8 +174,8 @@ export const useAppStore = createStore((set) => ({
     }),
 
     // Signal from the Node backend that the validation step is finished, with
-    preProcessingDone: (inputFilePath, inputData, validationResult, validationErrorsOutputFile) => set(state => {
-        console.log("Preprocessing done", {inputFilePath, inputData, validationResult, validationErrorsOutputFile})
+    preProcessingDone: ({inputFilePath, inputData, validationResult, validationErrorsOutputFile, validationResultDocument}) => set(state => {
+        console.log("Preprocessing done", {inputFilePath, inputData, validationResult, validationErrorsOutputFile, validationResultDocument})
         // figure out if validation was a success or not
         const isValidationSuccess = !validationResult.some(sheet => !sheet.ok);
 
@@ -184,6 +195,7 @@ export const useAppStore = createStore((set) => ({
                 inputFilePath,
                 inputData,
                 validationResult,
+                validationResultDocument,
             }
         }
 
@@ -204,12 +216,14 @@ export const useAppStore = createStore((set) => ({
 
 
     // Callback after the processing of the file is finished
-    processingDone: (outputFilePath, outputData) => set(state => {
+    processingDone: ({outputFilePaths, outputData, mappingFilePaths}) => set(state => {
+        console.log("processingDONE:", {outputFilePaths, mappingFilePaths})
         return {
             config: state.config,
             screen: SCREEN_PROCESSING_FINISHED,
-            outputFilePath,
+            outputFilePath: outputFilePaths[0],
             outputData,
+            mappingFilePath: mappingFilePaths[0],
         }
     }),
 

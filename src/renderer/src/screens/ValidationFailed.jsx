@@ -65,11 +65,14 @@ function ValidationFailed({inputData, inputFilePath, validationResult, validatio
                 {/* <ValidationErrorSummary validationResult={validationResult} /> */}
             </div>
 
-            <div className="retryButton">
-                <button className="bigButton" onClick={retryFileLoad}>Retry the same file</button>
+            <div className="buttonRow buttonRow2">
+                <OpenFileRegion label="Open a different file" />
+
+                <div className="retryButton">
+                    <button className="bigButton" onClick={retryFileLoad}>Retry the same file</button>
+                </div>
             </div>
 
-            <OpenFileRegion label="Open a different file" />
 
         </div>
     )

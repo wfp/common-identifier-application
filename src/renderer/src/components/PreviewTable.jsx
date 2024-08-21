@@ -5,7 +5,7 @@ function EmptyTable() {
 
 
 function TableRow({rowData, keys}) {
-    const rowCells = keys.map(k => (<td key={k}>{ rowData[k] }</td>))
+    const rowCells = keys.map(k => (<td  className={'td-' + k} key={k}>{ rowData[k] }</td>))
 
     return (<tr className="TableRow">
         { rowCells }
@@ -28,13 +28,16 @@ function PreviewTable({tableData}) {
     // build the header row
     const tableHeader = (<thead>
         <tr>
-            {headerKeys.map(k => (<th key={k}>{k}</th>))}
+            {headerKeys.map(k => (<th className={'th-' + k} key={k}>{k}</th>))}
         </tr>
     </thead>);
 
+    // Limit the amount of data displayed (adds significant memory)
+    const previewDataRange = tableData.slice(0, 200);
+
     // build the body
     const tableBody = (<tbody>
-        { tableData.slice(1).map((row,i) => <TableRow key={i} rowData={row} keys={headerKeys} />) }
+        { previewDataRange.map((row,i) => <TableRow key={i} rowData={row} keys={headerKeys} />) }
     </tbody>)
 
     //

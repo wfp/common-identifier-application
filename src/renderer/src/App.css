@@ -77,6 +77,7 @@
 
 
 .bigButton { color: #242424; font-size: 1.4rem; padding: 1rem 2rem; border-radius: 1.5rem; font-weight: bold; }
+/* TODO: undearline is ugly */
 .bigButton:hover { text-decoration: underline;}
 
 
@@ -105,12 +106,18 @@
 
 .appScreen {  }
 
-.MainScreen { position: relative; display: grid; grid-template-rows: 3em 1fr 5em; align-items:center }
+.MainScreen { position: relative; display: grid; grid-template-rows: 1fr 10em 5em; align-items:center; }
 .MainScreen .mainDragAndDropArea { text-align:center; max-width: 40em; margin: 0 auto;  }
 .MainScreen .mainDragAndDropArea .large,
 .MainScreen .mainDragAndDropArea .small { display: block;  }
 .MainScreen .mainDragAndDropArea .large { font-size: 4em; font-weight: bold; }
 .MainScreen .mainDragAndDropArea .small {  font-size: 1.5em; }
+
+.MainScreen .bigButton.openFile { font-size: 2.5rem; }
+
+.WelcomeScreen { display: grid; grid-template-rows: 1fr 5em 1em; min-height: 100vh; }
+.WelcomeScreen .termsAndConditions { padding: 1em; }
+.WelcomeScreen .termsAndConditions .fromConfig { background: #ccc; border: 1px solid #999; padding: 1em; }
 
 .updateConfig {
   text-align:center;
@@ -127,9 +134,9 @@
 .ConfigUpdated .version { font-weight:bold; display: block; font-size:1.4em; }
 
 
-.SheetTabs { width: 100%; overflow: auto; background: #eee; border-radius: 1em; padding: 1rem; }
+.SheetTabs { width: 100%; overflow: auto; background: #eee; border-radius: 1em; padding: 1rem 0; }
 /* By setting a max-height here the overflow seems to be contained inside the grid's allowed space */
-.SheetTab { max-height: 0px; }
+.SheetTab { max-height: 0px; padding: 0 1em; }
 
 .ValidationSuccess, .ValidationFailed,
 .ProcessingFinished {
@@ -137,22 +144,24 @@
 }
 
 .ValidationSuccess {
-  grid-template-rows: 4em 1fr 4em 5em 5em;
+  grid-template-rows: 4em 1fr 2.5em 5em 1em;
 }
 
 
 .ValidationFailed {
-  grid-template-rows: 4em 1fr 8em 5em 5em;
+  grid-template-rows: 4em 1fr 8em 5em 1em;
 }
 
 .ProcessingFinished {
-  grid-template-rows: 4em 1fr 8em;
+  grid-template-rows: 5.5em 1fr 8em;
 }
 
 .FileInfo { text-align: right; padding: 0.2em 1em;}
 .FileInfo .help { color: #999; }
 .FileInfo .fileName { font-size: 1.5em; font-weight: bold; line-height: 1em; }
 .FileInfo .fileName a { /* border-bottom: 0.15em dashed; color: #242424; */ text-decoration: underline; }
+
+.FileInfo .fileName.otherPath {font-size: 1.1em; padding: 0.5em 0;}
 
 
 .validationResult { text-align: center; }
@@ -169,14 +178,19 @@
 .validationResult .validationErrors .openErrorList { align-content: center; }
 .validationResult .validationErrors .OpenErrorListButton { background-color: #ff8787; }
 
-.retryButton, .processButton, .doneButton { text-align: center; }
+.retryButton, .processButton, .doneButton, .acceptButton { text-align: center; align-content:center; }
 .retryButton button { background-color: #ffec99; }
+
+.acceptButton button,
 .processButton button,
 .doneButton button { background-color: #b2f2bb;}
 
-.doneButton { margin-top: 1em; }
-
-.bigButton.openFile { padding: .5rem 1rem; background-color: #377bb7; color: white; padding: 0.5em 2em; }
+.bigButton.openFile {
+  /* padding: .5rem 1rem;  */
+  background-color: #377bb7;
+  color: white;
+  /* padding: 0.5em 2em;  */
+}
 
 .bigButton.openConfigFile {
   font-size: .9em;
@@ -232,3 +246,20 @@
 
 .Error {  }
 .Error .errorBackButton {  background-color: #ff8787; }
+
+.PreviewTableMain {}
+.PreviewTableMain th,
+.PreviewTableMain td { white-space: nowrap; padding: 0.1em 0.5em; }
+
+.PreviewTableMain th { border-bottom: 0.1em solid #999; }
+.PreviewTableMain td { background: #f7f7f7; }
+
+.PreviewTableMain .th-errors,
+.PreviewTableMain .td-errors { color: #ff8787; font-weight: bold; border-right: 0.2em solid; }
+
+
+
+
+.buttonRow { display: grid; }
+.buttonRow1 { grid-template-columns: 1fr; }
+.buttonRow2 { grid-template-columns: 0.5fr 0.5fr; }

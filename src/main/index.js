@@ -19,6 +19,11 @@ const createWindow = () => {
     const mainWindow = new BrowserWindow({
         width: 1024,
         height: 800,
+
+        // constrain the layout
+        minWidth: 880,
+        minHeight: 640,
+
         webPreferences: {
             preload: path.join(__dirname, 'preload.js'),
             contextIsolation: true,
@@ -70,7 +75,6 @@ const createWindow = () => {
 
                 // attempt to load into the store
                 const loadError = configStore.updateUserConfig(filePath);
-                console.log("LOAD ERROR:", loadError)
 
                 if (!loadError) {
                     return {
@@ -80,6 +84,7 @@ const createWindow = () => {
                     };
                 }
 
+                console.log("CONFIG LOAD ERROR:", loadError)
                 return {
                     success: false,
                     canceled: false,
@@ -112,7 +117,12 @@ const createWindow = () => {
         const config = configStore.getConfig();
         const limit = undefined;
 
-        processing.preprocessFile(config, filePath, limit).then(({inputData, validationResult, validationErrorsOutputFile}) => {
+        processing.preprocessFile(config, filePath, limit).then(({
+            inputData,
+            validationResultDocument,
+            validationResult,
+            validationErrorsOutputFile
+        }) => {
 
             console.log("PREPROCESSING DONE")
             mainWindow.webContents.send('preprocessingDone', {
@@ -120,6 +130,7 @@ const createWindow = () => {
                 inputData: inputData,
                 validationResult: validationResult,
                 validationErrorsOutputFile,
+                validationResultDocument,
             })
         });
     }
@@ -155,12 +166,13 @@ const createWindow = () => {
             console.log("===== using:", {outputFormat, outputBasePath})
 
             processing.processFile(config, outputBasePath, filePath, limit, outputFormat)
-                .then(({ outputData, outputFilePath }) => {
+                .then(({ outputData, outputFilePaths, mappingFilePaths }) => {
 
                     console.log("!!!! PROCESSING DONE")
                     mainWindow.webContents.send('processingDone', {
                         outputData,
-                        outputFilePath,
+                        outputFilePaths,
+                        mappingFilePaths,
                     })
                 });
         }

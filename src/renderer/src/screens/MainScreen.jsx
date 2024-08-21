@@ -81,11 +81,6 @@ function MainScreen({config}) {
 
     return (
         <div className={divClassName} onDragEnter={dragEnter}>
-            <div className="updateConfig">
-                {/* Update the configuration File */}
-                <button onClick={loadNewConfig} className="openConfigFile bigButton"><span class="icon">⚙</span>  Update the configuration from a file</button>
-            </div>
-
             <div className="mainDragAndDropArea">
                 <span className="large">DRAG & DROP EXCEL OR CSV FILES HERE</span>
                 <span className="small">to start processing them</span>
@@ -93,6 +88,11 @@ function MainScreen({config}) {
 
 
             <OpenFileRegion label="Open a file" />
+
+            <div className="updateConfig">
+                {/* Update the configuration File */}
+                <button onClick={loadNewConfig} className="openConfigFile bigButton"><span class="icon">⚙</span>  Update the configuration from a file</button>
+            </div>
 
             { dropTargetDiv }
         </div>

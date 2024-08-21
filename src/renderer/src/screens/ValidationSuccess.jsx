@@ -22,11 +22,14 @@ function ValidationSuccess({inputData, inputFilePath}) {
                     File is Valid
                 </div>
             </div>
-            <div className="processButton">
-                <button className="bigButton" onClick={processTheFile}>Process the file</button>
-            </div>
 
-            <OpenFileRegion label="Open a different file" />
+            <div className="buttonRow buttonRow2">
+                <OpenFileRegion label="Open a different file" />
+
+                <div className="processButton">
+                    <button className="bigButton" onClick={processTheFile}>Process the file</button>
+                </div>
+            </div>
 
         </div>
     )
