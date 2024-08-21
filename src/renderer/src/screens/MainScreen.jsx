@@ -49,19 +49,19 @@ function MainScreen({config}) {
         let pathArr = [];
         for (const f of event.dataTransfer.files) {
             // Using the path attribute to get absolute file path
-            console.log('File Path of dragged files: ', f.path)
+            console.log('File Path of dragged files: ', f.path);
             pathArr.push(f.path); // assemble array for main.js
         }
         console.log(pathArr);
-        // TODO: notify the user if multiple files are dragged on the app
+        // TODO: maybe notify the user if multiple files are dragged on the app
         if (pathArr.length > 1) {
-
+            startPreProcessingFile(pathArr[0]);
         }
         // handle dropping if only one file is provided
         if (pathArr.length === 1) {
             // TODO: Electron will have access to the file path, use it here
             const draggedPath = pathArr[0];
-            startPreProcessingFile(draggedPath)
+            startPreProcessingFile(draggedPath);
         }
     }
 
