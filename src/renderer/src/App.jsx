@@ -57,7 +57,7 @@ function App() {
 
   switch (screenType) {
     case SCREEN_ERROR: {
-      screen = (<ErrorScreen error={errorMessage}/>);
+      screen = (<ErrorScreen error={errorMessage} config={config}/>);
       break;
     }
 

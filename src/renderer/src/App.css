@@ -117,7 +117,8 @@
 
 .WelcomeScreen { display: grid; grid-template-rows: 1fr 5em 1em; min-height: 100vh; }
 .WelcomeScreen .termsAndConditions { padding: 1em; }
-.WelcomeScreen .termsAndConditions .fromConfig { background: #ccc; border: 1px solid #999; padding: 1em; }
+.WelcomeScreen .termsAndConditions h4 { font-size: 1.6em; text-align: center; color: #377bb7; text-transform: uppercase; }
+.fromConfig { /* background: #eee; border: 1px solid #999; */ padding: 2em; max-width: 45em; margin: 0 auto; line-height: 2em; }
 
 .updateConfig {
   text-align:center;
@@ -244,8 +245,12 @@
   }
 }
 
-.Error {  }
+.Error { display: grid; grid-template-rows: 1fr 5em 10em 1em; align-items: center; }
+.Error h2 { color: #ff8787; font-size:1.4em; }
 .Error .errorBackButton {  background-color: #ff8787; }
+
+.Error .developerInformation { color: #999; background: #eee; padding: 1em; margin: 2rem; border-radius: 1rem; }
+.Error .developerInformation h4 { margin: 0; color: #ccc; text-decoration: underline; }
 
 .PreviewTableMain {}
 .PreviewTableMain th,
