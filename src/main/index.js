@@ -89,12 +89,14 @@ const createWindow = () => {
                     success: false,
                     canceled: false,
                     error: loadError,
+                    config: configStore.getConfig(),
                 }
 
             } else {
                 return {
                     success: false,
                     canceled: true,
+                    config: configStore.getConfig(),
                 };
             }
         });

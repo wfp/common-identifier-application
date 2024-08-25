@@ -70,7 +70,7 @@ function App() {
     }
 
     case SCREEN_INVALID_CONFIG: {
-      return (<InvalidConfig error={errorMessage}></InvalidConfig>)
+      return (<InvalidConfig error={errorMessage} config={config} />)
     }
 
     case SCREEN_LOAD_NEW_CONFIG: {

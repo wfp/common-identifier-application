@@ -95,8 +95,7 @@ withElectronAPI("Boot", (electronAPI) => {
     // Initial config load request (trigger config update on boot)
     electronAPI.requestConfigUpdate().then(newConfig => {
         console.log("Received initial config update with:", newConfig);
-        const boot = useAppStore.getState().boot;
-        boot(newConfig.config, newConfig.lastUpdated, newConfig.isBackup, newConfig.error);
+        useAppStore.getState().boot(newConfig);
     })
 })
 

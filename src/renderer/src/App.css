@@ -252,6 +252,9 @@
 .Error .developerInformation { color: #999; background: #eee; padding: 1em; margin: 2rem; border-radius: 1rem; }
 .Error .developerInformation h4 { margin: 0; color: #ccc; text-decoration: underline; }
 
+.InvalidConfig { height:100vh; text-align:center; font-size: 1.2em; }
+.InvalidConfig .updateConfig { font-size:1.4rem; }
+
 .PreviewTableMain {}
 .PreviewTableMain th,
 .PreviewTableMain td { white-space: nowrap; padding: 0.1em 0.5em; }

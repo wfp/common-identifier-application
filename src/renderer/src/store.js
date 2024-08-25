@@ -76,6 +76,10 @@ export const useAppStore = createStore((set) => ({
             // handle cancelation of inital load when there was an error booting
             if (state.config.isInitial && state.errorMessage) {
                 return {
+                    config: {
+                        data: config,
+                        isInitial: true,
+                    },
                     screen: SCREEN_INVALID_CONFIG,
                     errorMessage: state.errorMessage,
                 }
@@ -90,6 +94,10 @@ export const useAppStore = createStore((set) => ({
         // so fall back to the invalid config screen
         if (state.config.isInitial) {
             return {
+                config: {
+                    data: config,
+                    isInitial: true,
+                },
                 screen: SCREEN_INVALID_CONFIG,
                 errorMessage: error,
             }
@@ -105,17 +113,22 @@ export const useAppStore = createStore((set) => ({
     }),
 
     // Startup of the application after config load -- initialize a main screen
-    boot: (newConfig, lastUpdated, isBackup, error) => set(state => {
+    boot: ({config, lastUpdated, isBackup, error}) => set(state => {
         // TODO: if the backup config is also invalid show the "invalid config screen"
-        if (!newConfig.meta) {
+        // if (!newConfig.meta) {
+        if (error) {
             return {
+                config: {
+                    data: config,
+                    isInitial: true,
+                },
                 screen: SCREEN_INVALID_CONFIG,
                 errorMessage: error,
             }
         }
         return {
             config: {
-                data: newConfig,
+                data: config,
                 lastUpdated,
                 isBackup,
             },

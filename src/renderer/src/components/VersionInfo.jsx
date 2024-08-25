@@ -2,11 +2,16 @@
 // A version information box (config version, last update)
 function VersionInfo({config}) {
 
-    const {version, region} = config.data.meta;
+    // if the current config is the initial one we dont want to display anything
+    if (config.isInitial) {
+        return (<></>);
+    }
+
+    const {version="UNKNOWN", region="UNKNWON"} = config.data.meta;
     const {lastUpdated, isBackup} = config;
 
     // TODO: if a different date display format is desirable change it here
-    const lastUpdateDate = lastUpdated.toLocaleString();
+    const lastUpdateDate = lastUpdated ? lastUpdated.toLocaleString() : "";
 
     const backupVersionMarker = isBackup ? (<div className="backupVersionMarker">Using the default configuration</div>) : ([]);
 
