@@ -115,9 +115,10 @@
 
 .MainScreen .bigButton.openFile { font-size: 2.5rem; }
 
-.WelcomeScreen { display: grid; grid-template-rows: 1fr 5em 1em; min-height: 100vh; }
-.WelcomeScreen .termsAndConditions { padding: 1em; }
+.WelcomeScreen { display: grid; grid-template-rows: 6em 1fr 6em 1em; min-height: 100vh; }
+.WelcomeScreen .termsAndConditions { /* padding: 1em; */ }
 .WelcomeScreen .termsAndConditions h4 { font-size: 1.6em; text-align: center; color: #377bb7; text-transform: uppercase; }
+.termsAndConditionsText { overflow: scroll; border: 1px solid #ccc }
 .fromConfig { /* background: #eee; border: 1px solid #999; */ padding: 2em; max-width: 45em; margin: 0 auto; line-height: 2em; }
 
 .updateConfig {
@@ -179,12 +180,14 @@
 .validationResult .validationErrors .openErrorList { align-content: center; }
 .validationResult .validationErrors .OpenErrorListButton { background-color: #ff8787; }
 
-.retryButton, .processButton, .doneButton, .acceptButton { text-align: center; align-content:center; }
+.retryButton, .processButton, .doneButton, .acceptButton, .quitButton { text-align: center; align-content:center; }
+.quitButton button,
 .retryButton button { background-color: #ffec99; }
 
 .acceptButton button,
 .processButton button,
 .doneButton button { background-color: #b2f2bb;}
+
 
 .bigButton.openFile {
   /* padding: .5rem 1rem;  */

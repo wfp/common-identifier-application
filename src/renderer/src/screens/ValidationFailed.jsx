@@ -33,7 +33,7 @@ function ValidationErrorSummary(validationResult) {
     )
 }
 
-function ValidationFailed({inputData, inputFilePath, validationResult, validationErrorsOutputFile}) {
+function ValidationFailed({config, inputData, inputFilePath, validationResult, validationErrorsOutputFile}) {
 
     const startPreProcessingFile = useAppStore(store => store.startPreProcessingFile)
 
@@ -43,11 +43,22 @@ function ValidationFailed({inputData, inputFilePath, validationResult, validatio
     }
 
 
+    // filter the error table to only include the ones with an error
+    const documentData = {
+        sheets: inputData.sheets.map(sheet => (
+            {
+                name: sheet.name,
+                data: sheet.data.filter( row => row.errors)
+            }
+        ))
+    }
+
+
     return (
         <div className="ValidationFailed appScreen">
             <FileInfo filePath={inputFilePath} helpText="input file is invalid" />
 
-            <SheetTabs inputData={inputData}/>
+            <SheetTabs documentData={documentData} columnsConfig={config.data.destination_errors.columns}/>
 
             <div className="validationResult error">
                 <div className="validationErrors">

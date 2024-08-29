@@ -13,6 +13,8 @@ const EVENT_CONFIG_CHANGED = "configChanged";
 const EVENT_REQUEST_CONFIG_UPDATE = "requestConfigUpdate";
 const EVENT_LOAD_NEW_CONFIG = "loadNewConfig";
 
+const EVENT_QUIT = "quit";
+const EVENT_ERROR = "error";
 
 contextBridge.exposeInMainWorld('electronAPI', {
     // RPC call to fetch the app config
@@ -53,9 +55,18 @@ contextBridge.exposeInMainWorld('electronAPI', {
     },
 
 
+    // if unexpected errors occur this gets triggered
+    onError: (callback) => {
+        ipcRenderer.on(EVENT_ERROR, (_event, value) => callback(value))
+    },
+
     // open an output file using the OS default app
     openOutputFile: (fileName) => {
         return ipcRenderer.send(EVENT_OPEN_OUTPUT_FILE, fileName)
+    },
+
+    quit: () => {
+        return ipcRenderer.send(EVENT_QUIT)
     },
 
 })

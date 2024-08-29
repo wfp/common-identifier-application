@@ -4,7 +4,7 @@
 // it'll fall back to a short summary
 //
 // messageKey is the name of the message inside the messages key in the config
-function ErrorWrapper({config, error}) {
+function ErrorWrapper({config, error, isRuntimeError}) {
 
     let _messageKey = "error_in_config";
 
@@ -22,7 +22,13 @@ function ErrorWrapper({config, error}) {
 
     //
 
-    const userMessage = config.data.messages[_messageKey];
+    let userMessage = config.data.messages[_messageKey];
+
+    // runtime errors are currently handled as special cases
+    if (isRuntimeError) {
+        userMessage = "Internal error in the application"
+    }
+
 
     return (<div className="userErrorMessage">
             <div className="fromConfig" dangerouslySetInnerHTML={{ __html: userMessage }} />

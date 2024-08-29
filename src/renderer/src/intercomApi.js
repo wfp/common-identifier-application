@@ -86,6 +86,12 @@ withElectronAPI("registerCallbacks", (electronAPI) => {
         console.log("Received processing canceled");
         useAppStore.getState().processingCanceled();
     });
+
+
+    electronAPI.onError((errorMessage) => {
+        console.log("Received error message", errorMessage)
+        useAppStore.getState().reportError(errorMessage);
+    });
 })
 
 // BOOT
@@ -166,4 +172,11 @@ export function loadNewConfig() {
     }, () => {
         console.log("NO FALLBACK FOR ELECTRON-LESS OPEN CONFIG")
     });
+}
+
+// Quit the application
+export function quit() {
+    withElectronAPI("quit", (electronAPI) => {
+        electronAPI.quit();
+    })
 }

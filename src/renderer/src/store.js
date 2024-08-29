@@ -107,6 +107,7 @@ export const useAppStore = createStore((set) => ({
         return {
             config: state.config,
             screen: SCREEN_ERROR,
+            isRuntimeError: false,
             errorMessage: "Error in the configuration file: " + error,
         }
 
@@ -247,6 +248,24 @@ export const useAppStore = createStore((set) => ({
         return state;
     }),
 
+
+    // quit the application -- there is no state change after this
+    quit: () => {
+        intercomApi.quit();
+    },
+
+
+    // If an error occurs report it to the user via the apropriate screen
+    reportError: (errorMessage) => set(state => {
+
+        return {
+            config: state.config,
+            screen: SCREEN_ERROR,
+
+            errorMessage,
+            isRuntimeError: true,
+        };
+    })
 
 
   }))

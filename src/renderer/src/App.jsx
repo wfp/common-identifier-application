@@ -54,10 +54,11 @@ function App() {
   const mappingFilePath = useAppStore(store => store.mappingFilePath);
 
   const errorMessage = useAppStore(store => store.errorMessage);
+  const isRuntimeError = useAppStore(store => store.isRuntimeError);
 
   switch (screenType) {
     case SCREEN_ERROR: {
-      screen = (<ErrorScreen error={errorMessage} config={config}/>);
+      screen = (<ErrorScreen error={errorMessage} isRuntimeError={isRuntimeError} config={config}/>);
       break;
     }
 

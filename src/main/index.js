@@ -6,8 +6,15 @@ const path = require('node:path')
 
 const { resolveHtmlPath, baseFileName } = require('./util')
 
-const processing = require('./ALGO-NWS/processing')
-const makeConfigStore = require('./ALGO-NWS/config/ConfigStore');
+const processing = require('./algo-shared/processing')
+const makeConfigStore = require('./config/ConfigStore');
+
+// IPC event handlers
+const requestConfigUpdate = require("./ipc-handlers/requestConfigUpdate");
+const loadNewConfig = require('./ipc-handlers/loadNewConfig');
+const preProcessFile = require('./ipc-handlers/preProcessFile');
+const processFile = require('./ipc-handlers/processFile');
+const preProcessFileOpenDialog = require('./ipc-handlers/preProcessFileOpenDialog');
 
 const createWindow = () => {
 
@@ -41,66 +48,25 @@ const createWindow = () => {
     mainWindow.webContents.openDevTools()
 
 
+    function withErrorReporting(delegate) {
+        return new Promise(function(resolve, reject) {
+            resolve(delegate());
+        }).catch(e => {
+            console.error("INTERNAL ERROR:", e);
+            mainWindow.webContents.send('error', e.toString());
+        });
+    }
+
     // CONFIG-RELATED
     // --------------
 
     // Handle dropping of files
-    ipcMain.handle('requestConfigUpdate', (event) => {
-        console.log('App requesting config udpate');
-        // return the data
-        return {
-            config: configStore.getConfig(),
-            isBackup: configStore.isUsingBackupConfig,
-            lastUpdated: configStore.lastUpdated,
-            error: configStore.loadError,
-        }
+    ipcMain.handle('requestConfigUpdate', (_) => {
+        return requestConfigUpdate({configStore})
     });
 
-    ipcMain.handle('loadNewConfig', (event) => {
-
-        console.log("App requested loading a new config")
-
-        return dialog.showOpenDialog({
-            properties: ['openFile'],
-            filters: [
-                {name: "All config files", extensions: ["toml", "json"] },
-                {name: "TOML files", extensions: ["toml"] },
-                {name: "JSON files", extensions: ["json"] },
-            ],
-        }).then((response) => {
-            if (!response.canceled) {
-                // handle fully qualified file name
-                const filePath = response.filePaths[0];
-                console.log("Starting to load config file from open dialog:", filePath);
-
-                // attempt to load into the store
-                const loadError = configStore.updateUserConfig(filePath);
-
-                if (!loadError) {
-                    return {
-                        success: true,
-                        config: configStore.getConfig(),
-                        lastUpdated: configStore.lastUpdated,
-                    };
-                }
-
-                console.log("CONFIG LOAD ERROR:", loadError)
-                return {
-                    success: false,
-                    canceled: false,
-                    error: loadError,
-                    config: configStore.getConfig(),
-                }
-
-            } else {
-                return {
-                    success: false,
-                    canceled: true,
-                    config: configStore.getConfig(),
-                };
-            }
-        });
-
+    ipcMain.handle('loadNewConfig', (_) => {
+        return loadNewConfig({configStore});
     })
 
 
@@ -108,127 +74,37 @@ const createWindow = () => {
     // ------------------
 
     // Handle dropping of files
-    ipcMain.on('fileDropped', (event, filePath) => {
-        console.log('Dropped File:', filePath);
-        // event.returnValue = `Received ${arg.length} paths.`; // Synchronous reply
-        preprocessFileImpl(filePath);
+    ipcMain.on('fileDropped', (_, filePath) => {
+        return withErrorReporting(() => {
+            return preProcessFile({mainWindow, configStore, filePath, processing})
+        });
     })
-
-    function preprocessFileImpl(filePath) {
-
-        const config = configStore.getConfig();
-        const limit = undefined;
-
-        processing.preprocessFile(config, filePath, limit).then(({
-            inputData,
-            validationResultDocument,
-            validationResult,
-            validationErrorsOutputFile
-        }) => {
-
-            console.log("PREPROCESSING DONE")
-            mainWindow.webContents.send('preprocessingDone', {
-                inputFilePath: filePath,
-                inputData: inputData,
-                validationResult: validationResult,
-                validationErrorsOutputFile,
-                validationResultDocument,
-            })
-        });
-    }
-
-    function processFileImpl(filePath) {
-
-        // TODO: maybe assume the file is already valid?
-        console.log('=========== Processing File:', filePath);
-        // event.returnValue = `Received ${arg.length} paths.`; // Synchronous reply
-
-
-        function doProcessFile(outputPath) {
-            const config = configStore.getConfig();
-            const limit = undefined;
-            let outputFormat = undefined;
-            let outputBasePath = outputPath;
-            // figure out the output path
-            const extension = path.extname(outputPath);
-            // we may need to use the extension-less output path (if we replace the extension)
-            const basePath = path.join(path.dirname(outputPath), path.basename(outputPath, path.extname(outputPath)));
-
-            switch (extension.toLowerCase()) {
-                case ".xlsx":
-                    outputFormat = ".xlsx";
-                    outputBasePath = basePath;
-                    break;
-                case ".csv":
-                    outputFormat = ".csv";
-                    outputBasePath = basePath;
-                    break;
-            }
-
-            console.log("===== using:", {outputFormat, outputBasePath})
-
-            processing.processFile(config, outputBasePath, filePath, limit, outputFormat)
-                .then(({ outputData, outputFilePaths, mappingFilePaths }) => {
-
-                    console.log("!!!! PROCESSING DONE")
-                    mainWindow.webContents.send('processingDone', {
-                        outputData,
-                        outputFilePaths,
-                        mappingFilePaths,
-                    })
-                });
-        }
-
-        dialog.showSaveDialog({
-            defaultPath: baseFileName(filePath),
-        }).then(function (response) {
-            if (response.canceled || response.filePath === '') {
-                // TODO: send cancel signal
-                console.log("no file selected");
-                // send the cancelec message
-                mainWindow.webContents.send('processingCanceled', {});
-                return
-            }
-
-            const selectedFile = response.filePath;
-            console.log("STARTING TO PROCESS AS", selectedFile);
-            doProcessFile(selectedFile);
-                // handle fully qualified file name
-        });
-
-
-    }
 
     // Start processing the file
     ipcMain.on('processFile', (event, filePath) => {
-        processFileImpl(filePath)
+        return withErrorReporting(() => {
+            processFile({mainWindow, configStore, filePath, processing});
+        });
     });
 
     // open and process a file using an open file dialog
     ipcMain.on('preProcessFileOpenDialog', (event, _) => {
-
-        dialog.showOpenDialog({
-            properties: ['openFile'],
-            filters: [
-                {name: "CSV or XLSX files", extensions: ["csv", "xlsx" ] },
-            ],
-        }).then((response) => {
-            if (!response.canceled) {
-                // handle fully qualified file name
-                const filePath = response.filePaths[0];
-                console.log("Starting to process file from open dialog:", filePath);
-                preprocessFileImpl(filePath)
-            } else {
-                console.log("no file selected");
-                // send the cancelec message
-                mainWindow.webContents.send('processingCanceled', {});
-            }
+        return withErrorReporting(() => {
+            preProcessFileOpenDialog({mainWindow, configStore, processing})
         });
     });
+
+    // MISC
+    // ----
 
     // open a file with the OS default app
     ipcMain.on('openOutputFile', (event, filePath) => {
         shell.openPath(filePath);
+    });
+
+    // quit when receiving the 'quit' signal
+    ipcMain.on('quit', () => {
+        app.quit();
     });
 
 }

@@ -3,7 +3,7 @@ import OpenFileRegion from "../components/OpenFileRegion";
 import SheetTabs from "../components/SheetTabs";
 import { useAppStore } from "../store";
 
-function ValidationSuccess({inputData, inputFilePath}) {
+function ValidationSuccess({config, inputData, inputFilePath}) {
 
     const startProcessingFile = useAppStore(store => store.startProcessingFile);
 
@@ -15,7 +15,7 @@ function ValidationSuccess({inputData, inputFilePath}) {
         <div className="ValidationSuccess appScreen">
             <FileInfo filePath={inputFilePath} helpText="ready to process the file" />
 
-            <SheetTabs inputData={inputData}/>
+            <SheetTabs documentData={inputData} columnsConfig={config.data.source.columns}/>
 
             <div className="validationResult ok">
                 <div className="validationState">

@@ -13,18 +13,17 @@ function ConfigSignature({config}) {
 }
 
 
-function Error({config, error}) {
+function Error({config, isRuntimeError, error}) {
     const backToMainScreen = useAppStore(store => store.backToMainScreen);
 
     // figure out if this is an error in the salt file
     const errorMessageKey = "error_in_config";
 
-    const isSaltFileError = /Invalid salt/
 
     return (<div className="Error appScreen progressIndicator">
         <div className="help">
             <h2>ERROR</h2>
-            <ErrorWrapper config={config} error={error} messageKey={errorMessageKey} />
+            <ErrorWrapper config={config} error={error} isRuntimeError={isRuntimeError} messageKey={errorMessageKey} />
         </div>
 
         <div className="buttonRow buttonRow1">

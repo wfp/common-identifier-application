@@ -1,11 +1,16 @@
 import PreviewTable from "../components/PreviewTable";
 
-function SheetTabs({inputData}) {
+function SheetTabs({documentData, columnsConfig}) {
 
-    const sheetTabs = inputData.sheets.map(({name, data}) => (
+    function header(name) {
+        return (documentData.sheets.length > 1) ? (<h3>{ name }</h3>) : (<></>)
+    }
+    console.log("COLUMNS CONFIG:", columnsConfig);
+
+    const sheetTabs = documentData.sheets.map(({name, data}) => (
         <div key={name} className="SheetTab">
-            <h3>{ name }</h3>
-            <PreviewTable tableData={data} />
+            { header(name) }
+            <PreviewTable tableData={data} columnsConfig={columnsConfig}/>
         </div>
     ))
 

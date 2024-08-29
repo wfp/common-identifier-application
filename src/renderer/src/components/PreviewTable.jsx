@@ -12,7 +12,7 @@ function TableRow({rowData, keys}) {
     </tr>)
 }
 
-function PreviewTable({tableData}) {
+function PreviewTable({tableData, columnsConfig}) {
     // empty data is an empty table
     if (tableData.length === 0) {
         return <EmptyTable/>;
@@ -22,13 +22,16 @@ function PreviewTable({tableData}) {
     const headerRow = tableData[0];
 
     // the header will be the field names
+    const headerKeys = columnsConfig.map(c => c.alias);
+    const headerLabels = columnsConfig.map(c => c.name);
     // TODO: this needs to be re-mapped to human names + in the specified order based on the config
-    const headerKeys = Object.keys(headerRow);
+    // const headerKeys = Object.keys(headerRow);
 
     // build the header row
     const tableHeader = (<thead>
         <tr>
-            {headerKeys.map(k => (<th className={'th-' + k} key={k}>{k}</th>))}
+            {/* {headerKeys.map(k => (<th className={'th-' + k} key={k}>{k}</th>))} */}
+            {headerKeys.map((k, i) => (<th className={'th-' + k} key={k}>{headerLabels[i]}</th>))}
         </tr>
     </thead>);
 
