@@ -266,7 +266,7 @@
 .PreviewTableMain td { background: #f7f7f7; }
 
 .PreviewTableMain .th-errors,
-.PreviewTableMain .td-errors { color: #ff8787; font-weight: bold; border-right: 0.2em solid; }
+.PreviewTableMain .td-errors { color: #ff8787; font-weight: bold; border-right: 0.2em solid; white-space: pre;}
 
 
 

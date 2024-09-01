@@ -1,17 +1,7 @@
 
 // Validation engine
 
-class ValidationError {
-    constructor(kind, msg) {
-        this.kind = kind;
-        this.msg = msg;
-    }
-
-    // converts the validation error to a string for debugging purposes
-    toString() {
-        return `[${this.kind}]: ${this.msg}`
-    }
-}
+const ValidationError = require('./ValidationError');
 
 // base error type for low-level validator errors
 const ERROR_CORE = "core";

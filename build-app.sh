@@ -3,38 +3,39 @@ ALGORITHM_WRAPPER_REPO=...
 ALGORITHM_NWS_REPO=...
 ALGORITHM_GOS_REPO=...
 
-# the other repositories will be cloned here
-# NOTE: this must be an absolute path for symlinks to work
-WORKING_DIR=/tmp
+BUILD_OUTPUT_DIR=./_build
 
-# Clone the algorithm wrapper repo
-git clone $ALGORITHM_WRAPPER_REPO $WORKING_DIR/algo-wrapper
+git submodule update
 
-# Clone the algorithm repos into their distinct places
-git clone $ALGORITHM_NWS_REPO $WORKING_DIR/algo-nws
-git clone $ALGORITHM_GOS_REPO $WORKING_DIR/algo-gos
+# NWS
+# ===
 
 
-# Prepare the repositories
-for repo in wrapper nws gos
-do
+node tools/activate-algo.js algo-uscadi
 
-    # Symlink into the app main
-    # TODO: check if bundling collects all files
-    ln -s $WORKING_DIR/algo-$repo src/main/algo-$repo
+# Build the executable for windows and mac
+# NOTE: the "arch=x64" for windows is needed on mac to have it build the proper executable
+echo "BUILDING FOR WINDOWS"
+npx electron-forge make --arch=x64 --platform=win32
 
-    # Install the dependencies of the repos
-    # TODO: check if bundling collects the right dependencies
+echo "BUILDING FOR MACOS"
+npx electron-forge make --platform=darwin
 
-    (cd src/main/algo-$repo && npm install)
-done
+cp -r out/ui-win32-x64    $BUILD_OUTPUT_DIR/nws/ui-win32-x64
+cp -r out/ui-darwin-arm64 $BUILD_OUTPUT_DIR/nws/ui-darwin-arm64
 
-# Install repo dependencies
-npm install
+# GOS
+# ===
 
-# Run electron-forge to create a package
-# TODO: check cross-compilation possibilities
-npm run make
+node tools/activate-algo.js algo-gos
 
+# Build the executable for windows and mac
+# NOTE: the "arch=x64" for windows is needed on mac to have it build the proper executable
+echo "BUILDING FOR WINDOWS"
+npx electron-forge make --arch=x64 --platform=win32
 
+echo "BUILDING FOR MACOS"
+npx electron-forge make --platform=darwin
 
+cp -r out/ui-win32-x64    $BUILD_OUTPUT_DIR/gos/ui-win32-x64
+cp -r out/ui-darwin-arm64 $BUILD_OUTPUT_DIR/gos/ui-darwin-arm64

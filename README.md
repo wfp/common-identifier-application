@@ -1,5 +1,10 @@
 # WIP
 
+
+# IN THE CURRENT STATE INFORMATION BELLOW MAY OR MAY NOT BE ACCURATE
+
+SYMLINKING IS CURRENTLY NOT NEEDED (IT WILL MAKE A COMEBACK AFTER REPO RE-SEPARATION)
+
 # Setting up the current development environment
 
 Until the repository separation and build system is completed there are a number

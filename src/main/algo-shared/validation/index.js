@@ -1,6 +1,6 @@
 const toml = require('toml');
 const {Document, Sheet} = require('../document')
-
+const ValidationError = require('./ValidationError')
 
 // MAIN VALIDATION
 // ---------------
@@ -18,6 +18,18 @@ function validateValueWithList(validatorList, value) {
 }
 
 function validateRowWithListDict(validatorListDict, row) {
+    // check if all expected columns are present
+    let missingColumns = Object.keys(validatorListDict).map((k) => {
+        return (typeof row[k] === 'undefined') ? k : null;
+    }).filter(v => v);
+
+    // Fail if there are missing columns
+    if (missingColumns.length > 0) {
+        return missingColumns.reduce((memo, c) => {
+            return Object.assign(memo, {[c]: [new ValidationError('SCHEMA', 'is missing')]})
+        }, {});
+    }
+
     // TODO: should all columns in the validatorListDict checked or base it on the row?
     return Object.keys(row).reduce((memo, fieldName) => {
         // check if there is a validatorList for the field
@@ -229,7 +241,7 @@ function makeValidationResultDocument(sourceConfig, results) {
             });
             // combine with the row onject
             return Object.assign({
-                errors: errorList.join(";  "),
+                errors: errorList.join("\n"),
             }, rowResult.row)
         }));
     }));

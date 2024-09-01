@@ -23,11 +23,13 @@ function checkArabicUtf8(v) {
     // Arabic Mathematical Alphabetic Symbols (1EE00–1EEFF, 143 characters)
 
     const RX_BASE = [
-        "a-z",
-        "A-Z",
-        "0-9",
+        // English characters are out-of-spec
+        // "a-z",
+        // "A-Z",
+        // "0-9",
         "()\\-",
         "\\s",
+        "/",
         "\u0600-\u06ff",
 
         "\u0750-\u077f",

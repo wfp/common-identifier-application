@@ -3,7 +3,6 @@ const fs = require('node:fs');
 
 
 const { loadConfig, CONFIG_FILE_ENCODING }= require('./loadConfig');
-const generateConfigHash = require('./generateConfigHash');
 
 
 // Returns the prefered Application Data storage location based on the operating system

@@ -10,128 +10,13 @@ const {encoderForFile} = require('./encoding');
 const {decoderForFile, fileTypeOf} = require('./decoding');
 const validation = require("./validation");
 
-// takes an row object and the "algorithm.columns" config and returns a new
-// object with { static: [<COL VALUES>], to_translate: [..], reference: [...] } columns
-function extractAlgoColumnsFromObject(columnConfig, obj) {
-    // check if we have an actual config
-    if (typeof columnConfig !== "object") {
-        throw new Error("Invalid algorithm columns config");
-    }
-
-    // the config values we care about
-    let groups = ["static", "to_translate", "reference"];
-    let output = {};
-
-    // go through the groups
-    for (let groupName of groups) {
-        let colNames = columnConfig[groupName];
-        // check if this is an array
-        if (!Array.isArray(colNames)) {
-            throw new Error(`invalid algorithm config: cannot find column group '${groupName}'`);
-        }
-
-        let colValues = colNames.map((colName) => {
-            let extractedValue = obj[colName];
-            return extractedValue;
-        });
-
-        output[groupName] = colValues;
-    }
-
-    return output;
-}
-
-
-// Centralized helper to join different parts of a field value list
-function joinFieldsForHash(fieldValueList) {
-    return fieldValueList.join("");
-}
-
-// Returns a cleaned version (null and undefined values removed)
-// TODO: implement this based on WFP feedback
-function cleanValueList(fieldValueList) {
-    return fieldValueList.map((v) => typeof v === 'string' ? v : "")
-}
-
-// Takes the output of `extractAlgoColumnsFromObject` (extracted properties) and
-// return a string with the "refernce" parts concatednated as per the USCADI
-// spec
-function composeReferenceHashSource(uscadi, extractedObj) {
-    return joinFieldsForHash(cleanValueList(extractedObj.reference));
-}
-
-
-// Takes the output of `extractAlgoColumnsFromObject` (extracted properties) and
-// return a string with the "static" and the translated "to_translate" parts
-// concatednated as per the USCADI spec
-function composePersonalHashSource(uscadi, extractedObj) {
-    // returnst true if all values are present
-    function hasAllValuesPresent(list, nameList) {
-        return list.some((v) => typeof v !== 'string' && typeof v !== 'number');
-    }
-
-    if (false) {
-        // check to see if all values of static and to_translate are present
-        if (!hasAllValuesPresent(extractedObj.to_translate) || !hasAllValuesPresent(extractedObj.static)) {
-            // TODO: what is the desired thing here?
-            throw new Error(`Row is missing some expected values for hashing: '${extractedObj}'`);
-        }
-    }
-
-    // the static fields stay the same
-    // while the to_translate fields are translated
-
-    let translatedValues = extractedObj.to_translate.map((val) => uscadi.translateValue(val));
-    let staticValues = extractedObj.static;
-
-    // The original USCADI algorithm seems to concatenate the translated values
-    // by grouping them by concatenating per-type:
-    // [_mp1_value, _mp2_value, ... , _sx1_value, _sx2_value, ...]
-    let {metaphone, soundex} = translatedValues.reduce((memo, val) => {
-        memo.metaphone.push(val.transliteratedMetaphone);
-        memo.soundex.push(val.soundex);
-
-        return memo;
-    }, { metaphone:[], soundex:[] })
-
-    // concat them
-    // TODO: check the order
-    let concatenated = joinFieldsForHash(cleanValueList(staticValues.concat(metaphone, soundex)));
-
-    return concatenated;
-}
-
-// Builds the hash columns from the extracted row object
-function generateHashForExtractedObject(uscadi, extractedObj) {
-    // Helper that generates a hash based on a concatenation result
-    function generateHash(collectorFn) {
-        // collect the data for hashing
-        const collectedData = collectorFn(uscadi, extractedObj);
-
-        // if there is an empty string only, return an empty string (no hash)
-        if (collectedData === '') {
-            return '';
-        }
-        // if there is data generate a hash
-        // return collectorFn(uscadi, extractedObj);
-        return uscadi.generateHash(collectedData);
-    }
-
-    return {
-        "USCADI": generateHash(composePersonalHashSource),
-        "document_hash": generateHash(composeReferenceHashSource),
-
-        // for debugging the hash
-        "USCADI_src": composePersonalHashSource(uscadi, extractedObj),
-        "document_hash_src": composeReferenceHashSource(uscadi, extractedObj),
-    }
-}
+const {extractAlgoColumnsFromObject} = require('./hashing/utils');
 
 
 // Generate the hash columns from the row object
 function generateHashForRow(algorithmConfig, uscadi, rowObject) {
     let extractedObj = extractAlgoColumnsFromObject(algorithmConfig.columns, rowObject);
-    let res = generateHashForExtractedObject(uscadi, extractedObj);
+    let res = uscadi.generateHashForExtractedObject(extractedObj);
     return res;
 }
 

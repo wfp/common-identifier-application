@@ -94,7 +94,9 @@ class XlsxEncoder extends EncoderBase {
         for (let row of rows) {
             // we'll need the index here so use forEach
             Object.keys(row).forEach((k, i) => {
-                colWidths[i] = Math.max(colWidths[i] || 0, row[k].length);
+                // do we have any data in the columm?
+                const rowLen = row[k] ? row[k].length : 0;
+                colWidths[i] = Math.max(colWidths[i] || 0, rowLen);
             })
         }
 
