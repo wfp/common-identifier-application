@@ -3,7 +3,7 @@ import { useAppStore } from "../store";
 
 function ConfigUpdated({config}) {
 
-    const backToMainScreen = useAppStore(store => store.backToMainScreen);
+    const showTermsAndConditions = useAppStore(store => store.showTermsAndConditions);
 
     const {meta} = config.data;
 
@@ -15,7 +15,7 @@ function ConfigUpdated({config}) {
             </h2>
 
             <div className="doneButton">
-                <button className="bigButton" onClick={backToMainScreen}>Done</button>
+                <button className="bigButton" onClick={showTermsAndConditions}>Done</button>
             </div>
         </div>
     )

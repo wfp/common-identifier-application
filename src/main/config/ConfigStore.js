@@ -4,6 +4,8 @@ const fs = require('node:fs');
 
 const { loadConfig, CONFIG_FILE_ENCODING }= require('./loadConfig');
 
+const { loadAppConfig, saveAppConfig, DEFAULT_APP_CONFIG } = require('./appConfig');
+
 // The current region name comes from the active algorithm
 const { REGION } = require('../active_algorithm');
 
@@ -15,6 +17,7 @@ function appDataLocation() {
 
 const APP_DIR_NAME = "CommonIDTool";
 const CONFIG_FILE_NAME = `config.${REGION}.json`;
+const APP_CONFIG_FILE_NAME = `appconfig.${REGION}.json`;
 
 // the path of the application's data files
 const APP_DIR_PATH = path.join(appDataLocation(), APP_DIR_NAME);
@@ -22,8 +25,12 @@ const APP_DIR_PATH = path.join(appDataLocation(), APP_DIR_NAME);
 // the path of the store configuration file
 const CONFIG_FILE_PATH = path.join(APP_DIR_PATH, CONFIG_FILE_NAME);
 
+// the path of the application config file (containing config-independent settings)
+const APP_CONFIG_FILE_PATH = path.join(APP_DIR_PATH, APP_CONFIG_FILE_NAME);
+
 // TODO: this should come from the algorithm
 const BACKUP_CONFIG_FILE_PATH = path.join(__dirname, "..", "config.backup.toml");
+
 
 
 // Ensure the application's config file directory exists
@@ -61,6 +68,8 @@ class ConfigStore {
         // coming from the backup, not a user-provided one
         this.isUsingBackupConfig = false;
 
+        this.appConfig = DEFAULT_APP_CONFIG;
+
     }
 
 
@@ -71,6 +80,10 @@ class ConfigStore {
     // On boot we try to load the user config from AppData
     // or fall back to a backup config
     boot() {
+
+        // attempt to load the application configuration
+        this.appConfig = loadAppConfig(APP_CONFIG_FILE_PATH);
+
         // attempt to load the default app config
         const userConfigLoad = loadConfig(CONFIG_FILE_PATH);
 
@@ -174,6 +187,27 @@ class ConfigStore {
         // TODO: maybe do a rename w/ timestamp for backup
         // save the config to the output path
         saveConfig(configData, CONFIG_FILE_PATH);
+    }
+
+    // Overwrites the application configuration with the current
+    // appConfig value.
+    _saveAppConfig() {
+        ensureAppDirectoryExists();
+        saveAppConfig(this.appConfig, APP_CONFIG_FILE_PATH);
+    }
+
+    // Marks the terms and conditions as accepted for the curent config hash
+    // and saves the application config so the user doesn't have to accept it
+    // anymore
+    acceptTermsAndConditions() {
+        this.appConfig.termsAndConditions[this.data.signature.config_signature] = true;
+        this._saveAppConfig();
+    }
+
+    // Returns true if the user has accepted the terms and conditions of the current
+    // config (as indicated by the signature)
+    hasAcceptedTermsAndConditions() {
+        return (this.appConfig.termsAndConditions[this.data.signature.config_signature] == true);
     }
 
 }

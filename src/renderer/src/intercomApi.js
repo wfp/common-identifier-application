@@ -180,3 +180,10 @@ export function quit() {
         electronAPI.quit();
     })
 }
+
+// Mark the current config's terms and conditions accepted
+export function acceptTermsAndConditions() {
+    withElectronAPI("acceptTermsAndConditions", (electronAPI) => {
+        electronAPI.acceptTermsAndConditions();
+    })
+}

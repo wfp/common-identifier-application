@@ -16,16 +16,17 @@ const preProcessFile = require('./ipc-handlers/preProcessFile');
 const processFile = require('./ipc-handlers/processFile');
 const preProcessFileOpenDialog = require('./ipc-handlers/preProcessFileOpenDialog');
 
-const createWindow = () => {
 
-    const configStore = makeConfigStore();
-    // start loading the config here
-    configStore.boot();
+function createMainWindow(configStore) {
+
+    // figure out the existing window configuration
+    const appConfig = configStore.appConfig;
+    const { width, height } = appConfig.window;
 
     // Create the browser window.
     const mainWindow = new BrowserWindow({
-        width: 1024,
-        height: 800,
+        width,
+        height,
 
         // constrain the layout
         minWidth: 880,
@@ -38,15 +39,22 @@ const createWindow = () => {
         }
     })
 
+    return mainWindow;
+}
+
+const createWindow = () => {
+
+    const configStore = makeConfigStore();
+    // start loading the config here
+    configStore.boot();
+
+    const mainWindow = createMainWindow(configStore);
+
     // and load the index.html of the app.
     mainWindow.loadURL(resolveHtmlPath('renderer.html'))
 
-
-
-
     // Open the DevTools.
     // mainWindow.webContents.openDevTools()
-
 
     function withErrorReporting(delegate) {
         return new Promise(function(resolve, reject) {
@@ -105,6 +113,11 @@ const createWindow = () => {
     // quit when receiving the 'quit' signal
     ipcMain.on('quit', () => {
         app.quit();
+    });
+
+    // mark the terms and conditions accepted
+    ipcMain.on('acceptTermsAndConditions', () => {
+        configStore.acceptTermsAndConditions();
     });
 
 }

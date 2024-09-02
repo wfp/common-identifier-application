@@ -15,6 +15,7 @@ const EVENT_LOAD_NEW_CONFIG = "loadNewConfig";
 
 const EVENT_QUIT = "quit";
 const EVENT_ERROR = "error";
+const EVENT_ACCEPT_TERMS_AND_CONDITIONS = "acceptTermsAndConditions";
 
 contextBridge.exposeInMainWorld('electronAPI', {
     // RPC call to fetch the app config
@@ -68,5 +69,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
     quit: () => {
         return ipcRenderer.send(EVENT_QUIT)
     },
+
+    acceptTermsAndConditions: () => {
+        return ipcRenderer.send(EVENT_ACCEPT_TERMS_AND_CONDITIONS);
+    }
 
 })

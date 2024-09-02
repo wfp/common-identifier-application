@@ -9,6 +9,7 @@ function requestConfigUpdate({configStore}) {
             isBackup: configStore.isUsingBackupConfig,
             lastUpdated: configStore.lastUpdated,
             error: configStore.loadError,
+            hasAcceptedTermsAndConditions: configStore.hasAcceptedTermsAndConditions(),
         }
 }
 

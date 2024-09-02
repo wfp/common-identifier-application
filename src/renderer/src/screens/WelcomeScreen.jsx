@@ -1,7 +1,7 @@
 import { useAppStore } from "../store";
 
 function WelcomeScreen({ config }) {
-    const backToMainScreen = useAppStore(store => store.backToMainScreen);
+    const acceptTermsAndConditions = useAppStore(store => store.acceptTermsAndConditions);
     const quit = useAppStore(store => store.quit);
 
     console.log("Welcome", config);
@@ -24,7 +24,7 @@ function WelcomeScreen({ config }) {
                     <button className="bigButton" onClick={quit}>Quit the application</button>
                 </div>
                 <div className="acceptButton">
-                    <button className="bigButton" onClick={backToMainScreen}>Agree to terms of use (WIP)</button>
+                    <button className="bigButton" onClick={acceptTermsAndConditions}>Agree to terms of use (WIP)</button>
                 </div>
             </div>
         </div>

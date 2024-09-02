@@ -114,7 +114,7 @@ export const useAppStore = createStore((set) => ({
     }),
 
     // Startup of the application after config load -- initialize a main screen
-    boot: ({config, lastUpdated, isBackup, error}) => set(state => {
+    boot: ({config, lastUpdated, isBackup, error, hasAcceptedTermsAndConditions }) => set(state => {
         // TODO: if the backup config is also invalid show the "invalid config screen"
         // if (!newConfig.meta) {
         if (error) {
@@ -127,14 +127,15 @@ export const useAppStore = createStore((set) => ({
                 errorMessage: error,
             }
         }
+
+        const targetScreen = hasAcceptedTermsAndConditions ? SCREEN_MAIN : SCREEN_WELCOME;
         return {
             config: {
                 data: config,
                 lastUpdated,
                 isBackup,
             },
-            screen: SCREEN_WELCOME,
-            // screen: SCREEN_MAIN,
+            screen: targetScreen,
         }
     }),
 
@@ -144,6 +145,26 @@ export const useAppStore = createStore((set) => ({
             config: state.config,
             screen: SCREEN_MAIN,
         }
+    }),
+
+    // Take the user to the Terms And Conditions page (ex: after a config update)
+    showTermsAndConditions: () => set(state => {
+        return {
+            config: state.config,
+            screen: SCREEN_WELCOME,
+        }
+    }),
+
+    // Accept the terms and conditions -- after this the user is forwarded
+    // to the main screen
+    acceptTermsAndConditions: () => set(state => {
+
+        intercomApi.acceptTermsAndConditions();
+
+        return {
+            config: state.config,
+            screen: SCREEN_MAIN,
+        };
     }),
 
     // When receiving a "processing canceled" (the user used "Cancel" in a file open or save dialog)
