@@ -139,4 +139,5 @@ function makeUscadiHasher(config) {
 
 module.exports = {
     makeHasher: makeUscadiHasher,
+    REGION: 'NWS',
 }

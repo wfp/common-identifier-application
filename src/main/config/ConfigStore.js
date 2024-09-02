@@ -4,6 +4,9 @@ const fs = require('node:fs');
 
 const { loadConfig, CONFIG_FILE_ENCODING }= require('./loadConfig');
 
+// The current region name comes from the active algorithm
+const { REGION } = require('../active_algorithm');
+
 
 // Returns the prefered Application Data storage location based on the operating system
 function appDataLocation() {
@@ -11,7 +14,7 @@ function appDataLocation() {
 }
 
 const APP_DIR_NAME = "CommonIDTool";
-const CONFIG_FILE_NAME = "config.json";
+const CONFIG_FILE_NAME = `config.${REGION}.json`;
 
 // the path of the application's data files
 const APP_DIR_PATH = path.join(appDataLocation(), APP_DIR_NAME);

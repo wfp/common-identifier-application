@@ -1,3 +1,5 @@
+const { REGION } = require('../active_algorithm');
+
 // enums with the validation result
 const CONFIG_IS_VALID = "ConfigIsValid";
 const CONFIG_IS_INVALID = "ConfigIsInvalid";
@@ -63,6 +65,11 @@ function validateConfig(config) {
     // ----
 
     function checkMeta(meta) {
+        // check if this is the correct region
+        if (meta.region != REGION) {
+            return `meta.region is not '${REGION}'`
+        }
+
         return isObject("meta", meta) ||
             isString("meta.version", meta.version) ||
             isString("meta.region", meta.region) ||

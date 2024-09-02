@@ -74,4 +74,5 @@ function makeGOSHasher(config) {
 
 module.exports = {
     makeHasher: makeGOSHasher,
+    REGION: 'GOS',
 }
