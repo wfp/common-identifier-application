@@ -138,7 +138,7 @@ validator_regex = "-----BEGIN PGP PUBLIC KEY BLOCK-----[A-Za-z0-9+/=\\s]+-----EN
 # $APPDATA can be used to substitute the application data directory
 win32 = "./test_files/public_system.asc"
 # $HOME can be used to substitute the users home directory
-darwin = "$HOME/Documents/test_files/public_system.asc"
+darwin = "$APPDATA/CommonIDTool/public_system.asc"
 
 
 [destination]
