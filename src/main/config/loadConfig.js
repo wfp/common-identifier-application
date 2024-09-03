@@ -4,9 +4,7 @@ const validateConfig = require('./validateConfig');
 const loadSaltFile = require('./loadSaltFile');
 const generateConfigHash = require('./generateConfigHash');
 
-const {
-    attemptToReadTOMLData
-} = require('./utils');
+const { getSaltFilePath, attemptToReadTOMLData } = require('./utils');
 
 
 // The encoding used by the config file
@@ -87,7 +85,7 @@ function loadConfig(configPath) {
         return {
             success: false,
             isSaltFileError: true,
-            error: `Invalid salt file: '${saltFilePath}'`,
+            error: `Invalid salt file: '${getSaltFilePath(saltFilePath)}'`,
             // send the existing config alongside so if this config is the backup one, error messages
             // can still be loaded
             config: configData,

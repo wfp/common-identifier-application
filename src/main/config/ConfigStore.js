@@ -9,11 +9,7 @@ const { loadAppConfig, saveAppConfig, DEFAULT_APP_CONFIG } = require('./appConfi
 // The current region name comes from the active algorithm
 const { REGION } = require('../active_algorithm');
 
-
-// Returns the prefered Application Data storage location based on the operating system
-function appDataLocation() {
-    return process.env.APPDATA || (process.platform == 'darwin' ? process.env.HOME + '/Library/Preferences' : process.env.HOME + "/.local/share")
-}
+const {appDataLocation} = require('./utils');
 
 const APP_DIR_NAME = "CommonIDTool";
 const CONFIG_FILE_NAME = `config.${REGION}.json`;
@@ -113,7 +109,7 @@ class ConfigStore {
         this.loadError = backupConfigLoad.error;
 
         // if the backup config fails to load we are screwed
-        console.log("[CONFIG] Backup config load failed - the application should alert the user")
+        console.log("[CONFIG] Backup config load failed - the application should alert the user: ", backupConfigLoad.error)
 
         // if there is a salt file error store the config, but act like it's invalid
         // (this is needed to pick up error messages from the config file)
@@ -196,18 +192,25 @@ class ConfigStore {
         saveAppConfig(this.appConfig, APP_CONFIG_FILE_PATH);
     }
 
+    _currentSignature() {
+        if (this.data && this.data.signature && this.data.signature.config_signature) {
+            return this.data.signature.config_signature;
+        }
+        return "INVALID CONFIG, NO SIGNATURE"
+    }
+
     // Marks the terms and conditions as accepted for the curent config hash
     // and saves the application config so the user doesn't have to accept it
     // anymore
     acceptTermsAndConditions() {
-        this.appConfig.termsAndConditions[this.data.signature.config_signature] = true;
+        this.appConfig.termsAndConditions[this._currentSignature()] = true;
         this._saveAppConfig();
     }
 
     // Returns true if the user has accepted the terms and conditions of the current
     // config (as indicated by the signature)
     hasAcceptedTermsAndConditions() {
-        return (this.appConfig.termsAndConditions[this.data.signature.config_signature] == true);
+        return (this.appConfig.termsAndConditions[this._currentSignature()] == true);
     }
 
 }

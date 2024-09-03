@@ -130,9 +130,15 @@ size = 32
 
 [algorithm.salt]
 source = "FILE" # STRING | FILE
-value = "./test_files/public_system.asc" # static string | ./<path_to_some_file>
 # The regular expression to validate the salt file
 validator_regex = "-----BEGIN PGP PUBLIC KEY BLOCK-----[A-Za-z0-9+/=\\s]+-----END PGP PUBLIC KEY BLOCK-----"
+
+
+[algorithm.salt.value]
+# $APPDATA can be used to substitute the application data directory
+win32 = "./test_files/public_system.asc"
+# $HOME can be used to substitute the users home directory
+darwin = "$HOME/Documents/test_files/public_system.asc"
 
 
 [destination]

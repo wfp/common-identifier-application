@@ -146,12 +146,15 @@ function validateConfig(config) {
 
             switch (algorithmSalt.source) {
                 case "FILE":
+                    // the salt value is either a string or has basic platform suppport
+                    return isString("algorithm.salt.value", algorithm.salt.value) &&
+                    (
+                        isObject("algorithm.salt.value", algorithm.salt.value) ||
+                        isString("algorithm.salt.value.win32", algorithm.salt.value.win32) ||
+                        isString("algorithm.salt.value.darwin", algorithm.salt.value.darwin)
+                    );
                 case "STRING":
-                    // check if there is a value here
-                    if (!algorithmSalt.value) {
-                        return "Missing algorithm.salt.value";
-                    }
-                    return null;
+                    return isString("algorithm.salt.value", algorithm.salt.value);
                 default:
                     return "Unknown algorithm.salt.source";
 
