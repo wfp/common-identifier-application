@@ -229,7 +229,7 @@ function makeValidationResultDocument(sourceConfig, results) {
 
     return new Document(results.map((sheetResult) => {
 
-        return new Sheet(sheetResult.sheet, sheetResult.results.map((rowResult) => {
+        return new Sheet(sheetResult.sheet, sheetResult.results.map((rowResult, rowIdx) => {
             // build an error message
             let errorList = rowResult.errors.map((error) => {
 
@@ -239,26 +239,15 @@ function makeValidationResultDocument(sourceConfig, results) {
                     return `${columnHumanName} ${err.msg}`
                 }).join(", ")
             });
+
+
             // combine with the row onject
             return Object.assign({
+                row_number: rowIdx + 1,
                 errors: errorList.join("\n"),
             }, rowResult.row)
         }));
     }));
-}
-
-function makeValidationResultOutputConfiguration(sourceConfig) {
-    // // check if results is empty
-    // if (resultsSheet.data.length === 0) {
-    //     return { columns: [] };
-    // }
-    // // get a list of columns from the first object in the results sheet
-    // let columnsInResults = Object.keys(resultsSheet.data[0]);
-    // re-map the column names to their original version
-
-
-    // generate a list of column mappings
-    return { columns: sourceConfig.columns.concat([{name: "Errors", alias: "errors" }]) };
 }
 
 module.exports = {
@@ -267,5 +256,4 @@ module.exports = {
     validateDocumentWithListDict,
 
     makeValidationResultDocument,
-    makeValidationResultOutputConfiguration,
 }

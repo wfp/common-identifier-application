@@ -21,7 +21,7 @@ function parseDateDiff(dateDiffStr) {
     const parsedInt = parseInt(dateDiffStr.substring(0, dateDiffStr.length - 1));
 
     // combine into a date-fn.sub() compatible format
-    return { [key]: parsedInt, isPositive: (parsedInt >= 0) }
+    return { [key]: parsedInt, isPositive: (parsedInt >= 0), _key: key, _value: parsedInt }
 
 }
 
@@ -61,7 +61,8 @@ class DateDiffValidator extends ValidatorBase {
 
     // the default message
     defaultMessage() {
-        return `must be in the date range: ${this.dateDiff}`;
+        const { _key, _value } = this.parsedDateDiff;
+        return `must be in the date range: ${_value} ${_key}`;
     }
 
     validate(value) {

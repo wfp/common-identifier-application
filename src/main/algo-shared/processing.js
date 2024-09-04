@@ -86,6 +86,10 @@ async function preprocessFile(config, inputFilePath, limit) {
     // decode the data
     let decoded = await decoder.decodeFile(inputFilePath);
 
+    // check if there is more then one sheets in the input and throw an error
+    if (decoded.sheets.length > 1) {
+        throw new Error("Input files must have only one sheet")
+    }
 
     // apply limiting if needed
     if (limit) {

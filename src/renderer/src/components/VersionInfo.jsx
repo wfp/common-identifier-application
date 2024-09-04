@@ -10,13 +10,30 @@ function VersionInfo({config}) {
     const {version="UNKNOWN", region="UNKNWON"} = config.data.meta;
     const {lastUpdated, isBackup} = config;
 
-    // TODO: if a different date display format is desirable change it here
-    const lastUpdateDate = lastUpdated ? lastUpdated.toLocaleString() : "";
-
-    const backupVersionMarker = isBackup ? (<div className="backupVersionMarker">Using the default configuration</div>) : ([]);
 
     const classNameString = ["VersionInfo"];
-    if (isBackup) classNameString.push("usingBackupConfig")
+    let secondBlock = (<></>);
+
+    // if this is a backup display that as the second element
+    if (isBackup) {
+        classNameString.push("usingBackupConfig")
+
+        secondBlock = (
+            <div className="backupVersionMarker">
+                Using the default configuration
+            </div>
+        );
+    } else {
+        // TODO: if a different date display format is desirable change it here
+        const lastUpdateDate = lastUpdated ? lastUpdated.toLocaleString() : "";
+
+        secondBlock = (
+            <div className="lastUpdated">
+                <div className="help">last updated:</div>
+                <div className="lastUpdateDate data">{ lastUpdateDate }</div>
+            </div>
+        );
+    }
 
     return (
 
@@ -29,11 +46,7 @@ function VersionInfo({config}) {
                     <span className="region">{ region }</span>
                 </div>
             </div>
-            <div className="lastUpdated">
-                <div className="help">last updated:</div>
-                <div className="lastUpdateDate data">{ lastUpdateDate }</div>
-            </div>
-            { backupVersionMarker }
+            { secondBlock }
         </div>
     )
 }

@@ -1,5 +1,10 @@
 const ValidatorBase = require('./base');
 
+const FIELD_TYPE_NAMES = {
+    str: "text",
+    num: "number",
+}
+
 const FIELD_TYPE_MATCHERS = {
     str: (v) => typeof v === 'string',
     num: (v) => typeof v === 'number',
@@ -13,7 +18,7 @@ class FieldTypeValidator extends ValidatorBase {
 
     // the default message
     defaultMessage() {
-        return `must be of type: ${this.fieldType}`;
+        return `must be of type: ${FIELD_TYPE_NAMES[this.fieldType]}`;
     }
 
     validate(value) {

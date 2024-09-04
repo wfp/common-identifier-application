@@ -53,12 +53,14 @@ function ValidationFailed({config, inputData, inputFilePath, validationResult, v
         ))
     }
 
+    const errorColumns = [{ name: "Row #", alias: "row_number" }].concat(config.data.destination_errors.columns)
+
 
     return (
         <div className="ValidationFailed appScreen">
             <FileInfo filePath={inputFilePath} helpText="input file is invalid" />
 
-            <SheetTabs documentData={documentData} columnsConfig={config.data.destination_errors.columns}/>
+            <SheetTabs documentData={documentData} columnsConfig={errorColumns}/>
 
             <div className="validationResult error">
                 <div className="validationErrors">
