@@ -188,6 +188,7 @@
 .processButton button,
 .doneButton button { background-color: #b2f2bb;}
 
+.acceptButton button:disabled { background-color: #ccc; color: #999; }
 
 .bigButton.openFile {
   /* padding: .5rem 1rem;  */

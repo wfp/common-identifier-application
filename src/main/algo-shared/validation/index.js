@@ -5,10 +5,12 @@ const ValidationError = require('./ValidationError')
 // MAIN VALIDATION
 // ---------------
 
-function validateValueWithList(validatorList, value) {
+// Validates a single value with a list of validators.
+// The row is passed to allow for cross-column checks
+function validateValueWithList(validatorList, value, row) {
     return validatorList.reduce((memo, validator) => {
         // check if the validator says OK
-        let result = validator.validate(value);
+        let result = validator.validate(value, row);
         // if failed add to the list of errors
         if (result) {
             memo.push(result);
@@ -42,7 +44,7 @@ function validateRowWithListDict(validatorListDict, row) {
         let fieldValue = row[fieldName];
 
         // use the validators
-        memo[fieldName] = validateValueWithList(validatorList, fieldValue);
+        memo[fieldName] = validateValueWithList(validatorList, fieldValue, row);
 
         return memo;
     }, {})
@@ -62,6 +64,7 @@ const makeMinValueValidator = require('./min_value');
 const makeMaxValueValidator = require('./max_value');
 
 const makeDateDiffValidator = require('./date_diff');
+const makeDateFieldDiffValidator = require('./date_field_diff');
 
 const VALIDATOR_FACTORIES = {
     // Regexp validators have a number of possible names (for ease of use)
@@ -81,6 +84,7 @@ const VALIDATOR_FACTORIES = {
     "max_value": makeMaxValueValidator,
 
     "date_diff": makeDateDiffValidator,
+    "date_field_diff": makeDateFieldDiffValidator,
 };
 
 

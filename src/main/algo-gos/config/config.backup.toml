@@ -99,7 +99,8 @@ start = [
 end = [
     { op = "regex_match", value = '((?:19|20)\d{2}(?:0[1-9]|1[012])(?:0[1-9]|[12]\d|3[01]))' }, # yyyyMMdd
     { op = "date_diff", value = "+3M"},
-    { op = "date_diff", value = "-12M"}
+    { op = "date_diff", value = "-12M"},
+    { op = "date_field_diff", target = "start", value="-12M"},
 ]
 
 
@@ -178,4 +179,4 @@ postfix = "-ERRORS-GOS-0.0.9-{{yyyy-MM-dd--HH-mm-ss}}"
 
 
 [signature]
-config_signature="130b80177dbb751ab51730b72dedf57e"
+config_signature="67c0f04047149df5e126f443e454c7f9"

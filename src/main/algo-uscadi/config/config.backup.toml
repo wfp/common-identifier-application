@@ -144,7 +144,8 @@ start = [
 end = [
     { op = "regex_match", value = '((?:19|20)\d{2}(?:0[1-9]|1[012])(?:0[1-9]|[12]\d|3[01]))', message="is in the wrong date format"  }, # yyyyMMdd
     { op = "date_diff", value = "+3M"},
-    { op = "date_diff", value = "-12M"}
+    { op = "date_diff", value = "-12M"},
+    { op = "date_field_diff", target = "start", value="-12M"},
 ]
 
 
@@ -235,4 +236,4 @@ postfix = "-ERRORS-NWS-1.0.8-{{yyyy-MM-dd--HH-mm-ss}}"
 
 
 [signature]
-config_signature="abd92c7df857e9266a4d684e59578a10"
+config_signature="3b685b5ae2554c95ec5b0b3d60295a0f"

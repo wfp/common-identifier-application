@@ -1,4 +1,5 @@
 import { useAppStore } from "../store";
+import { useState } from 'react'
 
 function WelcomeScreen({ config }) {
     const acceptTermsAndConditions = useAppStore(store => store.acceptTermsAndConditions);
@@ -9,14 +10,25 @@ function WelcomeScreen({ config }) {
     // const termsAndConditionsHtml = "<div class='asd'>Hello <b>WORLD</b></div>";
     const termsAndConditionsHtml = config.data.meta.terms_and_conditions;
 
+
+    const [reachedBottom, setReachedBottom] = useState(false);
+
+    // scroll handler to know the user has seen the TnC
+    const handleScrollOfTnc = (e) => {
+        const bottom = e.target.scrollHeight - e.target.scrollTop === e.target.clientHeight;
+        if (bottom) {
+            setReachedBottom(true);
+         }
+    };
+
     return (
         <div className="WelcomeScreen appScreen">
             <div className="termsAndConditions">
                 <h4>Terms and conditions</h4>
             </div>
 
-            <div className="termsAndConditions termsAndConditionsText">
-                <div className="fromConfig" dangerouslySetInnerHTML={{ __html: termsAndConditionsHtml }} />
+            <div className="termsAndConditions termsAndConditionsText" onScroll={handleScrollOfTnc}>
+                <div className="fromConfig" dangerouslySetInnerHTML={{ __html: termsAndConditionsHtml }}/>
             </div>
 
             <div className="buttonRow buttonRow2">
@@ -24,7 +36,7 @@ function WelcomeScreen({ config }) {
                     <button className="bigButton" onClick={quit}>Quit the application</button>
                 </div>
                 <div className="acceptButton">
-                    <button className="bigButton" onClick={acceptTermsAndConditions}>Agree to terms of use (WIP)</button>
+                    <button className="bigButton" disabled={!reachedBottom} onClick={acceptTermsAndConditions}>Agree to terms of use (WIP)</button>
                 </div>
             </div>
         </div>
