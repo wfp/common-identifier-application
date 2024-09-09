@@ -1,0 +1,3 @@
+[submodule "src/main/algo-gos"]
+	path = src/main/algo-gos
+	url = https://worldfoodprogramme@dev.azure.com/worldfoodprogramme/SYR-BB-PREPROCESSING-APP/_git/ALGO-GOS
