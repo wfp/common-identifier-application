@@ -8,7 +8,7 @@ function WelcomeScreen({ config }) {
     console.log("Welcome", config);
 
     // const termsAndConditionsHtml = "<div class='asd'>Hello <b>WORLD</b></div>";
-    const termsAndConditionsHtml = config.data.meta.terms_and_conditions;
+    const termsAndConditionsHtml = config.data.messages.terms_and_conditions;
 
 
     const [reachedBottom, setReachedBottom] = useState(false);

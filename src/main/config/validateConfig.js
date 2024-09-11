@@ -72,8 +72,7 @@ function validateConfig(config) {
 
         return isObject("meta", meta) ||
             isString("meta.version", meta.version) ||
-            isString("meta.region", meta.region) ||
-            isString("meta.terms_and_conditions", meta.terms_and_conditions);
+            isString("meta.region", meta.region);
     }
 
     // Source & destinations
@@ -178,7 +177,8 @@ function validateConfig(config) {
     function checkMessages(messages) {
         return isObject("messages", messages) ||
             isString("messages.error_in_config", messages.error_in_config) ||
-            isString("messages.error_in_salt", messages.error_in_salt);
+            isString("messages.error_in_salt", messages.error_in_salt) ||
+            isString("messages.terms_and_conditions", messages.terms_and_conditions);
 
     }
 

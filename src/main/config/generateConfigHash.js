@@ -13,6 +13,10 @@ function generateConfigHash(config, hashType=DEFAULT_HASH_TYPE) {
     // remove the "signature" key
     delete configCopy.signature;
 
+    // remove the "messages" key
+    // TODO: messages should go in a separate locales file to future proof translations
+    delete configCopy.messages;
+
     // remove the "algorithm.salt" part as it may have injected keys
     // TODO: this enables messing with the salt file path pre-injection without signature validations, but is required for compatibility w/ the injection workflow
     delete configCopy.algorithm.salt.value;
