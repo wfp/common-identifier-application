@@ -1,7 +1,7 @@
 
 function fileDropped({mainWindow, configStore, filePath, processing}) {
 
-    console.log('Dropped File:', filePath);
+    console.log('[IPC] [fileDropped] Dropped File:', filePath);
 
     const config = configStore.getConfig();
     const limit = undefined;
@@ -12,7 +12,7 @@ function fileDropped({mainWindow, configStore, filePath, processing}) {
         validationResult,
         validationErrorsOutputFile
     }) => {
-        console.log("PREPROCESSING DONE")
+        console.log("[IPC] [fileDropped] PREPROCESSING DONE")
         mainWindow.webContents.send('preprocessingDone', {
             inputFilePath: filePath,
             inputData: inputData,

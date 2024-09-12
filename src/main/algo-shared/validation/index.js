@@ -247,7 +247,9 @@ function makeValidationResultDocument(sourceConfig, results) {
 
             // combine with the row onject
             return Object.assign({
-                row_number: rowIdx + 1,
+                // The row number should match the row number in the input document (row index 0 is row# 2)
+                row_number: rowIdx + 2,
+                // The error list should be an empty string (so that it'll be hidden if no errors are present)
                 errors: errorList.join("\n"),
             }, rowResult.row)
         }));

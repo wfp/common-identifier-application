@@ -24,12 +24,12 @@ function doProcessFile(mainWindow, configStore, inputFilePath, outputPath, proce
             break;
     }
 
-    console.log("===== using:", { outputFormat, outputBasePath })
+    // console.log("===== using:", { outputFormat, outputBasePath })
 
     return processing.processFile(config, outputBasePath, inputFilePath, limit, outputFormat)
         .then(({ outputData, outputFilePaths, mappingFilePaths }) => {
 
-            console.log("!!!! PROCESSING DONE")
+            console.log("[IPC] [processFile] PROCESSING DONE")
             mainWindow.webContents.send('processingDone', {
                 outputData,
                 outputFilePaths,
@@ -54,14 +54,14 @@ function processFile({mainWindow, configStore, filePath, processing}) {
     }).then(function (response) {
         if (response.canceled || response.filePath === '') {
             // TODO: send cancel signal
-            console.log("no file selected");
+            console.log("[IPC] [processFile] no file selected");
             // send the canceled message
             mainWindow.webContents.send('processingCanceled', {});
             return
         }
 
         const outputPath = response.filePath;
-        console.log("STARTING TO PROCESS AS", outputPath);
+        console.log("[IPC] [processFile] STARTING TO PROCESS AS", outputPath);
         return doProcessFile(mainWindow, configStore, filePath, outputPath, processing);
     });
 

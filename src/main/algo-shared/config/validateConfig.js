@@ -1,4 +1,4 @@
-const { REGION } = require('../active_algorithm');
+const { REGION } = require('../../active_algorithm');
 
 // enums with the validation result
 const CONFIG_IS_VALID = "ConfigIsValid";

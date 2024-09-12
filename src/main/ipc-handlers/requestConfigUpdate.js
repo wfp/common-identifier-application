@@ -1,8 +1,8 @@
-
+const path = require('node:path');
 
 function requestConfigUpdate({configStore}) {
 
-        console.log('App requesting config udpate');
+        console.log('[IPC] [requestConfigUpdate] App requesting config udpate');
         // return the data
         return {
             config: configStore.getConfig(),

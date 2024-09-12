@@ -17,10 +17,10 @@ function defer(timeout) {
 
 function withElectronAPI(label, fn, elseFn=() => {}) {
     if (typeof electronAPI === 'object') {
-        console.log("Callong Electron API", label)
+        console.log("[IPC] Callong Electron API", label)
         return fn(electronAPI);
     } else {
-        console.log("Cannot find electrom API")
+        console.log("[IPC] Cannot find electrom API")
         return elseFn();
     }
 }

@@ -1,6 +1,41 @@
 # WIP
 
 
+
+## Some basic dev tasks
+
+### Activating an algorithm for use
+
+To set which algorithm is used by the app the command-line tool `tools/activate-algo.js` can be used:
+
+```
+$ node tools/activate-algo.js algo-gos
+
+Activating algoirhtm: algo-gos
+Generating ****/src/main/active_algorithm.js
+Copying backup config from ****/src/main/algo-gos/config/config.backup.toml
+                        to ****/src/main/config.backup.toml
+```
+
+
+This generates a new `src/main/active_algorithm.js` which is a re-export of the selected algorithm's `index.js` and copies the backup configuration to `src/main/config.backup.toml`.
+
+Manually doing these steps also activates the algorithm.
+
+### Generating a config signature hash
+
+To generate the config signature for the config file the tool `tools/config-signature.js` can be used:
+
+```
+$ node tools/config-signature.js src/main/algo-uscadi/config/config.backup.toml
+
+Opening file:  src/main/algo-uscadi/config/config.backup.toml
+HASH: 9000d0f670be5287bc86bc1b74b48d34
+```
+
+This returns the signature hash that can be embedded in the config file.
+
+
 # IN THE CURRENT STATE INFORMATION BELLOW MAY OR MAY NOT BE ACCURATE
 
 SYMLINKING IS CURRENTLY NOT NEEDED (IT WILL MAKE A COMEBACK AFTER REPO RE-SEPARATION)

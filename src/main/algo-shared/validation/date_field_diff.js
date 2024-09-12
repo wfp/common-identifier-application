@@ -37,7 +37,6 @@ class DateFieldDiffValidator extends ValidatorBase {
             return this.failWith("must be a date: " + value);
         }
 
-        console.log("Comparing:", {pd: this.parsedDateDiff, currentFieldDate, originDate})
         if (!isDateInRange(this.parsedDateDiff, originDate, currentFieldDate)) {
             return this.fail();
         }

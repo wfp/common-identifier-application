@@ -14,7 +14,7 @@ function loadSaltFile(saltFilePath, validatorRegexp=DEFAULT_VALIDATOR_REGEXP) {
     // resolve the salt file path from the config & platform
     const fullSaltFilePath = getSaltFilePath(saltFilePath);
 
-    console.log("Attempting to load salt file from ", path.resolve(fullSaltFilePath))
+    console.log("[CONFIG] [SALT] Attempting to load salt file from ", path.resolve(fullSaltFilePath))
     // return null;
     // TODO: potentially clean up line endings and whitespace here
     const saltData = attemptToReadFileData(fullSaltFilePath, SALT_FILE_ENCODING);
@@ -25,11 +25,11 @@ function loadSaltFile(saltFilePath, validatorRegexp=DEFAULT_VALIDATOR_REGEXP) {
     const CHECK_RX = new RegExp(validatorRegexp);
 
     if (!CHECK_RX.test(saltData)) {
-        console.log("SALT FILE Regexp error")
+        console.log("[CONFIG] [SALT] SALT FILE Regexp error")
         return null;
     }
 
-    console.log("SALT FILE looks OK")
+    console.log("[CONFIG] [SALT] SALT FILE looks OK")
     return saltData;
 }
 

@@ -27,7 +27,6 @@ function parseDateDiff(dateDiffStr) {
 
 function isValidDateDiff(dateDiffString) {
     const dateDiff = parseDateDiff(dateDiffString);
-    console.log("Date diff: ", dateDiff)
     return dateDiff;
 }
 

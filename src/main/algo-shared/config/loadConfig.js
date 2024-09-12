@@ -19,7 +19,7 @@ const CONFIG_FILE_ENCODING = "utf-8";
 // - { success: false, isSaltFileError: true, error: "string"}
 //     if there is something wrong with the salt file
 function loadConfig(configPath) {
-    console.log("Loading config from", configPath);
+    console.log("[CONFIG] Loading config from", configPath);
 
 
     // attempt to read the file
@@ -49,7 +49,7 @@ function loadConfig(configPath) {
 
     // TODO: check sinature validity before salt injection
     const configHash = generateConfigHash(configData);
-    console.log("CONFIG HASH:", configHash);
+    console.log("[CONFIG] CONFIG HASH:", configHash);
 
     // fail if the signature is not OK
     if (configHash !== configData.signature.config_signature) {
@@ -81,7 +81,7 @@ function loadConfig(configPath) {
 
     // if the salt file load failed, we have failed
     if (!saltData) {
-        console.log("Error while loading the salt file!")
+        console.log("[CONFIG] [SALT] Error while loading the salt file!")
         return {
             success: false,
             isSaltFileError: true,

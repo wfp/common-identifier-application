@@ -3,7 +3,7 @@ const { dialog } = require('electron')
 function loadNewConfig({configStore}) {
 
 
-        console.log("App requested loading a new config")
+        console.log("[IPC] [loadNewConfig] App requested loading a new config")
 
         return dialog.showOpenDialog({
             properties: ['openFile'],
@@ -16,7 +16,7 @@ function loadNewConfig({configStore}) {
             if (!response.canceled) {
                 // handle fully qualified file name
                 const filePath = response.filePaths[0];
-                console.log("Starting to load config file from open dialog:", filePath);
+                console.log("[IPC] [loadNewConfig] Starting to load config file from open dialog:", filePath);
 
                 // attempt to load into the store
                 const loadError = configStore.updateUserConfig(filePath);
@@ -29,7 +29,7 @@ function loadNewConfig({configStore}) {
                     };
                 }
 
-                console.log("CONFIG LOAD ERROR:", loadError)
+                console.log("[IPC] [loadNewConfig] CONFIG LOAD ERROR:", loadError)
                 return {
                     success: false,
                     canceled: false,

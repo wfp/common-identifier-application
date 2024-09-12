@@ -7,7 +7,7 @@ const { loadConfig, CONFIG_FILE_ENCODING }= require('./loadConfig');
 const { loadAppConfig, saveAppConfig, DEFAULT_APP_CONFIG } = require('./appConfig');
 
 // The current region name comes from the active algorithm
-const { REGION } = require('../active_algorithm');
+const { REGION } = require('../../active_algorithm');
 
 const {appDataLocation} = require('./utils');
 
@@ -24,8 +24,8 @@ const CONFIG_FILE_PATH = path.join(APP_DIR_PATH, CONFIG_FILE_NAME);
 // the path of the application config file (containing config-independent settings)
 const APP_CONFIG_FILE_PATH = path.join(APP_DIR_PATH, APP_CONFIG_FILE_NAME);
 
-// TODO: this should come from the algorithm
-const BACKUP_CONFIG_FILE_PATH = path.join(__dirname, "..", "config.backup.toml");
+// TODO: if used without the app, this should be injected
+const BACKUP_CONFIG_FILE_PATH = path.join(__dirname, "..", "..", "config.backup.toml");
 
 
 
@@ -33,7 +33,7 @@ const BACKUP_CONFIG_FILE_PATH = path.join(__dirname, "..", "config.backup.toml")
 // TODO: export this bad boy to also use in the UI's logging path
 function ensureAppDirectoryExists(appDir=APP_DIR_PATH) {
     if (!fs.existsSync(appDir)) {
-        console.log("Application directory '", appDir, "' does not exits -- creating it");
+        console.log("[CONFIG] Application directory '", appDir, "' does not exits -- creating it");
         // TODO: is doing this recursively worth it (the app dir should always be 1 level bellow a system directory)
         fs.mkdirSync(appDir /*, { recursive: true } */);
     }
@@ -48,7 +48,7 @@ function saveConfig(configData, outputPath) {
     // update the config hash on import to account for the
     const outputData = JSON.stringify(configData, null, "    ");
     fs.writeFileSync(outputPath, outputData, CONFIG_FILE_ENCODING );
-    console.log("Written config data to ", outputPath);
+    console.log("[CONFIG] Written config data to ", outputPath);
 }
 
 class ConfigStore {

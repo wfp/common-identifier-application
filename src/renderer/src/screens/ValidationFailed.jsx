@@ -20,19 +20,6 @@ function OpenErrorListButton({validationErrorsOutputFile}) {
     )
 }
 
-function ValidationErrorSummary(validationResult) {
-    return (
-        <div className="validationErrors">
-            <div className="help">
-                One or more rows of the input file failed the validation.
-            </div>
-            <div className="openErrorList">
-                <OpenErrorListButton />
-            </div>
-        </div>
-    )
-}
-
 function ValidationFailed({config, inputData, inputFilePath, validationResult, validationErrorsOutputFile}) {
 
     const startPreProcessingFile = useAppStore(store => store.startPreProcessingFile)
@@ -53,7 +40,10 @@ function ValidationFailed({config, inputData, inputFilePath, validationResult, v
         ))
     }
 
-    const errorColumns = [{ name: "Row #", alias: "row_number" }].concat(config.data.destination_errors.columns)
+    // Add the row number to the list of regular error columns for display
+    const errorColumns = [
+        { name: "Row #", alias: "row_number" },
+    ].concat(config.data.destination_errors.columns)
 
 
     return (
@@ -75,7 +65,6 @@ function ValidationFailed({config, inputData, inputFilePath, validationResult, v
                         <OpenErrorListButton validationErrorsOutputFile={validationErrorsOutputFile} />
                     </div>
                 </div>
-                {/* <ValidationErrorSummary validationResult={validationResult} /> */}
             </div>
 
             <div className="buttonRow buttonRow2">

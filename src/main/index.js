@@ -7,7 +7,7 @@ const path = require('node:path')
 const { resolveHtmlPath, baseFileName } = require('./util')
 
 const processing = require('./algo-shared/processing')
-const makeConfigStore = require('./config/ConfigStore');
+const makeConfigStore = require('./algo-shared/config/ConfigStore');
 
 // IPC event handlers
 const requestConfigUpdate = require("./ipc-handlers/requestConfigUpdate");

@@ -1,22 +1,24 @@
 import { useAppStore } from "../store";
 import { useState } from 'react'
 
+// Sets the maximum distance in pixels from the bottom of the Terms & Conditions
+// from which point we consider the TnC acceptable.
+const MAX_DISTANCE_FROM_BOTTOM_FOR_TOC_ACCEPTANCE = 32;
+
 function WelcomeScreen({ config }) {
     const acceptTermsAndConditions = useAppStore(store => store.acceptTermsAndConditions);
     const quit = useAppStore(store => store.quit);
 
-    console.log("Welcome", config);
-
-    // const termsAndConditionsHtml = "<div class='asd'>Hello <b>WORLD</b></div>";
     const termsAndConditionsHtml = config.data.messages.terms_and_conditions;
-
 
     const [reachedBottom, setReachedBottom] = useState(false);
 
     // scroll handler to know the user has seen the TnC
     const handleScrollOfTnc = (e) => {
-        const bottom = e.target.scrollHeight - e.target.scrollTop === e.target.clientHeight;
-        if (bottom) {
+        const bottomDistance = (e.target.scrollHeight - e.target.scrollTop) - e.target.clientHeight;
+        const hasNowReachedBottom = bottomDistance < MAX_DISTANCE_FROM_BOTTOM_FOR_TOC_ACCEPTANCE;
+        // const bottom = e.target.scrollHeight - e.target.scrollTop === e.target.clientHeight;
+        if (hasNowReachedBottom) {
             setReachedBottom(true);
          }
     };
