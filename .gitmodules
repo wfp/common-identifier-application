@@ -6,3 +6,7 @@
 	path = src/main/algo-uscadi
 	url = https://worldfoodprogramme@dev.azure.com/worldfoodprogramme/SYR-BB-PREPROCESSING-APP/_git/ALGO-NWS
 	ignore = dirty
+[submodule "src/main/algo-shared"]
+	path = src/main/algo-shared
+	url = https://worldfoodprogramme@dev.azure.com/worldfoodprogramme/SYR-BB-PREPROCESSING-APP/_git/ALGO-SHARED
+	ignore = dirty
