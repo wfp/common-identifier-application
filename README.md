@@ -15,6 +15,14 @@ Activating algoirhtm: algo-gos
 Generating ****/src/main/active_algorithm.js
 Copying backup config from ****/src/main/algo-gos/config/config.backup.toml
                         to ****/src/main/config.backup.toml
+
+
+$ node tools/activate-algo.js algo-uscadi
+
+Activating algoirhtm: algo-uscadi
+Generating ****/src/main/active_algorithm.js
+Copying backup config from ****/src/main/algo-uscadi/config/config.backup.toml
+                        to ****/src/main/config.backup.toml
 ```
 
 

@@ -7,7 +7,7 @@ const ALGO_NAME = "algo-gos"
 const ALGO_PATH = path.join(__dirname, "..", "src", "main", ALGO_NAME);
 const CONFIG_FILE_PATH = path.join(ALGO_PATH, 'config', 'config.backup.toml');
 
-const {loadConfig} = require("../src/main/config/loadConfig");
+const {loadConfig} = require("../src/main/algo-shared/config/loadConfig");
 const processing = require(`../src/main/algo-shared/processing`);
 
 function compareFilesAndStopIfNotMatching(pathA, pathB) {
