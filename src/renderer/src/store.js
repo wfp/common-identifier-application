@@ -209,8 +209,8 @@ export const useAppStore = createStore((set) => ({
     }),
 
     // Signal from the Node backend that the validation step is finished, with
-    preProcessingDone: ({inputFilePath, inputData, validationResult, validationErrorsOutputFile, validationResultDocument}) => set(state => {
-        console.log("Preprocessing done", {inputFilePath, inputData, validationResult, validationErrorsOutputFile, validationResultDocument})
+    preProcessingDone: ({inputFilePath, inputData, validationResult, validationErrorsOutputFile, validationResultDocument, isMappingDocument}) => set(state => {
+        console.log("Preprocessing done", {inputFilePath, inputData, validationResult, validationErrorsOutputFile, validationResultDocument, isMappingDocument})
         // figure out if validation was a success or not
         const isValidationSuccess = !validationResult.some(sheet => !sheet.ok);
 
@@ -221,6 +221,7 @@ export const useAppStore = createStore((set) => ({
                 screen: SCREEN_VALIDATION_SUCCESS,
                 inputFilePath,
                 inputData,
+                isMappingDocument,
             }
         } else {
             return {
@@ -229,6 +230,7 @@ export const useAppStore = createStore((set) => ({
                 validationErrorsOutputFile,
                 inputFilePath,
                 inputData,
+                isMappingDocument,
                 validationResult,
                 validationResultDocument,
             }
@@ -251,14 +253,12 @@ export const useAppStore = createStore((set) => ({
 
 
     // Callback after the processing of the file is finished
-    processingDone: ({outputFilePaths, outputData, mappingFilePaths}) => set(state => {
-        console.log("processingDONE:", {outputFilePaths, mappingFilePaths})
+    processingDone: ({outputFilePaths, outputData, mappingFilePaths, allOutputPaths}) => set(state => {
         return {
             config: state.config,
             screen: SCREEN_PROCESSING_FINISHED,
-            outputFilePath: outputFilePaths[0],
             outputData,
-            mappingFilePath: mappingFilePaths[0],
+            outputFilePaths: allOutputPaths,
         }
     }),
 

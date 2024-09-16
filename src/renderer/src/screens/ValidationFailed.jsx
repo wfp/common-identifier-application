@@ -20,7 +20,7 @@ function OpenErrorListButton({validationErrorsOutputFile}) {
     )
 }
 
-function ValidationFailed({config, inputData, inputFilePath, validationResult, validationErrorsOutputFile}) {
+function ValidationFailed({config, inputData, inputFilePath, validationResult, validationErrorsOutputFile, isMappingDocument}) {
 
     const startPreProcessingFile = useAppStore(store => store.startPreProcessingFile)
 
@@ -45,6 +45,10 @@ function ValidationFailed({config, inputData, inputFilePath, validationResult, v
         { name: "Row #", alias: "row_number" },
     ].concat(config.data.destination_errors.columns)
 
+    // The file invalid message differs between mapping & assistance documents
+    const fileIsNotValidMessage = isMappingDocument ?
+        "File is not a valid Mapping Document" :
+        "File is not a valid Assistance Document"
 
     return (
         <div className="ValidationFailed appScreen">
@@ -55,7 +59,7 @@ function ValidationFailed({config, inputData, inputFilePath, validationResult, v
             <div className="validationResult error">
                 <div className="validationErrors">
                     <div className="validationState">
-                        File is NOT Valid
+                        {fileIsNotValidMessage}
                         <div className="help">
                             One or more rows of the input file failed the validation.
                         </div>

@@ -48,7 +48,7 @@ export function startPreProcessingFile(filePath) {
             // if (Math.random() > 0.5) {
                 // validationResult[0].ok = true;
             // }
-            preprocessingDoneCallback(filePath, INPUT_DATA, validationResult, "<NO FILE>");
+            // preprocessingDoneCallback(filePath, INPUT_DATA, validationResult, "<NO FILE>");
         })
     })
 
@@ -60,8 +60,10 @@ withElectronAPI("registerCallbacks", (electronAPI) => {
     // preprocessing done hook
     electronAPI.onPreprocessingDone((value) => {
         console.log("Received preprocessing done with: ", value);
+
+        useAppStore.getState().preProcessingDone(value);
         // const { inputFilePath, inputData, validationResult, validationErrorsOutputFile, validationResultDocument} = value;
-        preprocessingDoneCallback(value)
+        // preprocessingDoneCallback(value)
     });
 
     // preprocessing done hook
@@ -106,12 +108,12 @@ withElectronAPI("Boot", (electronAPI) => {
 })
 
 
-// propagate the results of the preprocessing to the UI
-function preprocessingDoneCallback(filePath, inputData, validationResult, validationErrorsOutputFile) {
-    const preProcessingDone = useAppStore.getState().preProcessingDone;
+// // propagate the results of the preprocessing to the UI
+// function preprocessingDoneCallback(filePath, inputData, validationResult, validationErrorsOutputFile) {
+//     const preProcessingDone = useAppStore.getState().preProcessingDone;
 
-    preProcessingDone(filePath, inputData, validationResult, validationErrorsOutputFile);
-}
+//     preProcessingDone(filePath, inputData, validationResult, validationErrorsOutputFile);
+// }
 
 
 export function startProcessingFile(filePath, outputLocation) {

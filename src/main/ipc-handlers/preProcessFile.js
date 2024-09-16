@@ -6,20 +6,12 @@ function fileDropped({mainWindow, configStore, filePath, processing}) {
     const config = configStore.getConfig();
     const limit = undefined;
 
-    return processing.preprocessFile(config, filePath, limit).then(({
-        inputData,
-        validationResultDocument,
-        validationResult,
-        validationErrorsOutputFile
-    }) => {
+    return processing.preprocessFile(config, filePath, limit).then((result) => {
         console.log("[IPC] [fileDropped] PREPROCESSING DONE")
-        mainWindow.webContents.send('preprocessingDone', {
+        mainWindow.webContents.send('preprocessingDone', Object.assign({
             inputFilePath: filePath,
-            inputData: inputData,
-            validationResult: validationResult,
-            validationErrorsOutputFile,
-            validationResultDocument,
-        })
+        }, result)
+        )
     });
 
 }

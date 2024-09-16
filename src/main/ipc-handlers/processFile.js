@@ -27,14 +27,9 @@ function doProcessFile(mainWindow, configStore, inputFilePath, outputPath, proce
     // console.log("===== using:", { outputFormat, outputBasePath })
 
     return processing.processFile(config, outputBasePath, inputFilePath, limit, outputFormat)
-        .then(({ outputData, outputFilePaths, mappingFilePaths }) => {
-
+        .then((result) => {
             console.log("[IPC] [processFile] PROCESSING DONE")
-            mainWindow.webContents.send('processingDone', {
-                outputData,
-                outputFilePaths,
-                mappingFilePaths,
-            })
+            mainWindow.webContents.send('processingDone', result)
         });
 }
 

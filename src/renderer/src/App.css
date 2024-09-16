@@ -174,8 +174,8 @@
 .validationResult .validationState { font-size: 1.6em; text-transform: uppercase; font-weight: bold; }
 .validationResult .validationState .help { font-size: 0.62em; text-transform: none; color: #999; }
 .validationResult.error .validationState { color: #ff8787;  text-align: left; }
-.validationResult.ok .validationState { color: #0b9e01; }
-.validationResult .validationErrors { max-width: 40em; display: grid; grid-template-columns: 1fr 15em; margin: 1em auto;  }
+.validationResult.ok .validationState { color: #0b9e01; background: rgba(10, 126, 1, 0.1); }
+.validationResult .validationErrors { display: grid; grid-template-columns: 1fr 15em; padding: 1em; background: rgba(255, 10, 0, 0.1); }
 
 .validationResult .validationErrors .openErrorList { align-content: center; }
 .validationResult .validationErrors .OpenErrorListButton { background-color: #ff8787; }

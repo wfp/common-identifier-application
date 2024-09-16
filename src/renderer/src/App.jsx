@@ -49,9 +49,10 @@ function App() {
   const validationResultDocument = useAppStore(store => store.validationResultDocument);
   const validationErrorsOutputFile = useAppStore(store => store.validationErrorsOutputFile);
 
-  const outputFilePath = useAppStore(store => store.outputFilePath);
+  const isMappingDocument = useAppStore(store => store.isMappingDocument);
+
+  const outputFilePaths = useAppStore(store => store.outputFilePaths);
   const outputData = useAppStore(store => store.outputData);
-  const mappingFilePath = useAppStore(store => store.mappingFilePath);
 
   const errorMessage = useAppStore(store => store.errorMessage);
   const isRuntimeError = useAppStore(store => store.isRuntimeError);
@@ -97,12 +98,12 @@ function App() {
     }
 
     case SCREEN_VALIDATION_SUCCESS: {
-      screen = (<ValidationSuccess config={config} inputData={inputData} inputFilePath={inputFilePath}/>)
+      screen = (<ValidationSuccess config={config} inputData={inputData} inputFilePath={inputFilePath} isMappingDocument={isMappingDocument}/>)
       break;
     }
 
     case SCREEN_VALIDATION_FAILED: {
-      screen = (<ValidationFailed config={config} inputData={validationResultDocument} inputFilePath={inputFilePath} validationResult={validationResult} validationErrorsOutputFile={validationErrorsOutputFile}/>)
+      screen = (<ValidationFailed config={config} inputData={validationResultDocument} inputFilePath={inputFilePath} validationResult={validationResult} validationErrorsOutputFile={validationErrorsOutputFile} isMappingDocument={isMappingDocument}/>)
       break;
     }
 
@@ -112,7 +113,7 @@ function App() {
     }
 
     case SCREEN_PROCESSING_FINISHED: {
-      screen = (<ProcessingFinished config={config} outputFilePath={outputFilePath} outputData={outputData} mappingFilePath={mappingFilePath} />)
+      screen = (<ProcessingFinished config={config} outputFilePaths={outputFilePaths} outputData={outputData}  />)
       break;
     }
 
