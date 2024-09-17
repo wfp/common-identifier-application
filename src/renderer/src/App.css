@@ -186,9 +186,18 @@
 
 .acceptButton button,
 .processButton button,
+.okButton button,
 .doneButton button { background-color: #b2f2bb;}
 
 .acceptButton button:disabled { background-color: #ccc; color: #999; }
+
+.cancelButton button { background-color: #bbb; }
+
+.loadNewConfigButton button,
+.useDefaultConfigButton button { border: 0.2em solid; }
+
+.loadNewConfigButton button { background-color: #377bb7; color: white; }
+.useDefaultConfigButton button { background-color: white; color: #377bb7; }
 
 .bigButton.openFile {
   /* padding: .5rem 1rem;  */
@@ -277,3 +286,13 @@
 .buttonRow { display: grid; }
 .buttonRow1 { grid-template-columns: 1fr; }
 .buttonRow2 { grid-template-columns: 0.5fr 0.5fr; }
+
+
+.ConfigChange { display: grid; grid-template-rows: 8em 6em 6em 6em 6em; align-items: center; text-align: center; padding-top: 6em; }
+.ConfigChange .loadNewConfig,
+.ConfigChange .removeUserConfig { grid-template-rows: 15em 6em;}
+.ConfigChange .helpText { padding-bottom:3em; font-size:1.4em; }
+.ConfigChange .helpText h4 { font-size:1.4em; color: #377bb7; }
+.ConfigChange .helpText p { font-style:italic; }
+.ConfigChange .title {}
+.ConfigChange .title h3 { color: #377bb7; font-size: 3em; text-transform: uppercase;}

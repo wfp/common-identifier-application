@@ -17,6 +17,7 @@ export const SCREEN_LOAD_NEW_CONFIG = "LoadNewConfig";
 export const SCREEN_CONFIG_UPDATED = "ConfigUpdated";
 export const SCREEN_ERROR = "Error";
 export const SCREEN_INVALID_CONFIG = "InvalidConfig";
+export const SCREEN_CONFIG_CHANGE = "ConfigChange";
 
 
 export const useAppStore = createStore((set) => ({
@@ -111,6 +112,51 @@ export const useAppStore = createStore((set) => ({
             errorMessage: "Error in the configuration file: " + error,
         }
 
+    }),
+
+    // Trigger falling back to the backup configuration
+    removeUserConfig: () => set(state => {
+        // start the removal
+        intercomApi.removeUserConfig();
+        // show a loading screen
+        return {
+            config: state.config,
+            screen: SCREEN_LOAD_NEW_CONFIG,
+        }
+    }),
+
+    // Callback received after the falling back to the backup configuration
+    userConfigRemoved: ({success, error, config, lastUpdated}) => set(state => {
+        // if there was an error (like a config validation error) handle it like
+        // a config load error (and keep the current configuration)
+        if (!success) {
+            return {
+                config: state.config,
+                screen: SCREEN_ERROR,
+                isRuntimeError: false,
+                errorMessage: "Error in the backup configuration file: " + error,
+            }
+        }
+
+        // otherwise act like a new config has been loaded
+        return {
+            screen: SCREEN_CONFIG_UPDATED,
+            config: {
+                data: config,
+                lastUpdated: lastUpdated,
+                // this really is a backup config
+                isBackup: true,
+            }
+        };
+
+    }),
+
+    // Go to the config change screen
+    startConfigChange: () => set(state => {
+        return {
+            config: state.config,
+            screen: SCREEN_CONFIG_CHANGE,
+        }
     }),
 
     // Startup of the application after config load -- initialize a main screen

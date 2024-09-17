@@ -15,6 +15,7 @@ const loadNewConfig = require('./ipc-handlers/loadNewConfig');
 const preProcessFile = require('./ipc-handlers/preProcessFile');
 const processFile = require('./ipc-handlers/processFile');
 const preProcessFileOpenDialog = require('./ipc-handlers/preProcessFileOpenDialog');
+const removeUserConfig = require('./ipc-handlers/removeUserConfig');
 
 
 function createMainWindow(configStore) {
@@ -126,6 +127,10 @@ function registerIpcHandlers({mainWindow, configStore, processing}) {
 
     ipcMain.handle('loadNewConfig', (_) => {
         return loadNewConfig({configStore});
+    });
+
+    ipcMain.handle('removeUserConfig', (_) => {
+        return removeUserConfig({configStore});
     })
 
 }
@@ -151,6 +156,7 @@ function unregisterIpcHandlers() {
     [
         "requestConfigUpdate",
         "loadNewConfig",
+        "removeUserConfig",
     ].forEach(channel => ipcMain.removeHandler(channel));
 }
 

@@ -12,7 +12,7 @@ function MainScreen({config}) {
 
     const startPreProcessingFile = useAppStore((store) => store.startPreProcessingFile);
 
-    const loadNewConfig = useAppStore(store => store.loadNewConfig);
+    const startConfigChange = useAppStore(store => store.startConfigChange);
     // DRAG HANDLING
     // =============
 
@@ -91,7 +91,7 @@ function MainScreen({config}) {
 
             <div className="updateConfig">
                 {/* Update the configuration File */}
-                <button onClick={loadNewConfig} className="openConfigFile bigButton"><span class="icon">⚙</span>  Update the configuration from a file</button>
+                <button onClick={startConfigChange} className="openConfigFile bigButton"><span class="icon">⚙</span>  Update the configuration </button>
             </div>
 
             { dropTargetDiv }

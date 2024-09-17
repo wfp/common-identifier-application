@@ -12,10 +12,12 @@ const EVENT_OPEN_OUTPUT_FILE = "openOutputFile";
 const EVENT_CONFIG_CHANGED = "configChanged";
 const EVENT_REQUEST_CONFIG_UPDATE = "requestConfigUpdate";
 const EVENT_LOAD_NEW_CONFIG = "loadNewConfig";
+const EVENT_REMOVE_USER_CONFIG = "removeUserConfig";
 
 const EVENT_QUIT = "quit";
 const EVENT_ERROR = "error";
 const EVENT_ACCEPT_TERMS_AND_CONDITIONS = "acceptTermsAndConditions";
+
 
 contextBridge.exposeInMainWorld('electronAPI', {
     // RPC call to fetch the app config
@@ -23,6 +25,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
 
     // RPC call to load a new config via a dialog
     loadNewConfig: () => { return ipcRenderer.invoke(EVENT_LOAD_NEW_CONFIG); },
+
+    // RPC call to fall back to the backup config
+    removeUserConfig: () => { return ipcRenderer.invoke(EVENT_REMOVE_USER_CONFIG); },
 
     // callback if the config has changed
     onConfigChanged: (callback) => {

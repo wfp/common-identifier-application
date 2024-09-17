@@ -8,6 +8,13 @@ import ValidationFailed from './screens/ValidationFailed'
 import FileLoading from './screens/FileLoading'
 import ProcessingInProgress from './screens/ProcessingInProgress'
 import ProcessingFinished from './screens/ProcessingFinished'
+import ConfigChange from './screens/ConfigChange'
+import LoadNewConfig from './screens/LoadNewConfig'
+import ErrorScreen from './screens/Error'
+import ConfigUpdated from './screens/ConfigUpdated'
+import ProcessingCanceled from './screens/ProcessingCanceled'
+import InvalidConfig from './screens/InvalidConfig'
+import WelcomeScreen from './screens/WelcomeScreen'
 
 
 import {
@@ -25,15 +32,11 @@ import {
   SCREEN_LOAD_NEW_CONFIG,
   SCREEN_CONFIG_UPDATED,
   SCREEN_PROCESSING_CANCELED,
-  SCREEN_INVALID_CONFIG
+  SCREEN_INVALID_CONFIG,
+  SCREEN_CONFIG_CHANGE,
 } from "./store"
+
 import Navbar  from './components/Navbar'
-import LoadNewConfig from './screens/LoadNewConfig'
-import ErrorScreen from './screens/Error'
-import ConfigUpdated from './screens/ConfigUpdated'
-import ProcessingCanceled from './screens/ProcessingCanceled'
-import InvalidConfig from './screens/InvalidConfig'
-import WelcomeScreen from './screens/WelcomeScreen'
 
 
 function App() {
@@ -77,6 +80,11 @@ function App() {
 
     case SCREEN_LOAD_NEW_CONFIG: {
       screen = (<LoadNewConfig />)
+      break;
+    }
+
+    case SCREEN_CONFIG_CHANGE: {
+      screen = (<ConfigChange />)
       break;
     }
 

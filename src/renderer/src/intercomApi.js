@@ -176,6 +176,19 @@ export function loadNewConfig() {
     });
 }
 
+
+export function removeUserConfig() {
+    withElectronAPI("removeUserConfig", (electronAPI) => {
+        console.log("Calling Electron to fall back to the backup configuration")
+
+        return electronAPI.removeUserConfig().then(v => {
+            useAppStore.getState().userConfigRemoved(v);
+        });
+    }, () => {
+        console.log("NO FALLBACK FOR ELECTRON-LESS OPEN CONFIG")
+    });
+}
+
 // Quit the application
 export function quit() {
     withElectronAPI("quit", (electronAPI) => {
