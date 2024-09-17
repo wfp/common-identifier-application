@@ -44,6 +44,71 @@ HASH: 9000d0f670be5287bc86bc1b74b48d34
 This returns the signature hash that can be embedded in the config file.
 
 
+### Building a signed app for Windows
+
+The `forge.config.js` file contains the following (commented out) snippet:
+
+```js
+  makers: [
+    // ....
+    {
+      name: '@electron-forge/maker-squirrel',
+      config: {
+        // CODE SIGNING THINGS GO HERE
+        // ---------------------------
+
+        // certificateFile: './cert.pfx',
+        // certificatePassword: process.env.CERTIFICATE_PASSWORD
+
+        // END OF CODE SIGNING THINGS
+        // --------------------------
+      },
+    },
+    // ....
+```
+
+By uncommenting these lines, setting the certificate file path and the password environment variables the Windows builds will be signed ([Visual Studio's SignTool](https://learn.microsoft.com/en-us/dotnet/framework/tools/signtool-exe) is used, so at least the free Community edition of Visual Studio is needed)
+
+### Building a signed app for MacOS
+
+The `forge.config.js` file contains the following (commented out) snippet:
+
+```js
+  // ....
+  packagerConfig: {
+    // CODE SIGNING THINGS GO HERE
+    // ---------------------------
+
+
+    // enable this to create signed executables on macOS
+    // XCode and the developer account must be set up to sign executables --
+    // more on setting this up:
+    // https://github.com/electron/osx-sign
+
+    // object must exist even if empty
+    // osxSign: {}
+
+
+    // END OF CODE SIGNING THINGS
+    // --------------------------
+    // ....
+  }
+```
+
+By uncommenting the `osxSign: {}` line, the MacOS build will use XCode (and the developer account associated with it) to sign the executable. For more information, check [the electron osx-sign documentation](https://github.com/electron/osx-sign)
+
+
+#### Prerequisites
+
+- must be a registered member of the Apple Developer Program. Please note that you could be charged by Apple in order to get issued with the required certificates.
+
+- must have Xcode installed from the Mac App Store. It is not recommended to download your copy from other 3rd party sources for security reasons.
+
+- must have Xcode Command Line Tools installed. To check whether it is available, try `xcode-select --install` and follow the instructions.
+
+
+
+
 # IN THE CURRENT STATE INFORMATION BELLOW MAY OR MAY NOT BE ACCURATE
 
 SYMLINKING IS CURRENTLY NOT NEEDED (IT WILL MAKE A COMEBACK AFTER REPO RE-SEPARATION)

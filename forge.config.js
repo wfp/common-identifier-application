@@ -8,25 +8,51 @@ module.exports = {
 
     // algo repo symlinks should be followed
     derefSymlinks: true,
+
+
+    // CODE SIGNING THINGS GO HERE
+    // ---------------------------
+
+
+    // enable this to create signed executables on macOS
+    // XCode and the developer account must be set up to sign executables --
+    // more on setting this up:
+    // https://github.com/electron/osx-sign
+
+    // object must exist even if empty
+    // osxSign: {}
+
+
+    // END OF CODE SIGNING THINGS
+    // --------------------------
   },
   rebuildConfig: {},
   makers: [
     {
       name: '@electron-forge/maker-squirrel',
-      config: {},
+      config: {
+        // CODE SIGNING THINGS GO HERE
+        // ---------------------------
+
+        // certificateFile: './cert.pfx',
+        // certificatePassword: process.env.CERTIFICATE_PASSWORD
+
+        // END OF CODE SIGNING THINGS
+        // --------------------------
+      },
     },
     {
       name: '@electron-forge/maker-zip',
       platforms: ['darwin'],
     },
-    {
-      name: '@electron-forge/maker-deb',
-      config: {},
-    },
-    {
-      name: '@electron-forge/maker-rpm',
-      config: {},
-    },
+    // {
+    //   name: '@electron-forge/maker-deb',
+    //   config: {},
+    // },
+    // {
+    //   name: '@electron-forge/maker-rpm',
+    //   config: {},
+    // },
   ],
   plugins: [
     {

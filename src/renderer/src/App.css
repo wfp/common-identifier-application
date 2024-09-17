@@ -118,7 +118,7 @@
 .WelcomeScreen { display: grid; grid-template-rows: 6em 1fr 6em 1em; min-height: 100vh; }
 .WelcomeScreen .termsAndConditions { /* padding: 1em; */ }
 .WelcomeScreen .termsAndConditions h4 { font-size: 1.6em; text-align: center; color: #377bb7; text-transform: uppercase; }
-.termsAndConditionsText { overflow: scroll; border: 1px solid #ccc }
+.termsAndConditionsText { overflow-y: scroll; overflow-x: hidden; border: 1px solid #ccc }
 .fromConfig { /* background: #eee; border: 1px solid #999; */ padding: 2em; max-width: 45em; margin: 0 auto; line-height: 2em; }
 
 .updateConfig {
