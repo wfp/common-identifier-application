@@ -1,5 +1,5 @@
 import { useAppStore } from "../store";
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 
 // Sets the maximum distance in pixels from the bottom of the Terms & Conditions
 // from which point we consider the TnC acceptable.
@@ -11,17 +11,43 @@ function WelcomeScreen({ config }) {
 
     const termsAndConditionsHtml = config.data.messages.terms_and_conditions;
 
+    // We'll do an initial, defered check on first render, and we only want to do it once
+    const [hadInitialBottomCheckTriggered, setHadInitialBottomCheckTriggered] = useState(false);
+
+    // The Terms and conditions can only be accepted if the user has reached the bottom
     const [reachedBottom, setReachedBottom] = useState(false);
+
+    // The ref to the terms and conditions div (used by the initial check)
+    const termsAndConditionsDivRef = useRef(null);
+
+
+    // Returns true if the scrolling in the DOM element has reached its bottom (with a threshold)
+    function checkIfReachedBottom(domElement, treshold) {
+        const bottomDistance = (domElement.scrollHeight - domElement.scrollTop) - domElement.clientHeight;
+        return bottomDistance < treshold;
+    }
+
+    // Check if scrolling of TnC has reached its bottom and set the readchedBottom flag if yes
+    function checkAndSetIfReachedBottom(domElement, treshold=MAX_DISTANCE_FROM_BOTTOM_FOR_TOC_ACCEPTANCE) {
+        if (checkIfReachedBottom(domElement, treshold)) {
+            setReachedBottom(true);
+        }
+    }
 
     // scroll handler to know the user has seen the TnC
     const handleScrollOfTnc = (e) => {
-        const bottomDistance = (e.target.scrollHeight - e.target.scrollTop) - e.target.clientHeight;
-        const hasNowReachedBottom = bottomDistance < MAX_DISTANCE_FROM_BOTTOM_FOR_TOC_ACCEPTANCE;
-        // const bottom = e.target.scrollHeight - e.target.scrollTop === e.target.clientHeight;
-        if (hasNowReachedBottom) {
-            setReachedBottom(true);
-         }
+        checkAndSetIfReachedBottom(e.target);
     };
+
+    // The initial check needs to be defered
+    if (!hadInitialBottomCheckTriggered) {
+        // do not re-dispatch on potential future renders
+        setHadInitialBottomCheckTriggered(true);
+        // defer after the render
+        setTimeout(() => {
+            checkAndSetIfReachedBottom(termsAndConditionsDivRef.current);
+        },1);
+    }
 
     return (
         <div className="WelcomeScreen appScreen">
@@ -29,7 +55,7 @@ function WelcomeScreen({ config }) {
                 <h4>Terms and conditions</h4>
             </div>
 
-            <div className="termsAndConditions termsAndConditionsText" onScroll={handleScrollOfTnc}>
+            <div className="termsAndConditions termsAndConditionsText" onScroll={handleScrollOfTnc} ref={termsAndConditionsDivRef}>
                 <div className="fromConfig" dangerouslySetInnerHTML={{ __html: termsAndConditionsHtml }}/>
             </div>
 
