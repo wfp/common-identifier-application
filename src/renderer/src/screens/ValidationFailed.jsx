@@ -3,6 +3,7 @@ import FileInfo from "../components/FileInfo";
 import OpenFileRegion from "../components/OpenFileRegion";
 import SheetTabs from "../components/SheetTabs";
 import { useAppStore } from "../store";
+import { filterColumnConfigForMapping } from "../util";
 
 
 function OpenErrorListButton({validationErrorsOutputFile}) {
@@ -41,9 +42,22 @@ function ValidationFailed({config, inputData, inputFilePath, validationResult, v
     }
 
     // Add the row number to the list of regular error columns for display
+    let columnsConfig = config.data.destination_errors.columns;
+
+    // if this is a mapping document we need to clean the schema
+    if (isMappingDocument) {
+        columnsConfig = [
+            // we need to re-add the errors column here to keep the column filtering
+            // logic consistent across mapping and non-mapping documents
+            { name: "Errors", alias: "errors" },
+        ].concat(filterColumnConfigForMapping(config.data, columnsConfig));
+    }
+
+    // add the error column to the front of the column list
     const errorColumns = [
         { name: "Row #", alias: "row_number" },
-    ].concat(config.data.destination_errors.columns)
+    ].concat(columnsConfig)
+
 
     // The file invalid message differs between mapping & assistance documents
     const fileIsNotValidMessage = isMappingDocument ?

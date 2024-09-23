@@ -2,6 +2,7 @@ import FileInfo from "../components/FileInfo";
 import OpenFileRegion from "../components/OpenFileRegion";
 import SheetTabs from "../components/SheetTabs";
 import { useAppStore } from "../store";
+import { filterColumnConfigForMapping } from "../util";
 
 function ValidationSuccess({config, inputData, inputFilePath, isMappingDocument}) {
 
@@ -20,17 +21,9 @@ function ValidationSuccess({config, inputData, inputFilePath, isMappingDocument}
     // The schema for displaying the table
     let columnsConfig = config.data.source.columns;
 
-    // if this is a mapping document we to clean the schema
+    // if this is a mapping document we need to clean the schema
     if (isMappingDocument) {
-        // get a list of column aliases that are needed by the mapping
-        const src = config.data.algorithm.columns;
-        const mappingNeededColumns = new Set([].concat(
-            (src.to_translate || []),
-            (src.static || []),
-            (src.reference || []),
-        ))
-        // filter the existing output column list
-        columnsConfig = columnsConfig.filter(({alias}) => mappingNeededColumns.has(alias))
+        columnsConfig = filterColumnConfigForMapping(config.data, columnsConfig);
     }
 
     return (
