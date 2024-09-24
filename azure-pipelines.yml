@@ -3,27 +3,49 @@
 # Add steps that build, run tests, deploy, and more:
 # https://aka.ms/yaml
 
-trigger:
-- main
+resources:
+  repositories:
+  - repository: AlgoNws   # An ID to reference
+    type: Git
+    name: ALGO-NWS          # The name of the repository for the submodule
+  - repository: AlgoGos
+    type: Git
+    name: ALGO-GOS
+  - repository: AlgoShared
+    type: Git
+    name: ALGO-SHARED
+
+trigger: none
+# - main
 
 pool:
   vmImage: windows-latest
 
-steps:
-- checkout: self
-  submodules: true
+stages:
+  - stage: checkout
+    displayName: GIT
+    jobs:
+      - job:
+        steps:
+          - checkout: self
+            submodules: true
+        uses:
+          repositories:
+          - AlgoNws
+          - AlgoGos
+          - AlgoShared
 
-- script: echo 'Build pipeline started'
-  displayName: 'Run a one-line script'
+  - stage: frontend
+    dependsOn: checkout
+    displayName: Building frontend
+    jobs:
+      - job:
+        steps:
+        - script: |
+            (cd src/renderer && npm install && npm run build)
+          displayName: 'Build the renderer'
 
-- script: npm install
-  displayName: 'Run `npm install`'
-
-- script: |
-    (cd src/renderer && npm install && npm run build)
-  displayName: 'Build the renderer'
-
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+        - script: |
+            echo Add other tasks to build, test, and deploy your project.
+            echo See https://aka.ms/yaml
+          displayName: 'Run a multi-line script'
