@@ -22,32 +22,26 @@ pool:
   vmImage: windows-latest
 
 jobs:
-  - job:
+  - job: buildApplication
+    displayName: Build Application
     steps:
       - checkout: self
         submodules: true
-    uses:
-      repositories:
-      - AlgoNws
-      - AlgoGos
-      - AlgoShared
 
-  - job: buildFrontend
-    steps:
-    - script: |
-        (cd src/renderer && npm install && npm run build)
-      displayName: 'Build the renderer'
+      # Frontend
+      # -------
 
-    - script: |
-        echo Add other tasks to build, test, and deploy your project.
-        echo See https://aka.ms/yaml
-      displayName: 'Run a multi-line script'
+      - script: |
+          (cd src/renderer && npm install && npm run build)
+        displayName: 'Build the renderer'
 
-  - job: buildNWSWin
-    displayName: Windows + algo-uscadi
-    steps:
+      # Application
+      # -------
+
       - script: npm install
         displayName: NPM install
+
+      # NWS - WIN
 
       - script: node tools/activate-algo.js algo-uscadi
         displayName: "Activate algorithm 'algo-uscadi'"
@@ -59,4 +53,10 @@ jobs:
         displayName: Lets look at the output
           
     
+
+    uses:
+      repositories:
+      - AlgoNws
+      - AlgoGos
+      - AlgoShared
 
