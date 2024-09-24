@@ -10,13 +10,11 @@ pool:
   vmImage: windows-latest
 
 steps:
+- checkout: self
+  submodules: true
+
 - script: echo 'Build pipeline started'
   displayName: 'Run a one-line script'
-
-- script: |
-    git submodule init
-    git submodule update
-  displayName: "Update GIT submodules"
 
 - script: npm install
   displayName: 'Run `npm install`'
