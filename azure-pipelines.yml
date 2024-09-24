@@ -39,15 +39,23 @@ jobs:
       # -------
 
       - script: npm install
-        displayName: NPM install
+        displayName: NPM install App
 
       # NWS - WIN
 
-      - script: node tools/activate-algo.js algo-uscadi
-        displayName: "Activate algorithm 'algo-uscadi'"
+      - script: |
+          node tools/activate-algo.js algo-uscadi
+          npx electron-forge make --arch=x64 --platform=win32
+        displayName: "Build app-nws-win"
 
-      - script: npx electron-forge make --arch=x64 --platform=win32
-        displayName: Electron-Forge make
+      # Publishing should either be to Azure Blob storage (to be set up) or via Releases
+      - task: PublishBuildArtifacts@1
+        inputs:
+          pathtoPublish: $(System.DefaultWorkingDirectory)/out/make/squirrel.windows/x64
+          artifactName: app-nws-win
+        displayName: Publish app-nws-win
+        enabled: true
+    
 
       - script: ls -laR out/
         displayName: Lets look at the output
