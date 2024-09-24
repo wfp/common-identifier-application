@@ -5,9 +5,9 @@
 
 resources:
   repositories:
-  - repository: AlgoNws   # An ID to reference
+  - repository: AlgoNws
     type: Git
-    name: ALGO-NWS          # The name of the repository for the submodule
+    name: ALGO-NWS
   - repository: AlgoGos
     type: Git
     name: ALGO-GOS
@@ -55,12 +55,27 @@ jobs:
           artifactName: app-nws-win
         displayName: Publish app-nws-win
         enabled: true
-    
+
+      # GOS - WIN
+
+      - script: |
+          node tools/activate-algo.js algo-gos
+          npx electron-forge make --arch=x64 --platform=win32
+        displayName: "Build app-gos-win"
+
+      # Publishing should either be to Azure Blob storage (to be set up) or via Releases
+      - task: PublishBuildArtifacts@1
+        inputs:
+          pathtoPublish: $(System.DefaultWorkingDirectory)/out/make/squirrel.windows/x64
+          artifactName: app-gos-win
+        displayName: Publish app-gos-win
+        enabled: true
+
 
       - script: ls -laR out/
         displayName: Lets look at the output
-          
-    
+
+
 
     uses:
       repositories:
