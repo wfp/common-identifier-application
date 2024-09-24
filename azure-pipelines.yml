@@ -21,53 +21,42 @@ trigger: none
 pool:
   vmImage: windows-latest
 
-stages:
-  - stage: checkout
-    displayName: GIT
-    jobs:
-      - job:
-        steps:
-          - checkout: self
-            submodules: true
-        uses:
-          repositories:
-          - AlgoNws
-          - AlgoGos
-          - AlgoShared
+jobs:
+  - job:
+    steps:
+      - checkout: self
+        submodules: true
+    uses:
+      repositories:
+      - AlgoNws
+      - AlgoGos
+      - AlgoShared
 
-  - stage: frontend
-    dependsOn: checkout
-    displayName: Build Frontend
-    jobs:
-      - job: buildFrontend
-        steps:
-        - script: |
-            (cd src/renderer && npm install && npm run build)
-          displayName: 'Build the renderer'
+  - job: buildFrontend
+    steps:
+    - script: |
+        (cd src/renderer && npm install && npm run build)
+      displayName: 'Build the renderer'
 
-        - script: |
-            echo Add other tasks to build, test, and deploy your project.
-            echo See https://aka.ms/yaml
-          displayName: 'Run a multi-line script'
+    - script: |
+        echo Add other tasks to build, test, and deploy your project.
+        echo See https://aka.ms/yaml
+      displayName: 'Run a multi-line script'
 
-  - stage: application
-    dependsOn: frontend
-    displayName: Build and publish Application
-    jobs:
-      - job: buildNWSWin
-        displayName: Windows + algo-uscadi
-        steps:
-          - script: npm install
-            displayName: NPM install
+  - job: buildNWSWin
+    displayName: Windows + algo-uscadi
+    steps:
+      - script: npm install
+        displayName: NPM install
 
-          - script: node tools/activate-algo.js algo-uscadi
-            displayName: "Activate algorithm 'algo-uscadi'"
+      - script: node tools/activate-algo.js algo-uscadi
+        displayName: "Activate algorithm 'algo-uscadi'"
 
-          - script: npx electron-forge make --arch=x64 --platform=win32
-            displayName: Electron-Forge make
+      - script: npx electron-forge make --arch=x64 --platform=win32
+        displayName: Electron-Forge make
 
-          - script: ls -laR out/
-            displayName: Lets look at the output
-              
-        
+      - script: ls -laR out/
+        displayName: Lets look at the output
+          
+    
 
