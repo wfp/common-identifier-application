@@ -37,9 +37,9 @@ stages:
 
   - stage: frontend
     dependsOn: checkout
-    displayName: Building frontend
+    displayName: Build Frontend
     jobs:
-      - job:
+      - job: buildFrontend
         steps:
         - script: |
             (cd src/renderer && npm install && npm run build)
@@ -49,3 +49,25 @@ stages:
             echo Add other tasks to build, test, and deploy your project.
             echo See https://aka.ms/yaml
           displayName: 'Run a multi-line script'
+
+  - stage: application
+    dependsOn: frontend
+    displayName: Build and publish Application
+    jobs:
+      - job: buildNWSWin
+        displayName: Windows + algo-uscadi
+        steps:
+          - script: npm install
+            displayName: NPM install
+
+          - script: node tools/activate-algo.js algo-uscadi
+            displayName: "Activate algorithm 'algo-uscadi'"
+
+          - script: npx electron-forge make --arch=x64 --platform=win32
+            displayName: Electron-Forge make
+
+          - script: ls -laR out/
+            displayName: Lets look at the output
+              
+        
+
