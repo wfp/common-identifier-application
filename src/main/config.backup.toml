@@ -1,9 +1,11 @@
 [meta]
 # The application binary must support this region to allow the use of this configuration file
-region="GOS"
+region="NWS"
 
 # The version of the configuration file
-version="0.0.9"
+version="0.1.0"
+
+[messages]
 
 # HTML to display as Terms And Conditions
 terms_and_conditions="""
@@ -33,24 +35,30 @@ terms_and_conditions="""
 
 """
 
-[messages]
-
 error_in_config="""
 
 <p>The application encountered an error while attempting to load a configuration file.</p>
 
-<p>Please contanct WFP support at <a href="mailto:some.email@wfp.org">some.email@wfp.org</a></p>
+<p>Please contact WFP support at <a href="mailto:NWS.BuildingBlocks@wfp.org">NWS.BuildingBlocks@wfp.org</a></p>
 """
 
 error_in_salt="""
 <p>The application encountered an error while attempting to load your individual salt file.</p>
 
-<p>Please contanct WFP support at <a href="mailto:some.email@wfp.org">some.email@wfp.org</a></p>
+<p>Please contact WFP support at <a href="mailto:NWS.BuildingBlocks@wfp.org">NWS.BuildingBlocks@wfp.org</a></p>
 """
 
 [source]
 columns = [
-    { name = "National ID", alias = "national_id" },
+    { name = "Individual Reference", alias = "individual_reference" },
+    { name = "First Name", alias = "first_name" },
+    { name = "Last Name", alias = "last_name" },
+    { name = "Father First Name", alias = "father_first_name" },
+    { name = "Father Last Name", alias = "father_last_name" },
+    { name = "Mother First Name", alias = "mother_first_name" },
+    { name = "Year of Birth", alias = "dob_year" },
+    { name = "Document Type", alias = "document_type" },
+    { name = "Document ID", alias = "document_id" },
     { name = "Organization", alias = "organization" },
     { name = "Category", alias = "category" },
     { name = "Currency", alias = "currency" },
@@ -63,43 +71,93 @@ columns = [
 
 "*" = [
     { op = "max_field_length", value = 200 },
-    { op = "field_type", value = "str" },
 ]
 
 # biographic columns
-national_id = [
-    { op = "regex_match", value = '(\d{11})' }
+individual_reference = [
+    { op = "field_type", value = "str" },
+    { op = "regex_match", value = "[a-zA-Z0-9!\"#$%&'()*+\\-./:;?@[\\]^_{|}~]+", message="must only consist of alphanumeric characters and supported special characters" } # TBD
 ]
+
+first_name = [
+    { op = "field_type", value = "str" },
+    # Example message for a language check if needed
+    { op = "language_check", value = "Arabic", message="is not Arabic"}
+]
+
+last_name = [
+    { op = "field_type", value = "str" },
+    # The default error message for the 'lanaguage_check' is "languge is not <LANGUAGE>"
+    # so the default error messages should be enough
+    { op = "language_check", value = "Arabic"}
+]
+
+father_first_name = [
+    { op = "field_type", value = "str" },
+    { op = "language_check", value = "Arabic"}
+]
+
+father_last_name = [
+    { op = "field_type", value = "str" },
+    { op = "language_check", value = "Arabic"}
+]
+
+mother_first_name = [
+    { op = "field_type", value = "str" },
+    { op = "language_check", value = "Arabic"}
+]
+
+
+dob_year = [
+    # default error message for these validators is "is not less then ..." / "is not greater then ..."
+    { op = "min_value", value = 1901 },
+    { op = "max_value", value = 2024 },
+]
+
+document_type = [
+    { op = "field_type", value = "str" },
+    # default
+    { op = "options", value = [ "", "NATIONAL_ID", "PERSONAL_ID", "LOCAL_COUNCIL_CARD" ] }
+]
+
+document_id = [] # TBD
 
 # assistance columns
 organization = [
-    { op = "regex_match", value = 'ORG1' },
+    { op = "field_type", value = "str" },
+    { op = "min_field_length", value = 3 },
+    { op = "max_field_length", value = 8 },
+    { op = "same_value_for_all_rows" },
 ]
 
 category = [
-    { op = "regex_match", value = '(\S{6,12})' },
+    { op = "field_type", value = "str" },
+    { op = "same_value_for_all_rows" },
     { op = "options", value = [ "CASH-MPA", "CASH-RENT" ] }
 ]
 
 currency = [
-    { op = "regex_match", value = 'USD' }
+    { op = "field_type", value = "str" },
+    { op = "same_value_for_all_rows" },
+    { op = "regex_match", value = 'USD', message="must be USD" },
 ]
 
 amount = [
     { op = "min_value", value = 1 },
-    { op = "max_value", value = 1000 },
+    { op = "max_value", value = 1000000 },
 ]
 
 start = [
-    { op = "regex_match", value = '((?:19|20)\d{2}(?:0[1-9]|1[012])(?:0[1-9]|[12]\d|3[01]))' }, # yyyyMMdd
+    { op = "regex_match", value = '((?:19|20)\d{2}(?:0[1-9]|1[012])(?:0[1-9]|[12]\d|3[01]))', message="must be in the format of yyyyMMdd, e.g. 20240301" }, # yyyyMMdd
     { op = "date_diff", value = "+3M"},
     { op = "date_diff", value = "-12M"}
 ]
 
 end = [
-    { op = "regex_match", value = '((?:19|20)\d{2}(?:0[1-9]|1[012])(?:0[1-9]|[12]\d|3[01]))' }, # yyyyMMdd
+    { op = "regex_match", value = '((?:19|20)\d{2}(?:0[1-9]|1[012])(?:0[1-9]|[12]\d|3[01]))', message="must be in the format of yyyyMMdd, e.g. 20240301" }, # yyyyMMdd
     { op = "date_diff", value = "+3M"},
-    { op = "date_diff", value = "-12M"}
+    { op = "date_diff", value = "-12M"},
+    { op = "date_field_diff", target = "start", value="-12M", message="must be within a year of Start"},
 ]
 
 
@@ -107,18 +165,18 @@ end = [
 
 [algorithm.columns]
 to_translate = [
-    # "first_name",
-    # "last_name",
-    # "father_first_name",
-    # "father_last_name",
-    # "mother_first_name",
+    "first_name",
+    "last_name",
+    "father_first_name",
+    "father_last_name",
+    "mother_first_name",
 ]
 static = [
-    "national_id",
+    "dob_year"
 ]
 reference = [
-    # "document_type",
-    # "document_id"
+    "document_type",
+    "document_id"
 ]
 
 [algorithm.hash]
@@ -128,6 +186,7 @@ parallelism = 1
 block_size = 8
 size = 32
 
+
 [algorithm.salt]
 source = "FILE" # STRING | FILE
 # The regular expression to validate the salt file
@@ -136,37 +195,47 @@ validator_regex = "-----BEGIN PGP PUBLIC KEY BLOCK-----[A-Za-z0-9+/=\\s]+-----EN
 
 [algorithm.salt.value]
 # $APPDATA can be used to substitute the application data directory
-win32 = "./test_files/public_system.asc"
+win32 = "$APPDATA/CommonIDTool/public_system.asc"
 # $HOME can be used to substitute the users home directory
 darwin = "$APPDATA/CommonIDTool/public_system.asc"
 
 
 [destination]
 columns = [
-    { name = "Hashed ID", alias = "hashed_id" },
+    { name = "Common Identifier", alias = "USCADI" },
     { name = "Organization", alias = "organization" },
     { name = "Category", alias = "category" },
     { name = "Currency", alias = "currency" },
     { name = "Amount", alias = "amount" },
     { name = "Start (yyyyMMdd)", alias = "start" },
     { name = "End (yyyyMMdd)", alias = "end" },
+    { name = "Reference Identifier", alias = "document_hash" },
 ]
 # The postfix of the output file. Anything inside double curly braces
 # will be treated as a date format string.
 # FORMATTING TOKEN GUIDE: https://date-fns.org/v3.6.0/docs/lightFormat
-postfix = "-OUTPUT-GOS-0.0.9-{{yyyy-MM-dd--HH-mm-ss}}"
+postfix = "-OUTPUT-NWS-1.0.8-{{yyyy-MM-dd--HH-mm-ss}}"
 
 [destination_map]
 columns = [
-    { name = "National ID", alias = "national_id" },
-    { name = "Hashed ID", alias = "hashed_id" }
+    { name = "Individual Reference", alias = "individual_reference" },
+    { name = "Common Identifier", alias = "USCADI" },
+    { name = "Reference Identifier", alias = "document_hash" },
 ]
-postfix = "-MAPPING-GOS-0.0.9-{{yyyy-MM-dd--HH-mm-ss}}"
+postfix = "-MAPPING-NWS-1.0.8-{{yyyy-MM-dd--HH-mm-ss}}"
 
 [destination_errors]
 columns = [
     { name = "Errors", alias = "errors" },
-    { name = "National ID", alias = "national_id" },
+    { name = "Individual Reference", alias = "individual_reference" },
+    { name = "First Name", alias = "first_name" },
+    { name = "Last Name", alias = "last_name" },
+    { name = "Father First Name", alias = "father_first_name" },
+    { name = "Father Last Name", alias = "father_last_name" },
+    { name = "Mother First Name", alias = "mother_first_name" },
+    { name = "Year of Birth", alias = "dob_year" },
+    { name = "Document Type", alias = "document_type" },
+    { name = "Document ID", alias = "document_id" },
     { name = "Organization", alias = "organization" },
     { name = "Category", alias = "category" },
     { name = "Currency", alias = "currency" },
@@ -174,8 +243,8 @@ columns = [
     { name = "Start (yyyyMMdd)", alias = "start" },
     { name = "End (yyyyMMdd)", alias = "end" },
 ]
-postfix = "-ERRORS-GOS-0.0.9-{{yyyy-MM-dd--HH-mm-ss}}"
+postfix = "-ERRORS-NWS-1.0.8-{{yyyy-MM-dd--HH-mm-ss}}"
 
 
 [signature]
-config_signature="130b80177dbb751ab51730b72dedf57e"
+config_signature="6ad54aec6cc12277d74fa8d46bb7c146"
