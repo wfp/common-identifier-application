@@ -31,7 +31,7 @@ function ProcessingFinished({ config, outputData, outputFilePaths}) {
             <SheetTabs documentData={outputData} columnsConfig={columnsConfig} />
 
             <div className="buttonRow buttonRow2">
-                <OpenFileRegion label="Process Another file" />
+                <OpenFileRegion label="Process another file" />
 
                 <div className="doneButton">
                     <button className="bigButton" onClick={backToMainScreen}>Done</button>
