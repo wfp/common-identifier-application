@@ -146,12 +146,12 @@
 }
 
 .ValidationSuccess {
-  grid-template-rows: 4em 1fr 2.5em 5em 1em;
+  grid-template-rows: 4em 1fr 6em 5em 1em;
 }
 
 
 .ValidationFailed {
-  grid-template-rows: 4em 1fr 8em 5em 1em;
+  grid-template-rows: 4em 1fr 6em 5em 1em;
 }
 
 .ProcessingFinished {
@@ -165,20 +165,53 @@
 
 .FileInfo .fileName.otherPath {font-size: 1.1em; padding: 0.5em 0;}
 
+.validationResult {
+  display: flex;
+  align-items: center;
+  padding: 1em;
+}
 
-.validationResult { text-align: center; }
-.validationResult.ok {}
-.validationResult.error {}
+.validationResult.ok {
+  background: rgba(10, 126, 1, 0.1);
+  color: #0b9e01;
+}
 
+.validationResult.error {
+  flex-direction: row;
+  flex-shrink: revert;
+  background: rgba(255, 10, 0, 0.1);
+  color: #ff8787;
+  text-align: left;
+}
 
-.validationResult .validationState { font-size: 1.6em; text-transform: uppercase; font-weight: bold; }
-.validationResult .validationState .help { font-size: 0.62em; text-transform: none; color: #999; }
-.validationResult.error .validationState { color: #ff8787;  text-align: left; }
-.validationResult.ok .validationState { color: #0b9e01; background: rgba(10, 126, 1, 0.1); }
-.validationResult .validationErrors { display: grid; grid-template-columns: 1fr 15em; padding: 1em; background: rgba(255, 10, 0, 0.1); }
+.validationState {
+  flex: 1;
+  flex-direction: column;
+}
 
-.validationResult .validationErrors .openErrorList { align-content: center; }
-.validationResult .validationErrors .OpenErrorListButton { background-color: #ff8787; }
+.validationResult .validationState {
+  font-size: 1.4em;
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+.validationResult.ok .validationState {
+  text-align: center;
+}
+.validationResult.error .validationState {
+  text-align: left;
+}
+
+.validationResult .validationState .help {
+  font-size: 0.7em;
+  text-transform: none;
+  color: #999;
+}
+
+.validationResult .OpenErrorListButton {
+  background-color: #ff8787;
+}
+
 
 .retryButton, .processButton, .doneButton, .acceptButton, .quitButton { text-align: center; align-content:center; }
 .quitButton button,

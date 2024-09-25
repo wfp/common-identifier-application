@@ -60,28 +60,24 @@ function ValidationFailed({config, inputData, inputFilePath, validationResult, v
 
 
     // The file invalid message differs between mapping & assistance documents
-    const fileIsNotValidMessage = isMappingDocument ?
-        "File is not a valid Mapping Document" :
-        "File is not a valid Assistance Document"
+    const fileIsNotValidMessage = "Validation finished. Critical errors encountered."
 
     return (
         <div className="ValidationFailed appScreen">
-            <FileInfo filePath={inputFilePath} helpText="input file is invalid" />
+            <FileInfo filePath={inputFilePath} helpText="The input file is invalid." />
 
             <SheetTabs documentData={documentData} columnsConfig={errorColumns}/>
 
             <div className="validationResult error">
-                <div className="validationErrors">
-                    <div className="validationState">
-                        {fileIsNotValidMessage}
-                        <div className="help">
-                            One or more rows of the input file failed the validation.
-                        </div>
+                <div className="validationState">
+                    {fileIsNotValidMessage}
+                    <div className="help">
+                        You cannot continue until the noted issues are resolved.
                     </div>
+                </div>
 
-                    <div className="openErrorList">
-                        <OpenErrorListButton validationErrorsOutputFile={validationErrorsOutputFile} />
-                    </div>
+                <div className="openErrorList">
+                    <OpenErrorListButton validationErrorsOutputFile={validationErrorsOutputFile} />
                 </div>
             </div>
 

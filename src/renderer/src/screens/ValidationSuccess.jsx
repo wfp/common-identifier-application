@@ -12,12 +12,6 @@ function ValidationSuccess({config, inputData, inputFilePath, isMappingDocument}
         startProcessingFile(inputFilePath, "/tmp")
     }
 
-    // The file valid message differs between mapping & assistance documents
-    const fileIsValidMessage = isMappingDocument ?
-        "File is a valid Mapping Document" :
-        "File is a valid Assistance Document"
-
-
     // The schema for displaying the table
     let columnsConfig = config.data.source.columns;
 
@@ -28,13 +22,20 @@ function ValidationSuccess({config, inputData, inputFilePath, isMappingDocument}
 
     return (
         <div className="ValidationSuccess appScreen">
-            <FileInfo filePath={inputFilePath} helpText="ready to process the file" />
+            <FileInfo filePath={inputFilePath} helpText="Ready to process the file" />
 
             <SheetTabs documentData={inputData} columnsConfig={columnsConfig}/>
 
             <div className="validationResult ok">
                 <div className="validationState">
-                    {fileIsValidMessage}
+                    Validation finished. No errors encountered.
+                    <div className="help">
+                        { 
+                            isMappingDocument
+                                ? "Valid mapping file."
+                                : "Valid intended assistance file."
+                        }
+                    </div>
                 </div>
             </div>
 
