@@ -31,8 +31,13 @@ jobs:
       - checkout: self
         submodules: true
       
-      - script: echo $env:AZURE_CLIENT_ID, $env:AZURE_SECRET_KEY, $env:AZURE_TENANT_ID
-        displayName: Check runtime
+      - task: PowerShell@2
+        inputs:
+         targetType: inline
+         script: |
+           # use $env:AZURE_CLIENT_ID for client id
+           # use $env:AZURE_SECRET_KEY for secret key
+           # use $env:AZURE_TENANT_ID for tenant id
         env:
           AZURE_CLIENT_ID: $(CLIENT_ID)
           AZURE_SECRET_KEY: $(SECRET_KEY)
