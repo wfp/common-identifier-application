@@ -3,7 +3,7 @@ const { dialog } = require('electron')
 const {baseFileName} = require('../util');
 
 // The actual processing function called after the output path is selected
-function doProcessFile(mainWindow, configStore, inputFilePath, outputPath, processing) {
+async function doProcessFile(mainWindow, configStore, inputFilePath, outputPath, processing) {
     const config = configStore.getConfig();
     const limit = undefined;
     let outputFormat = undefined;
@@ -24,8 +24,6 @@ function doProcessFile(mainWindow, configStore, inputFilePath, outputPath, proce
             break;
     }
 
-    // console.log("===== using:", { outputFormat, outputBasePath })
-
     return processing.processFile(config, outputBasePath, inputFilePath, limit, outputFormat)
         .then((result) => {
             console.log("[IPC] [processFile] PROCESSING DONE")
@@ -39,16 +37,12 @@ function doProcessFile(mainWindow, configStore, inputFilePath, outputPath, proce
 // Process a file
 function processFile({mainWindow, configStore, filePath, processing}) {
 
-    // TODO: maybe assume the file is already valid?
     console.log('=========== Processing File:', filePath);
-
-
 
     return dialog.showSaveDialog({
         defaultPath: baseFileName(filePath),
     }).then(function (response) {
         if (response.canceled || response.filePath === '') {
-            // TODO: send cancel signal
             console.log("[IPC] [processFile] no file selected");
             // send the canceled message
             mainWindow.webContents.send('processingCanceled', {});

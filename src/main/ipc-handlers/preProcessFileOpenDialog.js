@@ -14,7 +14,7 @@ function preProcessFileOpenDialog({ mainWindow, configStore, processing}) {
             // handle fully qualified file name
             const filePath = response.filePaths[0];
             console.log("[IPC] [preProcessFileOpenDialog] Starting to process file from open dialog:", filePath);
-            preProcessFile({mainWindow, configStore, filePath, processing});
+            return preProcessFile({mainWindow, configStore, filePath, processing});
         } else {
             console.log("[IPC] [preProcessFileOpenDialog] no file selected");
             // send the cancelec message

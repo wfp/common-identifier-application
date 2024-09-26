@@ -64,9 +64,12 @@ function createWindow() {
 // Registers all handlers for the window
 function registerIpcHandlers({mainWindow, configStore, processing}) {
     function withErrorReporting(delegate) {
+        // catch errors that bubble up es exceptions and convert them to rejections
         return new Promise(function(resolve, reject) {
-            resolve(delegate());
+            try { resolve(delegate()); }
+            catch (e) { reject(e); }
         }).catch(e => {
+            // catch errors that bubble up as rejections
             console.error("INTERNAL ERROR:", e);
             mainWindow.webContents.send('error', e.toString());
         });
@@ -88,14 +91,14 @@ function registerIpcHandlers({mainWindow, configStore, processing}) {
     // Start processing the file
     ipcMain.on('processFile', (event, filePath) => {
         return withErrorReporting(() => {
-            processFile({mainWindow, configStore, filePath, processing});
+            return processFile({mainWindow, configStore, filePath, processing});
         });
     });
 
     // open and process a file using an open file dialog
     ipcMain.on('preProcessFileOpenDialog', (event, _) => {
         return withErrorReporting(() => {
-            preProcessFileOpenDialog({mainWindow, configStore, processing})
+            return preProcessFileOpenDialog({mainWindow, configStore, processing})
         });
     });
 

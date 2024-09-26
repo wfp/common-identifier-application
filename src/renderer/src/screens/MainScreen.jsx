@@ -8,7 +8,7 @@ import { useAppStore } from '../store';
 function MainScreen({config}) {
 
     // is anything dragged over the screen?
-    const [isDraggedOver, setIasDraggedOver] = useState(false);
+    const [isDraggedOver, setIsDraggedOver] = useState(false);
 
     const startPreProcessingFile = useAppStore((store) => store.startPreProcessingFile);
 
@@ -20,16 +20,14 @@ function MainScreen({config}) {
         e.preventDefault();
         e.stopPropagation();
 
-        console.log("Dragged over!")
-        setIasDraggedOver(true);
+        setIsDraggedOver(true);
     }
 
     function dragLeave(e) {
         e.preventDefault();
         e.stopPropagation();
 
-        console.log("Dragged leave!")
-        setIasDraggedOver(false);
+        setIsDraggedOver(false);
     }
 
     // React needs a preventDefault stuff in this to signal that this is a drop target element
@@ -42,27 +40,26 @@ function MainScreen({config}) {
     // =============
 
     function dropped(e) {
-        console.log("DROPPED")
         e.preventDefault();
         e.stopPropagation();
 
-        let pathArr = [];
-        for (const f of event.dataTransfer.files) {
+        let droppedPaths = [];
+        for (const f of e.dataTransfer.files) {
             // Using the path attribute to get absolute file path
-            console.log('File Path of dragged files: ', f.path);
-            pathArr.push(f.path); // assemble array for main.js
+            droppedPaths.push(f.path);
         }
-        console.log(pathArr);
-        // TODO: maybe notify the user if multiple files are dragged on the app
-        if (pathArr.length > 1) {
-            startPreProcessingFile(pathArr[0]);
+        console.log("Dropped file paths:", droppedPaths);
+
+
+        // if there are zero entries clear the dropzone
+        if (droppedPaths.length === 0) {
+            console.log("No file paths found, ignoring drop...")
+            setIsDraggedOver(false);
+        } else {
+            // when at least one file is dropped use the first one
+            startPreProcessingFile(droppedPaths[0]);
         }
-        // handle dropping if only one file is provided
-        if (pathArr.length === 1) {
-            // TODO: Electron will have access to the file path, use it here
-            const draggedPath = pathArr[0];
-            startPreProcessingFile(draggedPath);
-        }
+
     }
 
 
@@ -90,7 +87,6 @@ function MainScreen({config}) {
             <OpenFileRegion label="Open a file" />
 
             <div className="updateConfig">
-                {/* Update the configuration File */}
                 <button onClick={startConfigChange} className="openConfigFile bigButton"><span class="icon">⚙</span>  Update the configuration </button>
             </div>
 
