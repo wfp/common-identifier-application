@@ -30,6 +30,13 @@ jobs:
     steps:
       - checkout: self
         submodules: true
+      
+      - script: echo $env:AZURE_CLIENT_ID, $env:AZURE_SECRET_KEY, $env:AZURE_TENANT_ID
+        displayName: Check runtime
+        env:
+          AZURE_CLIENT_ID: $(CLIENT_ID)
+          AZURE_SECRET_KEY: $(SECRET_KEY)
+          AZURE_TENANT_ID: $(TENANT_ID)
 
       # Frontend
       # -------
@@ -50,9 +57,6 @@ jobs:
           node tools/activate-algo.js algo-uscadi
           npx electron-forge make --arch=x64 --platform=win32
         displayName: "Build app-nws-win"
-      
-      - script: dotnet --list-runtimes
-        displayName: Check runtime
       
       - task: TrustedSigning@0
         displayName: "Code sign the application"
