@@ -126,7 +126,7 @@
 }
 
 .ConfigUpdated,
-.ProcessingCanceled {
+.ProcessingCancelled {
   height: 10em;
   margin: auto auto;
   width: 40em;
@@ -146,12 +146,12 @@
 }
 
 .ValidationSuccess {
-  grid-template-rows: 4em 1fr 2.5em 5em 1em;
+  grid-template-rows: 4em 1fr 6em 5em 1em;
 }
 
 
 .ValidationFailed {
-  grid-template-rows: 4em 1fr 8em 5em 1em;
+  grid-template-rows: 4em 1fr 6em 5em 1em;
 }
 
 .ProcessingFinished {
@@ -165,20 +165,53 @@
 
 .FileInfo .fileName.otherPath {font-size: 1.1em; padding: 0.5em 0;}
 
+.validationResult {
+  display: flex;
+  align-items: center;
+  padding: 1em;
+}
 
-.validationResult { text-align: center; }
-.validationResult.ok {}
-.validationResult.error {}
+.validationResult.ok {
+  background: rgba(10, 126, 1, 0.1);
+  color: #0b9e01;
+}
 
+.validationResult.error {
+  flex-direction: row;
+  flex-shrink: revert;
+  background: rgba(255, 10, 0, 0.1);
+  color: #ff8787;
+  text-align: left;
+}
 
-.validationResult .validationState { font-size: 1.6em; text-transform: uppercase; font-weight: bold; }
-.validationResult .validationState .help { font-size: 0.62em; text-transform: none; color: #999; }
-.validationResult.error .validationState { color: #ff8787;  text-align: left; }
-.validationResult.ok .validationState { color: #0b9e01; background: rgba(10, 126, 1, 0.1); }
-.validationResult .validationErrors { display: grid; grid-template-columns: 1fr 15em; padding: 1em; background: rgba(255, 10, 0, 0.1); }
+.validationState {
+  flex: 1;
+  flex-direction: column;
+}
 
-.validationResult .validationErrors .openErrorList { align-content: center; }
-.validationResult .validationErrors .OpenErrorListButton { background-color: #ff8787; }
+.validationResult .validationState {
+  font-size: 1.4em;
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+.validationResult.ok .validationState {
+  text-align: center;
+}
+.validationResult.error .validationState {
+  text-align: left;
+}
+
+.validationResult .validationState .help {
+  font-size: 0.7em;
+  text-transform: none;
+  color: #999;
+}
+
+.validationResult .OpenErrorListButton {
+  background-color: #ff8787;
+}
+
 
 .retryButton, .processButton, .doneButton, .acceptButton, .quitButton { text-align: center; align-content:center; }
 .quitButton button,
@@ -288,11 +321,11 @@
 .buttonRow2 { grid-template-columns: 0.5fr 0.5fr; }
 
 
-.ConfigChange { display: grid; grid-template-rows: 8em 6em 6em 6em 6em; align-items: center; text-align: center; padding-top: 6em; }
+.ConfigChange { display: grid; grid-template-rows: 8em 6em 10em 6em; align-items: center; text-align: center; padding-top: 6em; }
 .ConfigChange .loadNewConfig,
 .ConfigChange .removeUserConfig { grid-template-rows: 15em 6em;}
 .ConfigChange .helpText { padding-bottom:3em; font-size:1.4em; }
 .ConfigChange .helpText h4 { font-size:1.4em; color: #377bb7; }
-.ConfigChange .helpText p { font-style:italic; }
+.ConfigChange .helpText p {}
 .ConfigChange .title {}
 .ConfigChange .title h3 { color: #377bb7; font-size: 3em; text-transform: uppercase;}

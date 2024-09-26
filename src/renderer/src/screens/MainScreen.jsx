@@ -79,8 +79,8 @@ function MainScreen({config}) {
     return (
         <div className={divClassName} onDragEnter={dragEnter}>
             <div className="mainDragAndDropArea">
-                <span className="large">DRAG & DROP EXCEL OR CSV FILES HERE</span>
-                <span className="small">to start processing them</span>
+                <span className="large">DRAG & DROP AN EXCEL OR CSV FILE</span>
+                <span className="small">to start processing</span>
             </div>
 
 

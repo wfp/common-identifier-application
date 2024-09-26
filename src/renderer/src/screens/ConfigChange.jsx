@@ -30,8 +30,8 @@ export default function ConfigChange() {
             return (
                 <div className="ConfigChange appScreen loadNewConfig">
                     <div className="helpText">
-                        <h4>Use the default configuration</h4>
-                        <p>Are you sure you want to load a new configiuration from a file?</p>
+                        <h4>Update configuration</h4>
+                        <p>Are you sure you want to load a new configuration file?</p>
                     </div>
 
                     <div className="buttonRow buttonRow2">
@@ -78,22 +78,15 @@ export default function ConfigChange() {
 
                     <div className="buttonRow buttonRow1">
                         <div className="loadNewConfigButton">
-                            <button className="bigButton" onClick={setHandlerOnClick(LOAD_NEW_CONFIG)}>Load a new Configuration</button>
+                            <button className="bigButton" onClick={setHandlerOnClick(LOAD_NEW_CONFIG)}>Load a new configuration file</button>
                         </div>
-                    </div>
-
-                    <div className="helpText">
-                        <p>Load a new configuration from a file you received</p>
                     </div>
 
                     <div className="buttonRow buttonRow1">
                         <div className="useDefaultConfigButton">
                             <button className="bigButton" onClick={setHandlerOnClick(REMOVE_USER_CONFIG)}>Use the default configuration</button>
                         </div>
-                    </div>
-
-                    <div className="helpText">
-                        <p>Fall back to the default (built-in) configuration that shipped with the application.</p>
+                        <p>Return to the default (built-in) configuration as supplied with the original application.</p>
                     </div>
 
                 </div>

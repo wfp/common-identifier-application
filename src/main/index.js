@@ -37,8 +37,9 @@ function createMainWindow(configStore) {
             preload: path.join(__dirname, 'preload.js'),
             contextIsolation: true,
             nodeIntegration: true
-        }
-    })
+        },
+        autoHideMenuBar: true
+    });
 
     return mainWindow;
 }

@@ -6,9 +6,9 @@ function ProcessingCanceled() {
 
 
     return (
-        <div className="ProcessingCanceled appScreen">
+        <div className="ProcessingCancelled appScreen">
             <h2>
-                Processing Canceled
+                Processing cancelled
             </h2>
 
             <div className="doneButton">
