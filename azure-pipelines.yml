@@ -18,6 +18,9 @@ resources:
 trigger: none
 # - main
 
+variables:
+  - group: AZURE_VARS
+
 pool:
   vmImage: windows-latest
 
@@ -75,7 +78,21 @@ jobs:
       - script: ls -laR out/
         displayName: Lets look at the output
 
-
+      - task: TrustedSigning@0
+        displayName: "Code sign the application"
+        inputs:
+          AzureTenantID: $AZURE_VARS.TENANT_ID
+          AzureClientID: $AZURE_VARS.CLIENT_ID
+          AzureClientSecret: $AZURE_VARS.SECRET_KEY
+          Endpoint: $AZURE_VARS.ENDPOINT
+          CodeSigningAccountName: $AZURE_VARS.CODE_SIGNING_ACCOUNT_NAME
+          CertificateProfileName: $AZURE_VARS.CERTIFICATE_PROFILE_NAME
+          
+          TimestampRfc3161: 'http://timestamp.acs.microsoft.com'
+          TimestampDigest: SHA256
+          
+          FilesFolder: $(System.DefaultWorkingDirectory)/out/make/squirrel.windows/x64
+          FileDigest: SHA256
 
     uses:
       repositories:
