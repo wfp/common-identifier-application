@@ -50,25 +50,6 @@ jobs:
           node tools/activate-algo.js algo-uscadi
           npx electron-forge make --arch=x64 --platform=win32
         displayName: "Build app-nws-win"
-      
-      - script: dotnet --list-runtimes
-        displayName: Check runtime
-      
-      - task: TrustedSigning@0
-        displayName: "Code sign the application"
-        inputs:
-          AzureTenantID: $(TENANT_ID)
-          AzureClientID: $(CLIENT_ID)
-          AzureClientSecret: $(SECRET_KEY)
-          Endpoint: $(ENDPOINT)
-          CodeSigningAccountName: $(CODE_SIGNING_ACCOUNT_NAME)
-          CertificateProfileName: $(CERTIFICATE_PROFILE_NAME)
-          
-          TimestampRfc3161: 'http://timestamp.acs.microsoft.com'
-          TimestampDigest: SHA256
-          
-          FilesFolder: $(System.DefaultWorkingDirectory)/out/make/squirrel.windows/x64
-          FileDigest: SHA256
 
       # Publishing should either be to Azure Blob storage (to be set up) or via Releases
       - task: PublishBuildArtifacts@1
