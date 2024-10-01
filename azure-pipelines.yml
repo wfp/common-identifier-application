@@ -50,7 +50,15 @@ jobs:
           node tools/activate-algo.js algo-uscadi
           npx electron-forge make --arch=x64 --platform=win32
         displayName: "Build app-nws-win"
-      
+
+      # Publish the yet unsigned zip as an artifact
+      - task: PublishBuildArtifacts@1
+        inputs:
+          pathtoPublish: $(System.DefaultWorkingDirectory)/out/make/zip/win32/x64
+          artifactName: app-nws-win-zip-unsigned
+        displayName: Publish app-nws-win-zip-unsigned
+        enabled: true
+
       - task: TrustedSigning@0
         displayName: "Code sign the application"
         inputs:
@@ -92,7 +100,16 @@ jobs:
           node tools/activate-algo.js algo-gos
           npx electron-forge make --arch=x64 --platform=win32
         displayName: "Build app-gos-win"
-      
+
+      # Publish the yet unsigned zip as an artifact
+      - task: PublishBuildArtifacts@1
+        inputs:
+          pathtoPublish: $(System.DefaultWorkingDirectory)/out/make/zip/win32/x64
+          artifactName: app-gos-win-zip-unsigned
+        displayName: Publish app-gos-win-zip-unsigned
+        enabled: true
+
+
       - task: TrustedSigning@0
         displayName: "Code sign the application"
         inputs:
