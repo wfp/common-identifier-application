@@ -3,47 +3,51 @@
 region="NWS"
 
 # The version of the configuration file
-version="0.1.0"
+version="0.1.2"
 
 [messages]
 
 # HTML to display as Terms And Conditions
 terms_and_conditions="""
-<p>Lorem ipsum <a href="https://wfp.org" target="_blank">dolor</a> sit amet, <b>consectetur adipiscing</b> elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. </p>
-
-<p><i>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu</i> fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-
-<p>Lorem ipsum <a href="https://wfp.org" target="_blank">dolor</a> sit amet, <b>consectetur adipiscing</b> elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. </p>
-
-<p><i>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu</i> fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-
-<p>Lorem ipsum <a href="https://wfp.org" target="_blank">dolor</a> sit amet, <b>consectetur adipiscing</b> elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. </p>
-
-<p><i>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu</i> fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-
-<p>Lorem ipsum <a href="https://wfp.org" target="_blank">dolor</a> sit amet, <b>consectetur adipiscing</b> elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. </p>
-
-<p><i>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu</i> fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-
-<p>Lorem ipsum <a href="https://wfp.org" target="_blank">dolor</a> sit amet, <b>consectetur adipiscing</b> elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. </p>
-
-<p><i>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu</i> fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-
-<p>Lorem ipsum <a href="https://wfp.org" target="_blank">dolor</a> sit amet, <b>consectetur adipiscing</b> elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. </p>
-
-<p><i>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu</i> fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-
+<strong>Common Identifier Application</strong>
+<p>
+    <i>Copyright (C) 2024 World Food Programme</i>
+</p>
+<p>
+    This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+    License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
+    later version.
+</p>
+<p>
+    This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the
+    implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+    more details.
+</p>
+<p>
+    You should have received a copy of the GNU General Public License along with this program. If not, see <a href="https://www.gnu.org/licenses" target="_blank">gnu.org</a>.
+</p>
+<p>
+    World Food Programme (WFP) disclaims any responsibility for how the program is used. Users are solely
+    responsible for ensuring their use of the program complies with all applicable norms and regulations, including
+    those on data privacy and protection, and obtaining necessary consents and security measures where required.
+</p>
+<p>
+    Any dispute, controversy, or claim arising out of or relating to the use of the program, including the
+    interpretation, application, or breach of this license, unless settled amicably, shall be finally resolved by
+    arbitration pursuant to the UNCITRAL Arbitration Rules. Nothing in or relating to this license shall be deemed a
+    waiver, express or implied, of any of the privileges and immunities enjoyed by World Food Programme.
+</p>
 """
 
 error_in_config="""
 
-<p>The application encountered an error while attempting to load a configuration file.</p>
+<p>The application encountered an error whilst attempting to load a configuration file.</p>
 
 <p>Please contact WFP support at <a href="mailto:NWS.BuildingBlocks@wfp.org">NWS.BuildingBlocks@wfp.org</a></p>
 """
 
 error_in_salt="""
-<p>The application encountered an error while attempting to load your individual salt file.</p>
+<p>The application encountered an error whilst attempting to load your individual salt file.</p>
 
 <p>Please contact WFP support at <a href="mailto:NWS.BuildingBlocks@wfp.org">NWS.BuildingBlocks@wfp.org</a></p>
 """
@@ -57,8 +61,9 @@ columns = [
     { name = "Father Last Name", alias = "father_last_name" },
     { name = "Mother First Name", alias = "mother_first_name" },
     { name = "Year of Birth", alias = "dob_year" },
-    { name = "Document Type", alias = "document_type" },
-    { name = "Document ID", alias = "document_id" },
+    # By specifying the default when the column is missing the default value will be added
+    { name = "Document Type", alias = "document_type", default="" },
+    { name = "Document ID", alias = "document_id", default="" },
     { name = "Organization", alias = "organization" },
     { name = "Category", alias = "category" },
     { name = "Currency", alias = "currency" },
@@ -111,7 +116,7 @@ mother_first_name = [
 dob_year = [
     # default error message for these validators is "is not less then ..." / "is not greater then ..."
     { op = "min_value", value = 1901 },
-    { op = "max_value", value = 2024 },
+    { op = "max_value", value = 2024 }, # TODO: not more than current year
 ]
 
 document_type = [
@@ -120,20 +125,22 @@ document_type = [
     { op = "options", value = [ "", "NATIONAL_ID", "PERSONAL_ID", "LOCAL_COUNCIL_CARD" ] }
 ]
 
-document_id = [] # TBD
+document_id = [] # TODO: Guidance needed from cluster
 
 # assistance columns
 organization = [
     { op = "field_type", value = "str" },
-    { op = "min_field_length", value = 3 },
-    { op = "max_field_length", value = 8 },
+    { op = "min_field_length", value = 2 },
+    { op = "max_field_length", value = 10 },
     { op = "same_value_for_all_rows" },
 ]
 
 category = [
     { op = "field_type", value = "str" },
+    { op = "min_field_length", value = 2 },
+    { op = "max_field_length", value = 15 },
     { op = "same_value_for_all_rows" },
-    { op = "options", value = [ "CASH-MPA", "CASH-RENT" ] }
+    # { op = "options", value = [ "FOOD-RFA", "FOOD-SFB", "FOOD-BA" ] }
 ]
 
 currency = [
@@ -144,19 +151,17 @@ currency = [
 
 amount = [
     { op = "min_value", value = 1 },
-    { op = "max_value", value = 1000000 },
+    { op = "max_value", value = 20000 },
 ]
 
 start = [
     { op = "regex_match", value = '((?:19|20)\d{2}(?:0[1-9]|1[012])(?:0[1-9]|[12]\d|3[01]))', message="must be in the format of yyyyMMdd, e.g. 20240301" }, # yyyyMMdd
-    { op = "date_diff", value = "+3M"},
+    { op = "date_diff", value = "+2M"},
     { op = "date_diff", value = "-12M"}
 ]
 
 end = [
     { op = "regex_match", value = '((?:19|20)\d{2}(?:0[1-9]|1[012])(?:0[1-9]|[12]\d|3[01]))', message="must be in the format of yyyyMMdd, e.g. 20240301" }, # yyyyMMdd
-    { op = "date_diff", value = "+3M"},
-    { op = "date_diff", value = "-12M"},
     { op = "date_field_diff", target = "start", value="-12M", message="must be within a year of Start"},
 ]
 
@@ -195,9 +200,9 @@ validator_regex = "-----BEGIN PGP PUBLIC KEY BLOCK-----[A-Za-z0-9+/=\\s]+-----EN
 
 [algorithm.salt.value]
 # $APPDATA can be used to substitute the application data directory
-win32 = "$APPDATA/CommonIDTool/public_system.asc"
+win32 = "$APPDATA/BuildingBlocks/WFP SYR NWS stage (BE85CAE8) – Public.asc"
 # $HOME can be used to substitute the users home directory
-darwin = "$APPDATA/CommonIDTool/public_system.asc"
+darwin = "$APPDATA/BuildingBlocks/WFP SYR NWS stage (BE85CAE8) – Public.asc"
 
 
 [destination]
@@ -247,4 +252,4 @@ postfix = "-ERRORS-NWS-1.0.8-{{yyyy-MM-dd--HH-mm-ss}}"
 
 
 [signature]
-config_signature="6ad54aec6cc12277d74fa8d46bb7c146"
+config_signature="3b4b6ab8a68202ebcf3221d5c1a728b7"
