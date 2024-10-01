@@ -56,28 +56,11 @@ jobs:
 
       - script: |
           node tools/activate-algo.js algo-uscadi
-          npx electron-forge make --arch=x64 --platform=win32
-        displayName: "Build app-nws-win"
-
-      # Publish the yet unsigned zip as an artifact
-      - task: PublishBuildArtifacts@1
-        inputs:
-          pathtoPublish: $(System.DefaultWorkingDirectory)/out/make/zip/win32/x64
-          artifactName: app-nws-win-zip-unsigned
-        displayName: Publish app-nws-win-zip-unsigned
-        enabled: true
+          npx electron-forge package --arch=x64 --platform=win32
+        displayName: "Package app-nws-win"
 
       # Signed zip building
       # -------------------
-
-      # The 'unzip' unix command fails with error code "1", so use Devops extraction
-      - task: ExtractFiles@1
-        displayName: "Extract the archive"
-        inputs:
-          archiveFilePatterns: out/make/zip/win32/x64/*.zip
-          destinationFolder: ${System.DefaultWorkingDirectory}/out/zip-sign-nws
-          cleanDestinationFolder: true
-
 
       # Sign the executable(s) in the output folder
       - task: TrustedSigning@0
@@ -93,7 +76,7 @@ jobs:
           TimestampRfc3161: 'http://timestamp.acs.microsoft.com'
           TimestampDigest: SHA256
 
-          FilesFolder: $(System.DefaultWorkingDirectory)/out/zip-sign-nws
+          FilesFolder: $(System.DefaultWorkingDirectory)/out/commonid-tool-win32-x64
           FilesFolderRecurse: true
           FileDigest: SHA256
           FilesFolderFilter: exe
@@ -111,10 +94,10 @@ jobs:
       - task: ArchiveFiles@2
         displayName: "Re-pack the signed archive"
         inputs:
-          rootFolderOrFile: '$(System.DefaultWorkingDirectory)/out/zip-sign-nws' # string. Required. Root folder or file to archive. Default: $(Build.BinariesDirectory).
-          includeRootFolder: false # boolean. Prepend root folder name to archive paths. Default: true.
+          rootFolderOrFile: '$(System.DefaultWorkingDirectory)/out/commonid-tool-win32-x64' # string. Required. Root folder or file to archive. Default: $(Build.BinariesDirectory).
+          includeRootFolder: true # boolean. Prepend root folder name to archive paths. Default: true.
           archiveType: 'zip'
-          archiveFile: '$(System.DefaultWorkingDirectory)/out/zip-signed-nws/signed-commonid-tool-win32-nws.zip' # string. Required. Archive file to create. Default: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip.
+          archiveFile: '$(System.DefaultWorkingDirectory)/out/signed-commonid-tool-win32-x64-nws.zip' # string. Required. Archive file to create. Default: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip.
           #replaceExistingArchive: true # boolean. Replace existing archive. Default: true.
           verbose: true # boolean. Force verbose output. Default: false.
           quiet: false # boolean. Force quiet output. Default: false.
@@ -122,9 +105,25 @@ jobs:
       # Publish the signed zip as an artifact
       - task: PublishBuildArtifacts@1
         inputs:
-          pathtoPublish: $(System.DefaultWorkingDirectory)/out/zip-signed-nws/signed-commonid-tool-win32-nws.zip'
+          pathtoPublish: $(System.DefaultWorkingDirectory)/out/signed-commonid-tool-win32-x64-nws.zip'
           artifactName: app-nws-win-zip-signed
         displayName: Publish app-nws-win-zip-signed
+        enabled: true
+
+
+      # Installer and unsigned zip building
+      # -----------------------------------
+
+      - script: |
+          npx electron-forge make --arch=x64 --platform=win32
+        displayName: "Build app-nws-win"
+
+      # Publish the yet unsigned zip as an artifact
+      - task: PublishBuildArtifacts@1
+        inputs:
+          pathtoPublish: $(System.DefaultWorkingDirectory)/out/make/zip/win32/x64
+          artifactName: app-nws-win-zip-unsigned
+        displayName: Publish app-nws-win-zip-unsigned
         enabled: true
 
 
