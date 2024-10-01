@@ -102,17 +102,13 @@ jobs:
           verbose: true # boolean. Force verbose output. Default: false.
           quiet: false # boolean. Force quiet output. Default: false.
 
-      - script: ls -laR out/
-        displayName: Lets look at the output
-
       # Publish the signed zip as an artifact
       - task: PublishBuildArtifacts@1
         inputs:
-          pathtoPublish: $(System.DefaultWorkingDirectory)/out/zip-signed-nws'
+          pathtoPublish: $(System.DefaultWorkingDirectory)/out/zip-signed-nws
           artifactName: app-nws-win-zip-signed
         displayName: Publish app-nws-win-zip-signed
         enabled: true
-
 
       # Installer and unsigned zip building
       # -----------------------------------
