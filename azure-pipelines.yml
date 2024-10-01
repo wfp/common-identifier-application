@@ -50,6 +50,33 @@ jobs:
           node tools/activate-algo.js algo-uscadi
           npx electron-forge make --arch=x64 --platform=win32
         displayName: "Build app-nws-win"
+      
+      - task: TrustedSigning@0
+        displayName: "Code sign the application"
+        inputs:
+          AzureTenantID: $(TENANT_ID)
+          AzureClientID: $(CLIENT_ID)
+          AzureClientSecret: $(CLIENT_SECRET)
+          Endpoint: $(ENDPOINT)
+          CodeSigningAccountName: $(CODE_SIGNING_ACCOUNT_NAME)
+          CertificateProfileName: $(CERTIFICATE_PROFILE_NAME)
+          
+          TimestampRfc3161: 'http://timestamp.acs.microsoft.com'
+          TimestampDigest: SHA256
+          
+          FilesFolder: $(System.DefaultWorkingDirectory)/out/make/squirrel.windows/x64
+          FilesFolderRecurse: true
+          FileDigest: SHA256
+          FilesFolderFilter: exe
+
+          ExcludeAzureCliCredential: true
+          ExcludeAzurePowerShellCredential: true
+          ExcludeInteractiveBrowserCredential: true
+          ExcludeManagedIdentityCredential: true
+          ExcludeSharedTokenCacheCredential: true
+          ExcludeVisualStudioCodeCredential: true
+          ExcludeVisualStudioCredential: true
+          ExcludeEnvironmentCredential: false
 
       # Publishing should either be to Azure Blob storage (to be set up) or via Releases
       - task: PublishBuildArtifacts@1
@@ -65,6 +92,33 @@ jobs:
           node tools/activate-algo.js algo-gos
           npx electron-forge make --arch=x64 --platform=win32
         displayName: "Build app-gos-win"
+      
+      - task: TrustedSigning@0
+        displayName: "Code sign the application"
+        inputs:
+          AzureTenantID: $(TENANT_ID)
+          AzureClientID: $(CLIENT_ID)
+          AzureClientSecret: $(CLIENT_SECRET)
+          Endpoint: $(ENDPOINT)
+          CodeSigningAccountName: $(CODE_SIGNING_ACCOUNT_NAME)
+          CertificateProfileName: $(CERTIFICATE_PROFILE_NAME)
+          
+          TimestampRfc3161: 'http://timestamp.acs.microsoft.com'
+          TimestampDigest: SHA256
+          
+          FilesFolder: $(System.DefaultWorkingDirectory)/out/make/squirrel.windows/x64
+          FilesFolderRecurse: true
+          FileDigest: SHA256
+          FilesFolderFilter: exe
+  
+          ExcludeAzureCliCredential: true
+          ExcludeAzurePowerShellCredential: true
+          ExcludeInteractiveBrowserCredential: true
+          ExcludeManagedIdentityCredential: true
+          ExcludeSharedTokenCacheCredential: true
+          ExcludeVisualStudioCodeCredential: true
+          ExcludeVisualStudioCredential: true
+          ExcludeEnvironmentCredential: false
 
       # Publishing should either be to Azure Blob storage (to be set up) or via Releases
       - task: PublishBuildArtifacts@1
