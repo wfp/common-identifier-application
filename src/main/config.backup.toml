@@ -200,9 +200,9 @@ validator_regex = "-----BEGIN PGP PUBLIC KEY BLOCK-----[A-Za-z0-9+/=\\s]+-----EN
 
 [algorithm.salt.value]
 # $APPDATA can be used to substitute the application data directory
-win32 = "$APPDATA/BuildingBlocks/public_system.asc" # TODO: filename TBD
+win32 = "$APPDATA/BuildingBlocks/WFP SYR NWS stage (BE85CAE8) – Public.asc"
 # $HOME can be used to substitute the users home directory
-darwin = "$APPDATA/BuildingBlocks/public_system.asc" # TODO: filename TBD
+darwin = "$APPDATA/BuildingBlocks/WFP SYR NWS stage (BE85CAE8) – Public.asc"
 
 
 [destination]
@@ -252,4 +252,4 @@ postfix = "-ERRORS-NWS-1.0.8-{{yyyy-MM-dd--HH-mm-ss}}"
 
 
 [signature]
-config_signature="18362f0025290d6c48c7f3c44461a6a3"
+config_signature="3b4b6ab8a68202ebcf3221d5c1a728b7"
