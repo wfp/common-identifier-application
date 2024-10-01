@@ -74,8 +74,8 @@ jobs:
       - task: ExtractFiles@1
         displayName: "Extract the archive"
         inputs:
-          archiveFilePatterns: '${System.DefaultWorkingDirectory}/out/make/zip/win32/x64/*.zip'
-          destinationFolder: '${System.DefaultWorkingDirectory}/out/zip-sign-nws'
+          archiveFilePatterns: out/make/zip/win32/x64/*.zip
+          destinationFolder: ${System.DefaultWorkingDirectory}/out/zip-sign-nws
           cleanDestinationFolder: true
 
 
