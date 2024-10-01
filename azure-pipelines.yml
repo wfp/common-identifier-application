@@ -34,8 +34,9 @@ jobs:
       # As the build directory at this point (after the 'make' run) is contaminated with Squirell stuff
       # we unzip -> sign -> re-zip the output of the zip builder
       - script: |
-          mkdir -p out\zip-sign-nws
-          mkdir -p out\zip-signed-nws
+          mkdir out
+          mkdir out\zip-sign-nws
+          mkdir out\zip-signed-nws
         displayName: "Create directories for unzipping and re-packing"
 
       # Frontend
