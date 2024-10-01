@@ -18,6 +18,11 @@ const preProcessFileOpenDialog = require('./ipc-handlers/preProcessFileOpenDialo
 const removeUserConfig = require('./ipc-handlers/removeUserConfig');
 
 
+// run this as early in the main process as possible
+if (require('electron-squirrel-startup')) app.quit();
+
+
+
 function createMainWindow(configStore) {
 
     // figure out the existing window configuration
