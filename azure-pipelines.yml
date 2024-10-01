@@ -66,8 +66,16 @@ jobs:
       # we unzip -> sign -> re-zip the output of the zip builder
       - script: |
           mkdir out/zip-sign-nws
-          unzip out/make/zip/win32/x64/*.zip -d out/zip-sign-nws
-        displayName: "Unpack zip to prepare for signing"
+          mkdir out/zip-signed-nws
+        displayName: "Create directories for unzipping and re-packing"
+
+      # The 'unzip' unix command fails with error code "1", so use Devops extraction
+      - task: ExtractFiles@1
+        displayName: "Extract the archive"
+        inputs:
+          archiveFilePatterns: '${System.DefaultWorkingDirectory}/out/make/zip/win32/x64/*.zip'
+          destinationFolder: '${System.DefaultWorkingDirectory}/out/zip-sign-nws'
+          cleanDestinationFolder: true
 
 
       # Sign the executable(s) in the output folder
@@ -98,15 +106,22 @@ jobs:
           ExcludeVisualStudioCredential: true
           ExcludeEnvironmentCredential: false
 
-      - script: |
-          mkdir out/zip-signed-nws
-          (cd out/zip-sign-nws && ls -1 ../make/zip/win32/x64/*.zip | xargs basename | xargs -I % zip -r ../zip-signed-nws/signed-% .)
-        displayName: "Repack the zip after signing"
+
+      - task: ArchiveFiles@2
+        displayName: "Re-pack the signed archive"
+        inputs:
+          rootFolderOrFile: '$(System.DefaultWorkingDirectory)/out/zip-sign-nws' # string. Required. Root folder or file to archive. Default: $(Build.BinariesDirectory).
+          includeRootFolder: false # boolean. Prepend root folder name to archive paths. Default: true.
+          archiveType: 'zip'
+          archiveFile: '$(System.DefaultWorkingDirectory)/out/zip-signed-nws/signed-commonid-tool-win32-nws.zip' # string. Required. Archive file to create. Default: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip.
+          #replaceExistingArchive: true # boolean. Replace existing archive. Default: true.
+          verbose: true # boolean. Force verbose output. Default: false.
+          quiet: false # boolean. Force quiet output. Default: false.
 
       # Publish the signed zip as an artifact
       - task: PublishBuildArtifacts@1
         inputs:
-          pathtoPublish: $(System.DefaultWorkingDirectory)/out/zip-signed-nws
+          pathtoPublish: $(System.DefaultWorkingDirectory)/out/zip-signed-nws/signed-commonid-tool-win32-nws.zip'
           artifactName: app-nws-win-zip-signed
         displayName: Publish app-nws-win-zip-signed
         enabled: true
