@@ -59,6 +59,61 @@ jobs:
         displayName: Publish app-nws-win-zip-unsigned
         enabled: true
 
+      # Signed zip building
+      # -------------------
+
+      # As the build directory at this point (after the 'make' run) is contaminated with Squirell stuff
+      # we unzip -> sign -> re-zip the output of the zip builder
+      - script: |
+          mkdir out/zip-sign-nws
+          unzip out/make/zip/win32/x64/*.zip -d out/zip-sign-nws
+        displayName: "Unpack zip to prepare for signing"
+
+
+      # Sign the executable(s) in the output folder
+      - task: TrustedSigning@0
+        displayName: "Code sign the application"
+        inputs:
+          AzureTenantID: $(TENANT_ID)
+          AzureClientID: $(CLIENT_ID)
+          AzureClientSecret: $(CLIENT_SECRET)
+          Endpoint: $(ENDPOINT)
+          CodeSigningAccountName: $(CODE_SIGNING_ACCOUNT_NAME)
+          CertificateProfileName: $(CERTIFICATE_PROFILE_NAME)
+
+          TimestampRfc3161: 'http://timestamp.acs.microsoft.com'
+          TimestampDigest: SHA256
+
+          FilesFolder: $(System.DefaultWorkingDirectory)/out/zip-sign-nws
+          FilesFolderRecurse: true
+          FileDigest: SHA256
+          FilesFolderFilter: exe
+
+          ExcludeAzureCliCredential: true
+          ExcludeAzurePowerShellCredential: true
+          ExcludeInteractiveBrowserCredential: true
+          ExcludeManagedIdentityCredential: true
+          ExcludeSharedTokenCacheCredential: true
+          ExcludeVisualStudioCodeCredential: true
+          ExcludeVisualStudioCredential: true
+          ExcludeEnvironmentCredential: false
+
+      - script: |
+          mkdir out/zip-signed-nws
+          (cd out/zip-sign-nws && ls -1 ../make/zip/win32/x64/*.zip | xargs basename | xargs -I % zip -r ../zip-signed-nws/signed-% .)
+        displayName: "Repack the zip after signing"
+
+      # Publish the signed zip as an artifact
+      - task: PublishBuildArtifacts@1
+        inputs:
+          pathtoPublish: $(System.DefaultWorkingDirectory)/out/zip-signed-nws
+          artifactName: app-nws-win-zip-signed
+        displayName: Publish app-nws-win-zip-signed
+        enabled: true
+
+
+
+      # Sign the installer
       - task: TrustedSigning@0
         displayName: "Code sign the application"
         inputs:
