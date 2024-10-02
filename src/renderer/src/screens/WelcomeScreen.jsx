@@ -61,10 +61,10 @@ function WelcomeScreen({ config }) {
 
             <div className="buttonRow buttonRow2">
                 <div className="quitButton">
-                    <button className="bigButton" onClick={quit}>Quit the application</button>
+                    <button className="bigButton" onClick={quit}>Disagree and quit</button>
                 </div>
                 <div className="acceptButton">
-                    <button className="bigButton" disabled={!reachedBottom} onClick={acceptTermsAndConditions}>Agree to terms of use (WIP)</button>
+                    <button className="bigButton" disabled={!reachedBottom} onClick={acceptTermsAndConditions}>Agree to terms of use</button>
                 </div>
             </div>
         </div>
