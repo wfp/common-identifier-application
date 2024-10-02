@@ -26,7 +26,7 @@ pool:
 
 jobs:
   - job: buildApplication
-    displayName: Build application for ${region}
+    displayName: Build Application
     strategy:
       matrix:
 
@@ -66,7 +66,7 @@ jobs:
 
       # Package for signing
       - script: |
-          node tools/activate-algo.js ${algo}
+          node tools/activate-algo.js $(algo)
           npx electron-forge package --arch=x64 --platform=win32
         displayName: "Build package for signing"
 
@@ -104,7 +104,7 @@ jobs:
 
       # Attempt to build the "Winstaller"
       - script: |
-          node build-windows-installer.js ${region}
+          node build-windows-installer.js $(region)
         displayName: "Build Installer from signed output"
 
       # Sign the installer
@@ -139,8 +139,8 @@ jobs:
       - task: PublishBuildArtifacts@1
         inputs:
           pathtoPublish: $(System.DefaultWorkingDirectory)/out/installer-win32-x64
-          artifactName: app-${region}-win-installer-signed
-        displayName: Publish app-${region}-win-installer-signed
+          artifactName: app-$(region)-win-installer-signed
+        displayName: Publish app-$(region)-win-installer-signed
         enabled: true
 
       # Signed zip
@@ -153,16 +153,16 @@ jobs:
           rootFolderOrFile: '$(System.DefaultWorkingDirectory)/out/commonid-tool-win32-x64'
           includeRootFolder: true
           archiveType: 'zip'
-          archiveFile: '$(System.DefaultWorkingDirectory)/out/signed-commonid-tool-win32-x64-${region}.zip'
+          archiveFile: '$(System.DefaultWorkingDirectory)/out/signed-commonid-tool-win32-x64-$(region).zip'
           verbose: true
           quiet: false
 
       # Publish the signed zip as an artifact
       - task: PublishBuildArtifacts@1
         inputs:
-          pathtoPublish: $(System.DefaultWorkingDirectory)/out/signed-commonid-tool-win32-x64-${region}.zip
-          artifactName: app-${region}-win-zip-signed
-        displayName: Publish app-${region}-win-zip-signed
+          pathtoPublish: $(System.DefaultWorkingDirectory)/out/signed-commonid-tool-win32-x64-$(region).zip
+          artifactName: app-$(region)-win-zip-signed
+        displayName: Publish app-$(region)-win-zip-signed
         enabled: true
 
       # Installer and unsigned zip building
