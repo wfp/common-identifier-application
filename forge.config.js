@@ -31,6 +31,7 @@ module.exports = {
     {
       name: '@electron-forge/maker-squirrel',
       config: {
+        loadingGif: "./assets/installing_animation.gif",
         // CODE SIGNING THINGS GO HERE
         // ---------------------------
 
