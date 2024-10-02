@@ -18,19 +18,6 @@ resources:
 trigger: none
 # - main
 
-strategy:
-  matrix:
-
-    'NWS Win32 x64':
-      # The name of the region (will be in the app title and the setup executable)
-      region: "nws"
-      # The algorithm to use (the name of the algorithm directory in src/main)
-      algo: "algo-uscadi"
-
-    'GOS Win32 x64':
-      region: "gos"
-      algo: "algo-gos"
-
 variables:
   - group: AZURE_VARS
 
@@ -40,6 +27,19 @@ pool:
 jobs:
   - job: buildApplication
     displayName: Build application for ${region}
+    strategy:
+      matrix:
+
+        'NWS Win32 x64':
+          # The name of the region (will be in the app title and the setup executable)
+          region: "nws"
+          # The algorithm to use (the name of the algorithm directory in src/main)
+          algo: "algo-uscadi"
+
+        'GOS Win32 x64':
+          region: "gos"
+          algo: "algo-gos"
+
     steps:
       - checkout: self
         submodules: true
