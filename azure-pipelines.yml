@@ -48,8 +48,8 @@ jobs:
       # =========
 
 
-      # Signed ZIP
-      # ----------
+      # Signed package
+      # --------------
 
       # Package for signed zip
       - script: |
@@ -86,6 +86,53 @@ jobs:
           ExcludeEnvironmentCredential: false
 
 
+      # Winstaller
+      # ----------
+
+      # Attempt to build the "Winstaller"
+      - script: |
+          node build-windows-installer.js
+        displayName: "Build Installer from signed output"
+
+      # Sign the installer
+      - task: TrustedSigning@0
+        displayName: "Code sign the application"
+        inputs:
+          AzureTenantID: $(TENANT_ID)
+          AzureClientID: $(CLIENT_ID)
+          AzureClientSecret: $(CLIENT_SECRET)
+          Endpoint: $(ENDPOINT)
+          CodeSigningAccountName: $(CODE_SIGNING_ACCOUNT_NAME)
+          CertificateProfileName: $(CERTIFICATE_PROFILE_NAME)
+
+          TimestampRfc3161: 'http://timestamp.acs.microsoft.com'
+          TimestampDigest: SHA256
+
+          FilesFolder: $(System.DefaultWorkingDirectory)/out/installer-win32-x64
+          FilesFolderRecurse: true
+          FileDigest: SHA256
+          FilesFolderFilter: exe
+
+          ExcludeAzureCliCredential: true
+          ExcludeAzurePowerShellCredential: true
+          ExcludeInteractiveBrowserCredential: true
+          ExcludeManagedIdentityCredential: true
+          ExcludeSharedTokenCacheCredential: true
+          ExcludeVisualStudioCodeCredential: true
+          ExcludeVisualStudioCredential: true
+          ExcludeEnvironmentCredential: false
+
+      # Publish the signed zip as an artifact
+      - task: PublishBuildArtifacts@1
+        inputs:
+          pathtoPublish: $(System.DefaultWorkingDirectory)/out/installer-win32-x64
+          artifactName: app-nws-win-installer-signed
+        displayName: Publish app-nws-win-installer-signed
+        enabled: true
+
+      # Signed zip
+      # ----------
+
       # package the signed zip
       - task: ArchiveFiles@2
         displayName: "Pack the signed ZIP"
@@ -108,56 +155,54 @@ jobs:
       # Installer and unsigned zip building
       # -----------------------------------
 
-      - script: |
-          npx electron-forge make --arch=x64 --platform=win32
-        displayName: "Build app-nws-win"
+      # - script: |
+      #     npx electron-forge make --arch=x64 --platform=win32
+      #   displayName: "Build app-nws-win"
 
-      # Publish the unsigned zip as an artifact
-      - task: PublishBuildArtifacts@1
-        inputs:
-          pathtoPublish: $(System.DefaultWorkingDirectory)/out/make/zip/win32/x64
-          artifactName: app-nws-win-zip-unsigned
-        displayName: Publish app-nws-win-zip-unsigned
-        enabled: true
-
-
-      # Sign the installer
-      - task: TrustedSigning@0
-        displayName: "Code sign the application"
-        inputs:
-          AzureTenantID: $(TENANT_ID)
-          AzureClientID: $(CLIENT_ID)
-          AzureClientSecret: $(CLIENT_SECRET)
-          Endpoint: $(ENDPOINT)
-          CodeSigningAccountName: $(CODE_SIGNING_ACCOUNT_NAME)
-          CertificateProfileName: $(CERTIFICATE_PROFILE_NAME)
-
-          TimestampRfc3161: 'http://timestamp.acs.microsoft.com'
-          TimestampDigest: SHA256
-
-          FilesFolder: $(System.DefaultWorkingDirectory)/out/make/squirrel.windows/x64
-          FilesFolderRecurse: true
-          FileDigest: SHA256
-          FilesFolderFilter: exe
-
-          ExcludeAzureCliCredential: true
-          ExcludeAzurePowerShellCredential: true
-          ExcludeInteractiveBrowserCredential: true
-          ExcludeManagedIdentityCredential: true
-          ExcludeSharedTokenCacheCredential: true
-          ExcludeVisualStudioCodeCredential: true
-          ExcludeVisualStudioCredential: true
-          ExcludeEnvironmentCredential: false
-
-      # Publishing should either be to Azure Blob storage (to be set up) or via Releases
-      - task: PublishBuildArtifacts@1
-        inputs:
-          pathtoPublish: $(System.DefaultWorkingDirectory)/out/make/squirrel.windows/x64
-          artifactName: app-nws-win
-        displayName: Publish app-nws-win
-        enabled: true
+      # # Publish the unsigned zip as an artifact
+      # - task: PublishBuildArtifacts@1
+      #   inputs:
+      #     pathtoPublish: $(System.DefaultWorkingDirectory)/out/make/zip/win32/x64
+      #     artifactName: app-nws-win-zip-unsigned
+      #   displayName: Publish app-nws-win-zip-unsigned
+      #   enabled: true
 
 
+      # # Sign the installer
+      # - task: TrustedSigning@0
+      #   displayName: "Code sign the application"
+      #   inputs:
+      #     AzureTenantID: $(TENANT_ID)
+      #     AzureClientID: $(CLIENT_ID)
+      #     AzureClientSecret: $(CLIENT_SECRET)
+      #     Endpoint: $(ENDPOINT)
+      #     CodeSigningAccountName: $(CODE_SIGNING_ACCOUNT_NAME)
+      #     CertificateProfileName: $(CERTIFICATE_PROFILE_NAME)
+
+      #     TimestampRfc3161: 'http://timestamp.acs.microsoft.com'
+      #     TimestampDigest: SHA256
+
+      #     FilesFolder: $(System.DefaultWorkingDirectory)/out/make/squirrel.windows/x64
+      #     FilesFolderRecurse: true
+      #     FileDigest: SHA256
+      #     FilesFolderFilter: exe
+
+      #     ExcludeAzureCliCredential: true
+      #     ExcludeAzurePowerShellCredential: true
+      #     ExcludeInteractiveBrowserCredential: true
+      #     ExcludeManagedIdentityCredential: true
+      #     ExcludeSharedTokenCacheCredential: true
+      #     ExcludeVisualStudioCodeCredential: true
+      #     ExcludeVisualStudioCredential: true
+      #     ExcludeEnvironmentCredential: false
+
+      # # Publishing should either be to Azure Blob storage (to be set up) or via Releases
+      # - task: PublishBuildArtifacts@1
+      #   inputs:
+      #     pathtoPublish: $(System.DefaultWorkingDirectory)/out/make/squirrel.windows/x64
+      #     artifactName: app-nws-win
+      #   displayName: Publish app-nws-win
+      #   enabled: true
 
 
 
@@ -165,115 +210,117 @@ jobs:
 
 
 
-      # GOS - WIN
-      # =========
 
 
-      # Package for signed zip
-      - script: |
-          node tools/activate-algo.js algo-gos
-          npx electron-forge package --arch=x64 --platform=win32
-        displayName: "Package app-gos-win"
-
-      # Sign the executable(s) in the output folder
-      - task: TrustedSigning@0
-        displayName: "Sign the executable in the ZIP"
-        inputs:
-          AzureTenantID: $(TENANT_ID)
-          AzureClientID: $(CLIENT_ID)
-          AzureClientSecret: $(CLIENT_SECRET)
-          Endpoint: $(ENDPOINT)
-          CodeSigningAccountName: $(CODE_SIGNING_ACCOUNT_NAME)
-          CertificateProfileName: $(CERTIFICATE_PROFILE_NAME)
-
-          TimestampRfc3161: 'http://timestamp.acs.microsoft.com'
-          TimestampDigest: SHA256
-
-          FilesFolder: $(System.DefaultWorkingDirectory)/out/commonid-tool-win32-x64
-          FilesFolderRecurse: true
-          FileDigest: SHA256
-          FilesFolderFilter: exe
-
-          ExcludeAzureCliCredential: true
-          ExcludeAzurePowerShellCredential: true
-          ExcludeInteractiveBrowserCredential: true
-          ExcludeManagedIdentityCredential: true
-          ExcludeSharedTokenCacheCredential: true
-          ExcludeVisualStudioCodeCredential: true
-          ExcludeVisualStudioCredential: true
-          ExcludeEnvironmentCredential: false
+      # # GOS - WIN
+      # # =========
 
 
-      # package the signed zip
-      - task: ArchiveFiles@2
-        displayName: "Pack the signed ZIP"
-        inputs:
-          rootFolderOrFile: '$(System.DefaultWorkingDirectory)/out/commonid-tool-win32-x64'
-          includeRootFolder: true
-          archiveType: 'zip'
-          archiveFile: '$(System.DefaultWorkingDirectory)/out/signed-commonid-tool-win32-x64-gos.zip'
-          verbose: true
-          quiet: false
+      # # Package for signed zip
+      # - script: |
+      #     node tools/activate-algo.js algo-gos
+      #     npx electron-forge package --arch=x64 --platform=win32
+      #   displayName: "Package app-gos-win"
 
-      # Publish the signed zip as an artifact
-      - task: PublishBuildArtifacts@1
-        inputs:
-          pathtoPublish: $(System.DefaultWorkingDirectory)/out/signed-commonid-tool-win32-x64-gos.zip
-          artifactName: app-gos-win-zip-signed
-        displayName: Publish app-gos-win-zip-signed
-        enabled: true
+      # # Sign the executable(s) in the output folder
+      # - task: TrustedSigning@0
+      #   displayName: "Sign the executable in the ZIP"
+      #   inputs:
+      #     AzureTenantID: $(TENANT_ID)
+      #     AzureClientID: $(CLIENT_ID)
+      #     AzureClientSecret: $(CLIENT_SECRET)
+      #     Endpoint: $(ENDPOINT)
+      #     CodeSigningAccountName: $(CODE_SIGNING_ACCOUNT_NAME)
+      #     CertificateProfileName: $(CERTIFICATE_PROFILE_NAME)
 
-      # Installer and unsigned zip building
-      # -----------------------------------
+      #     TimestampRfc3161: 'http://timestamp.acs.microsoft.com'
+      #     TimestampDigest: SHA256
 
-      - script: |
-          npx electron-forge make --arch=x64 --platform=win32
-        displayName: "Build app-gos-win"
+      #     FilesFolder: $(System.DefaultWorkingDirectory)/out/commonid-tool-win32-x64
+      #     FilesFolderRecurse: true
+      #     FileDigest: SHA256
+      #     FilesFolderFilter: exe
 
-      # Publish the unsigned zip as an artifact
-      - task: PublishBuildArtifacts@1
-        inputs:
-          pathtoPublish: $(System.DefaultWorkingDirectory)/out/make/zip/win32/x64
-          artifactName: app-gos-win-zip-unsigned
-        displayName: Publish app-gos-win-zip-unsigned
-        enabled: true
+      #     ExcludeAzureCliCredential: true
+      #     ExcludeAzurePowerShellCredential: true
+      #     ExcludeInteractiveBrowserCredential: true
+      #     ExcludeManagedIdentityCredential: true
+      #     ExcludeSharedTokenCacheCredential: true
+      #     ExcludeVisualStudioCodeCredential: true
+      #     ExcludeVisualStudioCredential: true
+      #     ExcludeEnvironmentCredential: false
 
 
-      # Sign the installer
-      - task: TrustedSigning@0
-        displayName: "Code sign the application"
-        inputs:
-          AzureTenantID: $(TENANT_ID)
-          AzureClientID: $(CLIENT_ID)
-          AzureClientSecret: $(CLIENT_SECRET)
-          Endpoint: $(ENDPOINT)
-          CodeSigningAccountName: $(CODE_SIGNING_ACCOUNT_NAME)
-          CertificateProfileName: $(CERTIFICATE_PROFILE_NAME)
+      # # package the signed zip
+      # - task: ArchiveFiles@2
+      #   displayName: "Pack the signed ZIP"
+      #   inputs:
+      #     rootFolderOrFile: '$(System.DefaultWorkingDirectory)/out/commonid-tool-win32-x64'
+      #     includeRootFolder: true
+      #     archiveType: 'zip'
+      #     archiveFile: '$(System.DefaultWorkingDirectory)/out/signed-commonid-tool-win32-x64-gos.zip'
+      #     verbose: true
+      #     quiet: false
 
-          TimestampRfc3161: 'http://timestamp.acs.microsoft.com'
-          TimestampDigest: SHA256
+      # # Publish the signed zip as an artifact
+      # - task: PublishBuildArtifacts@1
+      #   inputs:
+      #     pathtoPublish: $(System.DefaultWorkingDirectory)/out/signed-commonid-tool-win32-x64-gos.zip
+      #     artifactName: app-gos-win-zip-signed
+      #   displayName: Publish app-gos-win-zip-signed
+      #   enabled: true
 
-          FilesFolder: $(System.DefaultWorkingDirectory)/out/make/squirrel.windows/x64
-          FilesFolderRecurse: true
-          FileDigest: SHA256
-          FilesFolderFilter: exe
+      # # Installer and unsigned zip building
+      # # -----------------------------------
 
-          ExcludeAzureCliCredential: true
-          ExcludeAzurePowerShellCredential: true
-          ExcludeInteractiveBrowserCredential: true
-          ExcludeManagedIdentityCredential: true
-          ExcludeSharedTokenCacheCredential: true
-          ExcludeVisualStudioCodeCredential: true
-          ExcludeVisualStudioCredential: true
-          ExcludeEnvironmentCredential: false
+      # - script: |
+      #     npx electron-forge make --arch=x64 --platform=win32
+      #   displayName: "Build app-gos-win"
 
-      # Publishing should either be to Azure Blob storage (to be set up) or via Releases
-      - task: PublishBuildArtifacts@1
-        inputs:
-          pathtoPublish: $(System.DefaultWorkingDirectory)/out/make/squirrel.windows/x64
-          artifactName: app-gos-win
-        displayName: Publish app-gos-win
-        enabled: true
+      # # Publish the unsigned zip as an artifact
+      # - task: PublishBuildArtifacts@1
+      #   inputs:
+      #     pathtoPublish: $(System.DefaultWorkingDirectory)/out/make/zip/win32/x64
+      #     artifactName: app-gos-win-zip-unsigned
+      #   displayName: Publish app-gos-win-zip-unsigned
+      #   enabled: true
+
+
+      # # Sign the installer
+      # - task: TrustedSigning@0
+      #   displayName: "Code sign the application"
+      #   inputs:
+      #     AzureTenantID: $(TENANT_ID)
+      #     AzureClientID: $(CLIENT_ID)
+      #     AzureClientSecret: $(CLIENT_SECRET)
+      #     Endpoint: $(ENDPOINT)
+      #     CodeSigningAccountName: $(CODE_SIGNING_ACCOUNT_NAME)
+      #     CertificateProfileName: $(CERTIFICATE_PROFILE_NAME)
+
+      #     TimestampRfc3161: 'http://timestamp.acs.microsoft.com'
+      #     TimestampDigest: SHA256
+
+      #     FilesFolder: $(System.DefaultWorkingDirectory)/out/make/squirrel.windows/x64
+      #     FilesFolderRecurse: true
+      #     FileDigest: SHA256
+      #     FilesFolderFilter: exe
+
+      #     ExcludeAzureCliCredential: true
+      #     ExcludeAzurePowerShellCredential: true
+      #     ExcludeInteractiveBrowserCredential: true
+      #     ExcludeManagedIdentityCredential: true
+      #     ExcludeSharedTokenCacheCredential: true
+      #     ExcludeVisualStudioCodeCredential: true
+      #     ExcludeVisualStudioCredential: true
+      #     ExcludeEnvironmentCredential: false
+
+      # # Publishing should either be to Azure Blob storage (to be set up) or via Releases
+      # - task: PublishBuildArtifacts@1
+      #   inputs:
+      #     pathtoPublish: $(System.DefaultWorkingDirectory)/out/make/squirrel.windows/x64
+      #     artifactName: app-gos-win
+      #   displayName: Publish app-gos-win
+      #   enabled: true
 
 
 
