@@ -23,23 +23,28 @@ async function runBuild() {
     const appVersion = PACKAGE_JSON.version;
 
     try {
+        // INSTALLER CONFIGURATION
+        // =======================
+
         const buildOptions = {
-            // appDirectory: '/tmp/build/my-app-64',
             appDirectory: INPUT_DIRECTORY,
             outputDirectory: OUTPUT_DIRECTORY,
+
             title: `${appName}-${region}`,
             noMsi: true,
             exe: `${appName}.exe`,
-            // authors: 'WFP',
+
+
+            // override the loading gif
+            loadingGif: path.join(__dirname, "assets","installing_animation.gif"),
 
             // Version and description should come from package.json in the build `app.asar`
 
-            // exe: 'commonid-tool.exe',
-            // version: "0.9.17",
-            // description: "Common Identifier generation tool for Assistance and Mapping documents.",
-
             setupExe: `${appName}-${region}-${appVersion} Setup.exe`
         };
+
+
+        // Build the installer
 
         console.log("Starting installer build with options: ", buildOptions);
 

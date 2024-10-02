@@ -28,20 +28,20 @@ module.exports = {
   },
   rebuildConfig: {},
   makers: [
-    {
-      name: '@electron-forge/maker-squirrel',
-      config: {
-        loadingGif: "./assets/installing_animation.gif",
-        // CODE SIGNING THINGS GO HERE
-        // ---------------------------
+    // {
+    //   name: '@electron-forge/maker-squirrel',
+    //   config: {
+    //     loadingGif: "./assets/installing_animation.gif",
+    //     // CODE SIGNING THINGS GO HERE
+    //     // ---------------------------
 
-        // certificateFile: './cert.pfx',
-        // certificatePassword: process.env.CERTIFICATE_PASSWORD
+    //     // certificateFile: './cert.pfx',
+    //     // certificatePassword: process.env.CERTIFICATE_PASSWORD
 
-        // END OF CODE SIGNING THINGS
-        // --------------------------
-      },
-    },
+    //     // END OF CODE SIGNING THINGS
+    //     // --------------------------
+    //   },
+    // },
     {
       name: '@electron-forge/maker-zip',
       // platforms: ['darwin'],
