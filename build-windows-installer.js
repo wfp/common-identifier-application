@@ -65,6 +65,9 @@ function buildSignToolCommand(basePath='') {
 }
 
 
+
+
+
 async function runBuild() {
 
 
@@ -86,7 +89,7 @@ async function runBuild() {
         // =======================
 
         const fullAppName = `${appName}-${region}`;
-
+        const windowsSignOpts = buildSignToolCommand(process.platform == 'darwin' ? '/tmp/' : 'C:\\'),
         const buildOptions = {
             appDirectory: INPUT_DIRECTORY,
             outputDirectory: OUTPUT_DIRECTORY,
@@ -104,8 +107,8 @@ async function runBuild() {
 
             setupExe: `${appName}-${region}-${appVersion} Setup.exe`,
 
-            windowsSign: buildSignToolCommand(process.platform == 'darwin' ? '/tmp/' : 'C:\\'),
-            // windowsSign: buildSignToolCommand('/tmp/'),
+            signWithParams: windowsSignOpts.signWithParams
+            // windowsSign: windowsSignOpts,
         };
 
 
