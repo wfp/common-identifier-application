@@ -44,6 +44,11 @@ jobs:
       - checkout: self
         submodules: true
 
+      - task: UseNode@1
+        inputs:
+          version: "20.x"
+        displayName: "Install Node.js"
+
       # Frontend
       # -------
 
