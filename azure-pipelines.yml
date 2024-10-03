@@ -124,6 +124,14 @@ jobs:
           AZURE_CLIENT_ID: $(CLIENT_ID)
           AZURE_CLIENT_SECRET: $(CLIENT_SECRET)
 
+      - script: |
+          npx electron-windows-sign out/commonid-tool-win32-x64 --sign-tool-path="C:\Users\VssAdministrator\AppData\Local\TrustedSigning\Microsoft.Windows.SDK.BuildTools\Microsoft.Windows.SDK.BuildTools.10.0.22621.3233\bin\10.0.22621.0\x64\signtool.exe"  --sign-with-params='/v /debug /fd SHA256 /tr http://timestamp.acs.microsoft.com /td SHA256 /dlib "C:\Users\VssAdministrator\AppData\Local\TrustedSigning\Microsoft.Trusted.Signing.Client\Microsoft.Trusted.Signing.Client.1.0.53\bin\x64\Azure.CodeSigning.Dlib.dll" /dmdf "C:\Users\VssAdministrator\AppData\Local\TrustedSigning\Microsoft.Trusted.Signing.Client\Microsoft.Trusted.Signing.Client.1.0.53\bin\x64\metadata.json"'
+        displayName: electron-windows-sign execution test
+        env:
+          AZURE_TENANT_ID: $(TENANT_ID)
+          AZURE_CLIENT_ID: $(CLIENT_ID)
+          AZURE_CLIENT_SECRET: $(CLIENT_SECRET)
+
 
       # Winstaller
       # ----------
