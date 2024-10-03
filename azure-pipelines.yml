@@ -40,6 +40,10 @@ jobs:
           region: "gos"
           algo: "algo-gos"
 
+    variables:
+      AZURE_TENANT_ID: $(TENANT_ID)
+      AZURE_CLIENT_ID: $(CLIENT_ID)
+      AZURE_CLIENT_SECRET: $(CLIENT_SECRET)
     steps:
       - checkout: self
         submodules: true
@@ -55,6 +59,14 @@ jobs:
       - script: |
           (cd src/renderer && npm install && npm run build)
         displayName: 'Build the renderer'
+
+
+
+      - bash: |
+            echo '{ "Endpoint": "$(ENDPOINT)", "CodeSigningAccountName": "$(CODE_SIGNING_ACCOUNT_NAME)", "CertificateProfileName": "$(CERTIFICATE_PROFILE_NAME)" }' > signing_metadata.json
+
+            cat signing_metadata.json
+        displayName: "Prepare Trusted Signing metadata"
 
       # Application
       # -------
@@ -74,6 +86,7 @@ jobs:
           node tools/activate-algo.js $(algo)
           npx electron-forge package --arch=x64 --platform=win32
         displayName: "Build package for signing"
+
 
       # Sign the executable(s) in the output folder
       - task: TrustedSigning@0
