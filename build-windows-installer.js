@@ -101,7 +101,7 @@ async function runBuild() {
 
             setupExe: `${appName}-${region}-${appVersion} Setup.exe`,
 
-            signWithParams: buildSignToolCommand('/tmp/'),
+            signWithParams: buildSignToolCommand('C:\\'),
         };
 
 
