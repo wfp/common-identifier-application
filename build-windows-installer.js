@@ -15,7 +15,7 @@ function findFirstDirectoryMatchingPattern(baseDir, rxPattern) {
 
 
     if (dirs.length === 0) {
-        throw new Error("Unable to find any directory in", baseDir, "matching the pattern", rxPattern)
+        throw new Error(`Unable to find any directory in '${baseDir}' matching the pattern /${rxPattern}/`)
     }
 
     return dirs[0].name;
@@ -29,7 +29,7 @@ function buildSignToolCommand(basePath='') {
         const fullBasePath = `${basePath}${baseDir}`;
 
         const sdkDir = path.join( fullBasePath, findFirstDirectoryMatchingPattern(fullBasePath, /Microsoft\.Windows\.SDK\.BuildTools/));
-        const sdkBinDir = path.join( sdkDir, findFirstDirectoryMatchingPattern(path.join(sdkDir, 'bin'), /^[0-9\.]$/), 'x64' )
+        const sdkBinDir = path.join( sdkDir, findFirstDirectoryMatchingPattern(path.join(sdkDir, 'bin'), /^[0-9\.]{4,}$/), 'x64' )
 
         const signToolPath = path.join(sdkBinDir, 'signtool.exe');
         return signToolPath;
@@ -58,7 +58,10 @@ function buildSignToolCommand(basePath='') {
         `/dmdf "${path.join(binDir, 'metadata.json')}"`,
     ];
 
-    return commandLine.join('  ');
+    return {
+        signToolPath: getSigntoolPath(),
+        signWithParams: commandLine.join('  ')
+    };
 }
 
 
@@ -101,7 +104,8 @@ async function runBuild() {
 
             setupExe: `${appName}-${region}-${appVersion} Setup.exe`,
 
-            signWithParams: buildSignToolCommand('C:\\'),
+            windowsSign: buildSignToolCommand(process.platform == 'darwin' ? '/tmp/' : 'C:\\'),
+            // windowsSign: buildSignToolCommand('/tmp/'),
         };
 
 
