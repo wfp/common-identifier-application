@@ -90,7 +90,7 @@ async function runBuild() {
         // =======================
 
         const fullAppName = `${appName}-${region}`;
-        const windowsSignOpts = buildSignToolCommand(process.platform == 'darwin' ? '/tmp/' : 'C:\\'),
+        const windowsSignOpts = buildSignToolCommand(process.platform == 'darwin' ? '/tmp/' : 'C:\\');
         const buildOptions = {
             appDirectory: INPUT_DIRECTORY,
             outputDirectory: OUTPUT_DIRECTORY,
