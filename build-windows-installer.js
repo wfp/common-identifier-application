@@ -109,7 +109,7 @@ async function runBuild() {
 
             setupExe: `${appName}-${region}-${appVersion} Setup.exe`,
 
-            signWithParams: windowsSignOpts.signWithParams.join(' '),
+            // signWithParams: windowsSignOpts.signWithParams.join(' '),
             // windowsSign: windowsSignOpts,
         };
 
