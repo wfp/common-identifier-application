@@ -24,6 +24,7 @@
     "electron": "^31.3.0"
   },
   "dependencies": {
+    "create-desktop-shortcuts": "^1.11.0",
     "csv": "^6.3.9",
     "date-fns": "^3.6.0",
     "electron-squirrel-startup": "^1.0.1",
