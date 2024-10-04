@@ -117,8 +117,16 @@ jobs:
           ExcludeEnvironmentCredential: false
 
       - script: |
-          C:\Users\VssAdministrator\AppData\Local\TrustedSigning\Microsoft.Windows.SDK.BuildTools\Microsoft.Windows.SDK.BuildTools.10.0.22621.3233\bin\10.0.22621.0\x64\signtool.exe sign /v /debug /fd SHA256 /tr http://timestamp.acs.microsoft.com /td SHA256 /dlib "C:\Users\VssAdministrator\AppData\Local\TrustedSigning\Microsoft.Trusted.Signing.Client\Microsoft.Trusted.Signing.Client.1.0.53\bin\x64\Azure.CodeSigning.Dlib.dll" /dmdf "C:\Users\VssAdministrator\AppData\Local\TrustedSigning\Microsoft.Trusted.Signing.Client\Microsoft.Trusted.Signing.Client.1.0.53\bin\x64\metadata.json" "D:\a\1\s\out\commonid-tool-win32-x64\commonid-tool.exe"
+          C:\Users\VssAdministrator\AppData\Local\TrustedSigning\Microsoft.Windows.SDK.BuildTools\Microsoft.Windows.SDK.BuildTools.10.0.22621.3233\bin\10.0.22621.0\x64\signtool.exe sign /v /debug /fd SHA256 /tr http://timestamp.acs.microsoft.com /td SHA256 /dlib "C:\Users\VssAdministrator\AppData\Local\TrustedSigning\Microsoft.Trusted.Signing.Client\Microsoft.Trusted.Signing.Client.1.0.53\bin\x64\Azure.CodeSigning.Dlib.dll" /dmdf "C:\Users\VssAdministrator\AppData\Local\TrustedSigning\Microsoft.Trusted.Signing.Client\Microsoft.Trusted.Signing.Client.1.0.53\bin\x64\metadata.json" "out\commonid-tool-win32-x64\commonid-tool.exe"
         displayName: Signtool execution test
+        env:
+          AZURE_TENANT_ID: $(TENANT_ID)
+          AZURE_CLIENT_ID: $(CLIENT_ID)
+          AZURE_CLIENT_SECRET: $(CLIENT_SECRET)
+
+      - script: |
+          node_modules\electron-winstaller\vendor\signtool.exe sign /v /debug /fd SHA256 /tr http://timestamp.acs.microsoft.com /td SHA256 /dlib "C:\Users\VssAdministrator\AppData\Local\TrustedSigning\Microsoft.Trusted.Signing.Client\Microsoft.Trusted.Signing.Client.1.0.53\bin\x64\Azure.CodeSigning.Dlib.dll" /dmdf "C:\Users\VssAdministrator\AppData\Local\TrustedSigning\Microsoft.Trusted.Signing.Client\Microsoft.Trusted.Signing.Client.1.0.53\bin\x64\metadata.json" "out\commonid-tool-win32-x64\commonid-tool.exe"
+        displayName: electron-winstaller signtool execution test
         env:
           AZURE_TENANT_ID: $(TENANT_ID)
           AZURE_CLIENT_ID: $(CLIENT_ID)
