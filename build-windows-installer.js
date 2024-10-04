@@ -60,7 +60,8 @@ function buildSignToolCommand(basePath='') {
 
     return {
         signToolPath: getSigntoolPath(),
-        signWithParams: commandLine.join('  ')
+        signWithParams: commandLine,
+        debug: true,
     };
 }
 
@@ -100,6 +101,7 @@ async function runBuild() {
             exe: `${appName}.exe`,
 
 
+
             // override the loading gif
             loadingGif: path.join(__dirname, "assets","installing_animation.gif"),
 
@@ -107,7 +109,7 @@ async function runBuild() {
 
             setupExe: `${appName}-${region}-${appVersion} Setup.exe`,
 
-            signWithParams: windowsSignOpts.signWithParams
+            signWithParams: windowsSignOpts.signWithParams.join(' '),
             // windowsSign: windowsSignOpts,
         };
 
