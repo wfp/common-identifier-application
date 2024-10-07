@@ -1,6 +1,62 @@
 # WIP
 
 
+# Installer
+
+## Signing and building the installer
+
+Azure Trusted Signing and `electron-winstaller` do not play well together.
+
+Electron-Winstaller ships with (and always seem to use) an outdated version of
+`signtool.exe` which does not support Trusted Signing nor the `/debug` switch.
+This causes a number of issues when the Squirrel installer build wants to sign
+the executables to be packaged.
+
+We can avoid some of the issues by building the app, sigining all the executables and building the installer from the signed executables.
+
+Triggering an `electron-forge make` always re-packages the application files (and removes any signing), so the Azure pipeline first does an `electron-forge package` , signs the binaries and runs `build-windows-installer.js` to build the output installer.
+
+The main problem with this approach is that Squirrel adds two extra executables (`StubExecutable` which'll be renamed to the app executable name, and act as a launcher + `Updater.exe` which will handle updates), but also modifies them, so we cannot previously sign them, and will be added to the installer unsigned.
+
+
+## Installation and shortcuts
+
+The current implementation uses the code in `src/main/squirell-callbacks.js` to
+handle Squirrel Application Lifecycle events and create / update application
+(desktop) shortcuts.
+
+On install (or update) the `--squirrel-install` (or `--squirrel-updated`) command
+line switch is passed to the application, and are the desktop shortcuts are added.
+
+The `--squirrel-uninstall` switch is passed on uninstall, when we delete the desktop shortcut.
+
+If the code sigining of the application allows signing the `StubExecutable.exe`
+(launcher) and the `Updater.exe` executables as part of the Squirrel build process,
+the event handling block:
+
+```
+const handleSquirrelEvent = require('./squirell-callbacks');
+
+// INITIAL SQUIRELL EVENT HANDLING
+// -------------------------------
+
+
+
+// this should be placed at top of main.js to handle setup events quickly
+if (handleSquirrelEvent()) {
+    // squirrel event handled and app will exit in 1000ms, so don't do anything else
+    return;
+}
+```
+
+can be replaced with a simple call to `electron-squirell-startup` that uses the
+`Updater.exe` executable to create, remove and update the shortcuts.
+
+```
+
+if(require('electron-squirrel-startup')) return;
+```
+
 
 ## Some basic dev tasks
 
