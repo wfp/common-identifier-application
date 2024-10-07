@@ -15,6 +15,37 @@ function desktopPath(...subPaths) {
     return desktopDir;
 }
 
+
+// Attempts to create a desktop shortcut
+function createDesktopShortcut() {
+
+    if (process.platform !== 'win32') {
+        return;
+    }
+
+    const shortcutFullPath = desktopPath( `${SHORTCUT_FILE_NAME}.lnk`);
+    const exePath = process.execPath;
+    const appFolder = path.resolve(process.execPath, '..');
+
+
+    console.log("Attempting to create shortcut:", shortcutFullPath);
+
+    const success = shell.writeShortcutLink(
+        shortcutFullPath,
+        // create should update the shortcut if already present
+        'create',
+        {
+            target: exePath,
+            cwd: appFolder,
+            description: SHORTCUT_DESCRIPTION,
+        }
+    )
+
+    console.log("Shortcut creation success: ", success ? "YES" : "NO");
+
+    return success;
+}
+
 // Handles incoming Application Lifecycle events from Squirrel
 function handleSquirrelEvent() {
 
@@ -22,13 +53,6 @@ function handleSquirrelEvent() {
     if (process.argv.length === 1) {
       return false;
     }
-
-
-    const appFolder = path.resolve(process.execPath, '..');
-    const rootAtomFolder = path.resolve(appFolder, '..');
-    // const updateDotExe = path.resolve(path.join(rootAtomFolder, 'Update.exe'));
-    const exeName = path.basename(process.execPath);
-    const exePath = process.execPath;
 
 
     const shortcutFullPath = desktopPath( `${SHORTCUT_FILE_NAME}.lnk`);
@@ -40,16 +64,7 @@ function handleSquirrelEvent() {
       case '--squirrel-updated':
         console.log("App update event triggered -- updating shortcut")
 
-        shell.writeShortcutLink(
-            shortcutFullPath,
-            // create should update the shortcut if already present
-            'create',
-            {
-                target: exePath,
-                cwd: appFolder,
-                description: SHORTCUT_DESCRIPTION,
-            }
-        )
+        createDesktopShortcut();
         setTimeout(app.quit, 1000);
         return true;
 
@@ -81,4 +96,4 @@ function handleSquirrelEvent() {
 }
 
 
-module.exports = handleSquirrelEvent;
+module.exports = { handleSquirrelEvent, createDesktopShortcut };

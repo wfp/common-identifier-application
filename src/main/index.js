@@ -17,7 +17,7 @@ const processFile = require('./ipc-handlers/processFile');
 const preProcessFileOpenDialog = require('./ipc-handlers/preProcessFileOpenDialog');
 const removeUserConfig = require('./ipc-handlers/removeUserConfig');
 
-const handleSquirrelEvent = require('./squirell-callbacks');
+const { handleSquirrelEvent, createDesktopShortcut } = require('./squirell-callbacks');
 
 // INITIAL SQUIRELL EVENT HANDLING
 // -------------------------------
@@ -27,6 +27,11 @@ const handleSquirrelEvent = require('./squirell-callbacks');
 // this should be placed at top of main.js to handle setup events quickly
 if (handleSquirrelEvent()) {
     return;
+} else {
+
+    // Always attempt to create the shortcut to hopefully allow OneDrive
+    // Desktop shorcut creation on reinstall
+    createDesktopShortcut();
 }
 
 
