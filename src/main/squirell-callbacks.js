@@ -2,6 +2,7 @@ const os = require('os');
 const fs = require('fs');
 const path = require('path');
 const activeAlgorithm = require('./active_algorithm')
+const { app } = require('electron/main')
 const { shell } = require('electron')
 
 // The name of the shortcut as created on the Desktop
@@ -10,12 +11,11 @@ const SHORTCUT_FILE_NAME = `Building Blocks Common ID Tool ${activeAlgorithm.REG
 const SHORTCUT_DESCRIPTION = 'Common Identifier generation tool for Assistance and Mapping documents.'
 
 function desktopPath(...subPaths) {
-    const homeDir = os.homedir(); // See: https://www.npmjs.com/package/os
-    const desktopDir = path.join(homeDir, 'Desktop', ...subPaths);
+    const desktopDir = path.join(app.getPath('desktop'), ...subPaths);
     return desktopDir;
 }
 
-// Handles incoming Application Lifecycle events from Squirell
+// Handles incoming Application Lifecycle events from Squirrel
 function handleSquirrelEvent() {
 
     // no arg means this is not for us
