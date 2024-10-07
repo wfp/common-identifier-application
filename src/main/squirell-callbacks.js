@@ -50,6 +50,7 @@ function handleSquirrelEvent() {
                 description: SHORTCUT_DESCRIPTION,
             }
         )
+        setTimeout(app.quit, 1000);
         return true;
 
       case '--squirrel-uninstall':
@@ -57,9 +58,16 @@ function handleSquirrelEvent() {
         // Undo anything you did in the --squirrel-install and
         // --squirrel-updated handlers
 
-        fs.unlinkSync(shortcutFullPath);
+        try {
+            // Delete the shortcut file
+            fs.unlinkSync(shortcutFullPath);
+        } catch (err) {
+            // this delete operation should never fail (file presence or access problems)
+            console.log('Unable to delete shortcut -- shortcut not present', err);
+        }
 
 
+        setTimeout(app.quit, 1000);
         return true;
 
       case '--squirrel-obsolete':

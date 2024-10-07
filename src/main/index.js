@@ -26,7 +26,6 @@ const handleSquirrelEvent = require('./squirell-callbacks');
 
 // this should be placed at top of main.js to handle setup events quickly
 if (handleSquirrelEvent()) {
-    app.quit();
     return;
 }
 
