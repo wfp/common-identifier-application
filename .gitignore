@@ -1,4 +1,5 @@
 .neveradd
+.vite
 node_modules
 test_files
 src/renderer/dist

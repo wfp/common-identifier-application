@@ -2,12 +2,13 @@ const path = require('node:path');
 
 
 function resolveHtmlPath(htmlFileName) {
-    // if (process.env.NODE_ENV === 'development') {
-    //   const port = process.env.PORT || 1212;
-    //   const url = new URL(`http://localhost:${port}`);
-    //   url.pathname = htmlFileName;
-    //   return url.href;
-    // }
+    console.log(`ENV: ${process.env.NODE_ENV}`)
+    if (process.env.NODE_ENV === 'development') {
+      const port = process.env.PORT || 5173;
+      const url = new URL(`http://localhost:${port}`);
+      url.pathname = htmlFileName;
+      return url.href;
+    }
     return `file://${path.resolve(__dirname, '../renderer/', htmlFileName)}`;
 }
 
