@@ -60,6 +60,8 @@ function createWindow() {
     // and load the index.html of the app.
     mainWindow.loadURL(resolveHtmlPath('renderer.html'))
 
+    mainWindow.setIcon(`${path.resolve(__dirname, '../../assets/logo.ico')}`);
+
     // Open the DevTools.
     // mainWindow.webContents.openDevTools()
 
