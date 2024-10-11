@@ -1,18 +1,6 @@
 import { useAppStore } from '../store';
 import ErrorWrapper from '../components/ErrorWrapper';
 
-function ConfigSignature({config}) {
-    if (config && config.data && config.data.signature && config.data.signature.config_signature) {
-        return (<div className="configSignature">
-            Active config file signature:
-            <pre className="singatureCode">{config.data.signature.config_signature }</pre>
-        </div>);
-    }
-
-    return (<></>);
-}
-
-
 function Error({config, isRuntimeError, error}) {
     const backToMainScreen = useAppStore(store => store.backToMainScreen);
 
@@ -20,24 +8,19 @@ function Error({config, isRuntimeError, error}) {
     const errorMessageKey = "error_in_config";
 
 
-    return (<div className="Error appScreen progressIndicator">
+    return (<div className="error-screen">
         <div className="help">
-            <h2>ERROR</h2>
+            <h3 className="titleText">ERROR</h3>
             <ErrorWrapper config={config} error={error} isRuntimeError={isRuntimeError} messageKey={errorMessageKey} />
         </div>
 
-        <div className="buttonRow buttonRow1">
-            <div className="backToMain">
-                <button className="errorBackButton bigButton" onClick={backToMainScreen}>Back to the main screen</button>
-            </div>
+        <div className="cid-button-row">
+            <button className="cid-button cid-button-lg cid-button-alert" onClick={backToMainScreen}>Back to the main screen</button>
         </div>
 
         <div className="developerInformation">
             <h4>Technical details</h4>
-            <div className="errorMessage">
-                <code>{error}</code>
-            </div>
-            {/* <ConfigSignature config={config} /> */}
+            <code>{error}</code>
         </div>
 
     </div>)

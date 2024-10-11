@@ -1,11 +1,11 @@
 
 function LoadNewConfig() {
-    return (<div className="LoadNewConfig appScreen progressIndicator">
+    return (<div className="LoadNewConfig progressIndicator">
         <div className="loaderWrapper">
-            <span class="loader"></span>
+            <span className="loader"></span>
         </div>
         <div className="help">
-            Loading new configuration from file...
+            Loading new configuration file...
         </div>
     </div>)
 }

@@ -10,23 +10,19 @@ function InvalidConfig({config, error}) {
     // figure out if this is an error in the salt file
     const errorMessageKey = "error_in_config";
 
-    return (<div className="Error InvalidConfig appScreen">
+    return (<div className="error-screen InvalidConfig appScreen">
         <div className="help">
-            <h2>Configuration error</h2>
+            <h3 className="titleText">Configuration error</h3>
             <ErrorWrapper config={config} error={error} messageKey={errorMessageKey} />
         </div>
 
-        <div className="buttonRow buttonRow1">
-            <div className="updateConfig backToMain">
-                <button onClick={loadNewConfig} className="openConfigFile bigButton"><span class="icon">⚙</span> Update the configuration from a file</button>
-            </div>
+        <div className="cid-button-row">
+            <button className="cid-button cid-button-lg cid-button-alert" onClick={loadNewConfig}><span className="icon">⚙</span> Update the configuration from a file</button>
         </div>
 
         <div className="developerInformation">
             <h4>Technical details</h4>
-            <div className="errorMessage">
-                <code>{error}</code>
-            </div>
+            <code>{error}</code>
         </div>
 
     </div>)

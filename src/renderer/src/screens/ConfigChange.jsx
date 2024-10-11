@@ -28,19 +28,13 @@ export default function ConfigChange() {
     switch (handler) {
         case LOAD_NEW_CONFIG: {
             return (
-                <div className="ConfigChange appScreen loadNewConfig">
-                    <div className="helpText">
-                        <h4>Update configuration</h4>
-                        <p>Are you sure you want to load a new configuration file?</p>
-                    </div>
+                <div className="config-change appScreen loadNewConfig">
+                    <h3 className="titleText">Update configuration</h3>
 
-                    <div className="buttonRow buttonRow2">
-                        <div className="cancelButton">
-                            <button className="bigButton" onClick={backToMainScreen}>Cancel</button>
-                        </div>
-                        <div className="okButton">
-                            <button className="bigButton" onClick={loadNewConfig}>Load a new Configuration</button>
-                        </div>
+                    <p className="descriptionText">Are you sure you want to load a new configuration file?</p>
+                    <div className="cid-button-row cid-button-row-horiz">
+                        <button className="cid-button cid-button-lg cid-button-secondary" onClick={backToMainScreen}>Cancel</button>
+                        <button className="cid-button cid-button-lg cid-button-primary" onClick={loadNewConfig}>Yes, load a file</button>
                     </div>
 
                 </div>
@@ -49,19 +43,13 @@ export default function ConfigChange() {
 
         case REMOVE_USER_CONFIG: {
             return (
-                <div className="ConfigChange appScreen removeUserConfig">
-                    <div className="helpText">
-                        <h4>Use the default configuration</h4>
-                        <p>Are you sure you want to use the default configuration?</p>
-                    </div>
-
-                    <div className="buttonRow buttonRow2">
-                        <div className="cancelButton">
-                            <button className="bigButton" onClick={backToMainScreen}>Cancel</button>
-                        </div>
-                        <div className="okButton">
-                            <button className="bigButton" onClick={removeUserConfig}>Use the default configuration</button>
-                        </div>
+                <div className="config-change defaultConfig">
+                    <h3 className="titleText">Update configuration</h3>
+                    <p className="descriptionText">Are you sure you want to use the default configuration?</p>
+                    
+                    <div className="cid-button-row cid-button-row-horiz">
+                        <button className="cid-button cid-button-lg cid-button-secondary" onClick={backToMainScreen}>Cancel</button>
+                        <button className="cid-button cid-button-lg cid-button-primary" onClick={removeUserConfig}>Yes, use the default</button>
                     </div>
 
                 </div>
@@ -71,53 +59,18 @@ export default function ConfigChange() {
         // The default when no handlers are set
         default: {
             return (
-                <div className="ConfigChange appScreen">
-                    <div className="title">
-                        <h3>Update configuration</h3>
-                    </div>
+                <div className="config-change">
+                    <h3 className="titleText">Update configuration</h3>
 
-                    <div className="buttonRow buttonRow1">
-                        <div className="loadNewConfigButton">
-                            <button className="bigButton" onClick={setHandlerOnClick(LOAD_NEW_CONFIG)}>Load a new configuration file</button>
+                    <div className="cid-button-row cid-button-row-vert">
+                        <button className="cid-button cid-button-lg cid-button-primary" onClick={setHandlerOnClick(LOAD_NEW_CONFIG)}>Load a new configuration file</button>
+                        <div className="cid-button-with-helptext">
+                            <button className="cid-button cid-button-lg cid-button-secondary" onClick={setHandlerOnClick(REMOVE_USER_CONFIG)}>Use the default configuration</button>
+                            <p className="helptext">Revert to the default (built-in) configuration supplied with the application</p>
                         </div>
                     </div>
-
-                    <div className="buttonRow buttonRow1">
-                        <div className="useDefaultConfigButton">
-                            <button className="bigButton" onClick={setHandlerOnClick(REMOVE_USER_CONFIG)}>Use the default configuration</button>
-                        </div>
-                        <p>Return to the default (built-in) configuration as supplied with the original application.</p>
-                    </div>
-
                 </div>
             );
         }
     }
-
-
-
-
-    // return (
-    //     <div className="ConfigChange appScreen">
-    //         <div className="helpText">
-    //             Load a new configuration
-    //         </div>
-
-    //         <div className="buttonRow buttonRow1">
-    //             <div className="loadNewConfigButton">
-    //                 <button className="bigButton" onClick={loadNewConfig}>Load a new Configuration</button>
-    //             </div>
-    //         </div>
-
-    //         <div className="helpText">
-    //             Fall back to the default (built-in) configuration
-    //         </div>
-
-    //         <div className="buttonRow buttonRow1">
-    //             <div className="useDefaultConfigButton">
-    //                 <button className="bigButton" onClick={removeUserConfig}>Use the default configuration</button>
-    //             </div>
-    //         </div>
-    //     </div>
-    // )
 }

@@ -1,10 +1,10 @@
 function ProcessingInProgress({inputFilePath}) {
-    return (<div className="ProcessingInProgress appScreen progressIndicator">
+    return (<div className="ProcessingInProgress progressIndicator">
         <div className="loaderWrapper">
-            <span class="loader"></span>
+            <span className="loader"></span>
         </div>
         <div className="help">
-            Processing the file
+            Processing the file...
         </div>
     </div>)
 }

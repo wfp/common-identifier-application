@@ -1,5 +1,6 @@
 import { useAppStore } from "../store";
 import { useState, useRef } from 'react'
+import BottomButtons from "../components/BottomButtons";
 
 // Sets the maximum distance in pixels from the bottom of the Terms & Conditions
 // from which point we consider the TnC acceptable.
@@ -50,23 +51,21 @@ function WelcomeScreen({ config }) {
     }
 
     return (
-        <div className="WelcomeScreen appScreen">
-            <div className="termsAndConditions">
-                <h4>Terms and conditions</h4>
+        <div className="WelcomeScreen">
+            <h4 className="titleText">Terms and conditions</h4>
+
+            <div className="textContainer" onScroll={handleScrollOfTnc} ref={termsAndConditionsDivRef}>
+                <div className="textFromConfig" dangerouslySetInnerHTML={{ __html: termsAndConditionsHtml }}/>
             </div>
 
-            <div className="termsAndConditions termsAndConditionsText" onScroll={handleScrollOfTnc} ref={termsAndConditionsDivRef}>
-                <div className="fromConfig" dangerouslySetInnerHTML={{ __html: termsAndConditionsHtml }}/>
-            </div>
-
-            <div className="buttonRow buttonRow2">
-                <div className="quitButton">
-                    <button className="bigButton" onClick={quit}>Disagree and quit</button>
-                </div>
-                <div className="acceptButton">
-                    <button className="bigButton" disabled={!reachedBottom} onClick={acceptTermsAndConditions}>Agree to terms of use</button>
-                </div>
-            </div>
+            <BottomButtons
+                l_onClick={quit}
+                l_disabled={false}
+                r_onClick={acceptTermsAndConditions}
+                r_disabled={!reachedBottom}
+                l_content="Disagree and quit"
+                r_content="Agree to terms of use"
+            />
         </div>
     );
 }

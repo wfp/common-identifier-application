@@ -1,71 +1,707 @@
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+  /* font-family: Inter,system-ui,Avenir,Helvetica,Arial,sans-serif; */
+  font-family: "Open Sans", sans-serif;
 
-  color-scheme: light dark;
-  /* color: rgba(255, 255, 255, 0.87); */
-  /* background-color: #242424; */
+  --color-interactive-01: #0087cb;
+  --color-interactive-02: #005e8d;
+  --color-inverse-01: #fff;
 
-  background-color: #ffffff;
-  color: #242424;
+  --color-ui-01: #ffffff;
+  --color-ui-02: #ebf1f4;
+  --color-ui-03: #dde8ed;
+  --color-ui-04: #d3e1e8;
+  --color-ui-05: #77a0b6;
+  --color-ui-06: #11455f;
 
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  --color-alert-01: #c5192d;
+  --color-alert-02: #981323;
+
+  --color-text-01: #031c2d;
+  --color-text-02: #5a6872;
+  --color-text-03: #9a9ea2;
+
+  --color-validation-good-back: rgba(10, 126, 1, 0.1);
+  --color-validation-good-text: #0b9e01;
+
+  --color-validation-bad-back: rgba(255, 10, 0, 0.1);
+  --color-validation-bad-text: var(--color-alert-01);
+
+  --border-radius: 4px;
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
+/*#region reset */
+
+*,
+*:before,
+*:after {
+  box-sizing: border-box
 }
-a:hover {
-  color: #535bf2;
+
+html {
+  text-size-adjust: none
+}
+
+body,
+h1,
+h2,
+h3,
+h4,
+p,
+figure,
+blockquote,
+dl,
+dd {
+  margin-block-end: 0
+}
+
+ul[role=list],
+ol[role=list] {
+  list-style: none
 }
 
 body {
-  margin: 0;
-  /* display: flex; */
-  place-items: center;
-  min-width: 320px;
   min-height: 100vh;
+  min-width: 600px;
+  line-height: 1.5;
+  margin: 0;
+  color: var(--color-text-01);
+  background-color: var(--color-ui-01);
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+h1,
+h2,
+h3,
+h4,
+button,
+input,
+label {
+  line-height: 1.1
+}
+
+h1,
+h2,
+h3,
+h4 {
+  text-wrap: balance
+}
+
+img,
+picture {
+  max-width: 100%;
+  display: block
+}
+
+input,
+button,
+textarea,
+select {
+  font-family: inherit;
+  font-size: inherit
+}
+
+textarea:not([rows]) {
+  min-height: 10em
+}
+
+:target {
+  scroll-margin-block: 5ex
+}
+
+a {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  vertical-align: baseline;
+  font-weight: 500;
+  color: var(--color-interactive-01);
+  text-decoration: initial;
+}
+
+a:hover {
+  color: var(--color-interactive-02);
+  text-decoration: underline;
+}
+
+a:focus-visible {
+  outline: 2px solid var(--color-inverse-01);
+  outline-offset: 2px;
+}
+
+*:focus-visible {
+  outline: 2px solid var(--color-alert-01);
+  outline-offset: 2px;
 }
 
 button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+  border-radius: 0;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
+#root {
+  display: grid;
+  grid-template-rows: 5em 1fr;
+  height: 100vh
+}
+
+/*#endregion */
+
+
+/*#region generics */
+.loader {
+  width: 48px;
+  height: 48px;
+  border: 5px solid var(--color-interactive-01);
+  border-bottom-color: transparent;
+  border-radius: 50%;
+  display: inline-block;
+  box-sizing: border-box;
+  animation: rotation 1s linear infinite;
+}
+
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
   }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
+
+  100% {
+    transform: rotate(360deg);
   }
 }
+
+.progressIndicator {
+  display: flex;
+  flex-direction: column;
+  place-self: center;
+  gap: 1em;
+  align-items: center;
+}
+
+.progressIndicator .help {
+  font-size: 1.3em;
+  color: var(--color-text-02);
+}
+
+.progressIndicator p {
+  margin-block-start: 0;
+}
+
+.progressIndicator .fileName {
+  /* font-size: 1em; */
+  font-weight: bold;
+  color: var(--color-text-01);
+}
+
+/*#endregion
+
+/*#region navigation */
+.cid-button-row {
+  display: grid;
+  justify-items: center;
+  /* text-align: center; */
+  align-content: space-evenly;
+}
+
+.cid-button-row-vert {
+  gap: 1em;
+  grid-template-columns: 1fr
+}
+
+.cid-button-row-horiz {
+  gap: 1em;
+  grid-template-columns: 1fr 1fr
+}
+
+.cid-button {
+  letter-spacing: 0;
+  font-size: .875rem;
+  font-weight: 700;
+  height: 2.5rem;
+  padding: 0 .8rem;
+  border-radius: var(--border-radius);
+  text-align: center;
+  text-decoration: none;
+  transition-duration: 50ms;
+  transition-timing-function: ease-in;
+  white-space: nowrap;
+  border-width: 2px;
+  border-style: solid;
+  width: max(60%, 250px);
+}
+
+.cid-button-lg {
+  height: 3.5rem;
+  font-size: 1.125rem;
+}
+
+.cid-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.cid-button-primary {
+  background-color: var(--color-interactive-01);
+  border-color: transparent;
+  color: var(--color-inverse-01);
+}
+
+.cid-button-secondary {
+  background-color: transparent;
+  border-color: var(--color-interactive-01);
+  color: var(--color-interactive-01);
+}
+
+.cid-button-alert {
+  background-color: var(--color-alert-01);
+  border-color: transparent;
+  color: var(--color-inverse-01)
+}
+
+.cid-button-primary:hover,
+.cid-button-primary:focus {
+  background-color: var(--color-interactive-02)
+}
+
+.cid-button-secondary:hover,
+.cid-button-secondary:focus {
+  background-color: var(--color-interactive-02);
+  border-color: var(--color-interactive-02);
+  color: var(--color-inverse-01);
+}
+
+.cid-button-alert:hover,
+.cid-button-alert:focus {
+  background-color: var(--color-alert-02);
+}
+
+.cid-button-with-helptext {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+}
+
+.cid-button-with-helptext .helptext {
+  margin-block-start: 0.5em;
+  font-style: italic;
+  color: var(--color-text-02);
+}
+/*#endregion */
+
+/*#region Terms and conditions screen */
+
+.WelcomeScreen {
+  display: grid;
+  grid-template-rows: 7em 1fr 7em;
+  min-height: 100vh;
+}
+
+.titleText {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--color-text-01);
+  margin-top: 0;
+  font-size: 2.4rem;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.textContainer {
+  overflow-y: scroll;
+  overflow-x: hidden;
+  border: 1px solid #ccc;
+}
+
+.textFromConfig {
+  padding: 2em;
+  max-width: 45em;
+  margin: 0 auto;
+  line-height: 2em;
+}
+
+/*#endregion */
+
+/*#region Navbar */
+
+.main-navigation {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  justify-content: flex-end;
+  background-color: var(--color-interactive-01);
+  color: var(--color-inverse-01);
+  padding: 0.5em;
+  align-items: center;
+  text-wrap: nowrap;
+}
+
+.main-navigation .back-button {
+  flex-grow: 1;
+}
+
+.main-navigation .back-button a {
+  display: inline-block;
+  border: white 1px solid;
+  border-radius: var(--border-radius);
+  color: white;
+  font-weight: bold;
+  padding: .5em 2em;
+}
+
+.main-navigation .back-button a:hover {
+  background-color: var(--color-interactive-02);
+  text-decoration: none;
+  transition-duration: 50ms;
+  transition-timing-function: ease-in;
+}
+
+.version-info {
+  display: flex;
+  justify-content: flex-end;
+  color: var(--color-ui-02)
+}
+
+.version-info dl {
+  display: table;
+  margin-block-start: 0;
+  line-height: 1.1;
+}
+
+.version-info dl > div {
+  display: table-row
+}
+
+.version-info dl > div > dt,
+.version-info dl > div > dd {
+  display: table-cell;
+  padding: 0.25em;
+}
+
+.version-info dl > div > dt {
+  font-weight: bold;
+}
+
+/*#endregion */
+
+/*#region Main screen */
+
+.main-screen {
+  display: grid;
+  grid-template-rows: 1fr 12em 5em;
+  align-items: center;
+}
+
+.main-screen .region {
+  display: flex;
+  justify-content: center;
+}
+
+.main-screen .region-main {
+  flex-direction: column;
+  text-align: center;
+  gap: 1em;
+}
+
+.main-screen .region-main h1 {
+  max-width: 60rem;
+  place-self: center;
+  font-size: 4em;
+  font-weight: bold;
+  line-height: 1.3;
+}
+
+.main-screen .region-main h2 {
+  font-size: 1.8em;
+  font-weight: 400;
+}
+
+.main-screen .region-open-file .cid-button {
+  height: 5.5rem;
+  font-size: 2.5rem;
+  width: max(25%, 250px);
+}
+
+.main-screen .region-update-config .cid-button {
+  width: max(20%, 250px);
+}
+
+.drop-target {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 9999;
+
+  background-color: var(--color-ui-02);
+  display: grid;
+  grid-template-columns: 1fr;
+}
+
+.drop-target .drop-target-inner {
+  border: 1.5rem dashed var(--color-ui-06);
+  margin: 1rem;
+  border-radius: var(--border-radius);
+  align-content: center;
+  text-align: center;
+  font-size: 4rem;
+  color: var(--color-ui-06);
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+/*#endregion */
+
+/*#region Update Config Screens */
+.config-change {
+  display: grid;
+  grid-template-rows: 8em 8em;
+  align-items: center;
+  text-align: center;
+  padding-top: 6em;
+  gap: 4em;
+}
+
+.config-change .titleText {
+  font-size: 3em;
+}
+
+.config-change .cid-button-row {
+  width: 60em;
+  margin: 0 auto;
+  gap: 2em;
+}
+
+.config-change .cid-button-row-horiz {
+  gap: 0;
+  width: 50em;
+}
+
+.config-change .cid-button-row-horiz button {
+  width: max(60%, 320px);
+}
+
+.config-change .cid-button-row-vert button {
+  width: max(50%, 250px);
+}
+
+.loadNewConfig,
+.defaultConfig,
+.config-updated {
+  gap: 2em;
+  grid-template-rows: 8em 6em 4em;
+}
+
+.loadNewConfig .descriptionText,
+.defaultConfig .descriptionText,
+.config-updated h2 {
+  font-size: 1.3em;
+  font-style: italic;
+  color: var(--color-text-02);
+}
+
+.config-updated .version {
+  display: block;
+  margin-top: 1rem;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 1.4em;
+}
+
+/*#endregion */
+
+
+/*#region Error Screen */
+
+.error-screen {
+  display: grid;
+  grid-template-rows: 1fr 5em 12em;
+  align-items: center;
+  justify-content: center;
+  gap: 2em;
+}
+
+.error-screen .titleText {
+  font-size: 3rem;
+}
+
+.error-screen .textFromConfig {
+  line-height: 1.4em;
+  font-size: 1.2rem;
+  font-weight: 500;
+  text-align: center;
+}
+
+.error-screen .cid-button-row {
+  width: 40em;
+  margin: 0 auto;
+}
+
+.error-screen .developerInformation {
+  place-self: flex-end;
+  color: var(--color-text-03);
+  background: var(--color-ui-02);
+  padding: 2em;
+  width: 100vw;
+  height: 100%;
+  text-align: center;
+}
+
+.error-screen .developerInformation h4 {
+  margin: 0 0 1rem 0;
+  color: var(--color-text-03);
+  text-decoration: underline;
+}
+
+/*#endregion */
+
+/*#region validation general */
+.validationResult {
+  display: flex;
+  align-items: center;
+  padding: 1em;
+  text-align: left;
+}
+
+.validationResult.ok {
+  background-color: var(--color-validation-good-back);
+  color: var(--color-validation-good-text);
+}
+
+.validationResult.error {
+  flex-direction: row;
+  flex-shrink: revert;
+  background: var(--color-validation-bad-back);
+  color: var(--color-validation-bad-text);
+}
+
+.validationState {
+  flex: 1;
+  flex-direction: column;
+}
+
+.validationResult .validationState {
+  font-size: 1.4em;
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+.validationResult .validationState .help {
+  font-size: 0.7em;
+  text-transform: none;
+  color: var(--color-text-02);
+}
+
+.validationResult.error .cid-button {
+  width: 220px;
+}
+
+.FileInfo {
+  display: flex;
+  align-items: flex-end;
+  flex-direction: column;
+  padding: 0.2em 1em;
+}
+
+.FileInfo .help {
+  color: var(--color-text-02);
+}
+
+.FileInfo .fileName {
+  font-size: 1.5em;
+  font-weight: bold;
+  line-height: 1em;
+}
+
+.FileInfo .fileName a {
+  text-decoration: underline;
+}
+
+.FileInfo .fileName.otherPath {
+  font-size: 1.1em;
+  padding: 0.5em 0;
+}
+
+
+/*#endregion */
+
+/*#region end state screens */
+
+.ValidationSuccess {
+  display: grid;
+  grid-template-rows: 4em 1fr 6em 5em 1em;
+}
+
+.ValidationFailed {
+  display: grid;
+  grid-template-rows: 4em 1fr 6em 5em 1em;
+}
+
+.ProcessingFinished {
+  display: grid;
+  grid-template-rows: 5.5em 1fr 8em;
+}
+
+.ProcessingCancelled {
+  display: flex;
+  flex-direction: column;
+  place-self: center;
+  gap: 3em;
+  width: 40em;
+}
+
+
+/*#endregion */
+
+/*#region tabular data preview */
+
+.preview-table-wrapper {
+  display: flex;
+  justify-content: flex-start;
+  width: 100%;
+  overflow: auto;
+}
+
+/* By setting a max-height here the overflow seems to be contained inside the grid's allowed space */
+.preview-table-scroll {
+  max-height: 0px;
+  width: 100%;
+}
+
+.preview-table {
+  width: 100%;
+  border-spacing: 0;
+}
+
+.preview-table thead th {
+  position: sticky;
+  top: 0;
+  background-color: var(--color-ui-02);
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
+  border-left: 1px solid var(--color-ui-04);
+  border-right: 1px solid var(--color-ui-04);
+  border-bottom: 3px solid #666;
+}
+
+.preview-table th,
+.preview-table td {
+  white-space: nowrap;
+  padding: 0.1em 0.8em;
+}
+
+.preview-table td {
+  border: 1px solid var(--color-ui-02);
+}
+
+.preview-table .th-row_number,
+.preview-table .td-row_number,
+.preview-table .th-errors,
+.preview-table .td-errors {
+  color: var(--color-alert-01);
+  font-weight: bold;
+  border-right: 0.2em solid;
+  white-space: pre;
+}
+
+/*#endregion */

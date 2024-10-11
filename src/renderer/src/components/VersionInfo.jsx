@@ -7,46 +7,33 @@ function VersionInfo({config}) {
         return (<></>);
     }
 
-    const {version="UNKNOWN", region="UNKNWON"} = config.data.meta;
+    const {version="UNKNOWN", region="UNKNOWN"} = config.data.meta;
     const {lastUpdated, isBackup} = config;
 
 
-    const classNameString = ["VersionInfo"];
-    let secondBlock = (<></>);
+    const classNameString = ["version-info"];
+    let versionString = `${version}-${region}`
+    let lastUpdateDate = lastUpdated ? lastUpdated.toLocaleString([], { dateStyle: "short", timeStyle: "short" }) : "";
 
     // if this is a backup display that as the second element
     if (isBackup) {
         classNameString.push("usingBackupConfig")
-
-        secondBlock = (
-            <div className="backupVersionMarker">
-                Using the default configuration
-            </div>
-        );
-    } else {
-        // TODO: if a different date display format is desirable change it here
-        const lastUpdateDate = lastUpdated ? lastUpdated.toLocaleString() : "";
-
-        secondBlock = (
-            <div className="lastUpdated">
-                <div className="help">last updated:</div>
-                <div className="lastUpdateDate data">{ lastUpdateDate }</div>
-            </div>
-        );
+        versionString = "DEFAULT (" + versionString + ")"
     }
 
     return (
 
         <div className={classNameString.join(' ')}>
-            <div className="configVersion">
-                <div className="help">Configuration version</div>
-                <div className="configVersionData data">
-                    <span className="version">{ version }</span>
-                    <span className="separator">-</span>
-                    <span className="region">{ region }</span>
+            <dl>
+                <div>
+                    <dt>Version:</dt>
+                    <dd>{versionString}</dd>
                 </div>
-            </div>
-            { secondBlock }
+                { !isBackup 
+                    ? <div><dt>Last Updated:</dt><dd>{ lastUpdateDate }</dd></div>
+                    : null
+                }
+            </dl>
         </div>
     )
 }

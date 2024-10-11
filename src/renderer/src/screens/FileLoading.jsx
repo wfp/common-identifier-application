@@ -7,15 +7,16 @@ function baseFileName(filePath) {
 
 
 function FileLoading({inputFilePath}) {
+    console.log(inputFilePath);
     return (<div className="FileLoading appScreen progressIndicator">
         <div className="loaderWrapper">
-            <span class="loader"></span>
+            <span className="loader"></span>
         </div>
         <div className="help">
-            Loading the file
-        </div>
-        <div className="fileName">
-            {baseFileName(inputFilePath)}
+            { inputFilePath.length === 0
+                ? <p>Loading file...</p>
+                : <p>Loading file: <span className="fileName">{baseFileName(inputFilePath)}</span></p>
+            }
         </div>
     </div>)
 }

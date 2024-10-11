@@ -6,13 +6,12 @@ function ProcessingCanceled() {
 
 
     return (
-        <div className="ProcessingCancelled appScreen">
-            <h2>
+        <div className="ProcessingCancelled">
+            <h2 className="titleText">
                 Processing cancelled
             </h2>
-
-            <div className="doneButton">
-                <button className="bigButton" onClick={backToMainScreen}>Done</button>
+            <div className="cid-button-row">
+            <button className="cid-button cid-button-lg cid-button-primary" onClick={backToMainScreen}>Done</button>
             </div>
         </div>
     )

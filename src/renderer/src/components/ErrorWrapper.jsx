@@ -31,7 +31,7 @@ function ErrorWrapper({config, error, isRuntimeError}) {
 
 
     return (<div className="userErrorMessage">
-            <div className="fromConfig" dangerouslySetInnerHTML={{ __html: userMessage }} />
+            <div className="textFromConfig" dangerouslySetInnerHTML={{ __html: userMessage }} />
     </div>);
 }
 

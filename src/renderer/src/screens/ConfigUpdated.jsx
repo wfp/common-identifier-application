@@ -8,14 +8,15 @@ function ConfigUpdated({config}) {
     const {meta} = config.data;
 
     return (
-        <div className="ConfigUpdated appScreen">
+        <div className="config-change config-updated">
+            <h3 className="titleText">Configuration Updated</h3>
             <h2>
                 Configuration successfully updated to
                 <span className="version">{meta.version}-{meta.region}</span>
             </h2>
 
-            <div className="doneButton">
-                <button className="bigButton" onClick={showTermsAndConditions}>Done</button>
+            <div className="cid-button-row">
+                <button className="cid-button cid-button-lg cid-button-primary" onClick={showTermsAndConditions}>Done</button>
             </div>
         </div>
     )

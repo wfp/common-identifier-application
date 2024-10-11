@@ -1,12 +1,13 @@
 
+import BottomButtons from "../components/BottomButtons";
 import FileInfo from "../components/FileInfo";
-import SheetTabs from "../components/SheetTabs";
-import OpenFileRegion from "../components/OpenFileRegion";
+import PreviewTable from "../components/PreviewTable";
 import { useAppStore } from "../store";
 
 function ProcessingFinished({ config, outputData, outputFilePaths}) {
 
     const backToMainScreen = useAppStore(store => store.backToMainScreen);
+    const preProcessFileOpenDialog = useAppStore(store => store.preProcessFileOpenDialog);
 
     // clean the data we show to the user to only include the desired columns
     const isMappingDocument = outputFilePaths.length === 1;
@@ -22,21 +23,13 @@ function ProcessingFinished({ config, outputData, outputFilePaths}) {
         config.data.destination_map.columns :
         config.data.destination.columns;
 
-
     return (
-        <div className="ProcessingFinished appScreen">
+        <div className="ProcessingFinished">
             {fileInfoRow}
-            {/* <FileInfo filePath={outputFilePath} otherFilePath={mappingFilePath} helpText="Saved as" /> */}
 
-            <SheetTabs documentData={outputData} columnsConfig={columnsConfig} />
+            <PreviewTable tableData={outputData.sheets[0].data} columnsConfig={columnsConfig} />
 
-            <div className="buttonRow buttonRow2">
-                <OpenFileRegion label="Process another file" />
-
-                <div className="doneButton">
-                    <button className="bigButton" onClick={backToMainScreen}>Done</button>
-                </div>
-            </div>
+            <BottomButtons l_content="Open a different file" l_onClick={preProcessFileOpenDialog} r_onClick={backToMainScreen} r_content="Done" />
         </div>
     )
 }

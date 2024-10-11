@@ -1,29 +1,30 @@
 
+import BottomButtons from "../components/BottomButtons";
 import FileInfo from "../components/FileInfo";
-import OpenFileRegion from "../components/OpenFileRegion";
-import SheetTabs from "../components/SheetTabs";
+import PreviewTable from "../components/PreviewTable";
 import { useAppStore } from "../store";
 import { filterColumnConfigForMapping } from "../util";
 
 
 function OpenErrorListButton({validationErrorsOutputFile}) {
     const openOutputPath = useAppStore(store => store.openOutputFile);
-
+    
     // open the output file
     function openOutputFile() {
         openOutputPath(validationErrorsOutputFile)
     }
-
-
+    
+    
     return (
-        <button className="OpenErrorListButton bigButton" onClick={openOutputFile}>Open error list</button>
-
+        <button className="cid-button cid-button-lg cid-button-alert" onClick={openOutputFile}>Open error list</button>
+        
     )
 }
 
 function ValidationFailed({config, inputData, inputFilePath, validationResult, validationErrorsOutputFile, isMappingDocument}) {
-
+    
     const startPreProcessingFile = useAppStore(store => store.startPreProcessingFile)
+    const preProcessFileOpenDialog = useAppStore(store => store.preProcessFileOpenDialog);
 
     // on retry we simply re-submit the same path
     function retryFileLoad(e) {
@@ -64,9 +65,9 @@ function ValidationFailed({config, inputData, inputFilePath, validationResult, v
 
     return (
         <div className="ValidationFailed appScreen">
-            <FileInfo filePath={inputFilePath} helpText="The input file is invalid." />
+            <FileInfo filePath={inputFilePath} helpText="The input file is invalid" />
 
-            <SheetTabs documentData={documentData} columnsConfig={errorColumns}/>
+            <PreviewTable tableData={documentData.sheets[0].data} columnsConfig={errorColumns}/>
 
             <div className="validationResult error">
                 <div className="validationState">
@@ -76,18 +77,10 @@ function ValidationFailed({config, inputData, inputFilePath, validationResult, v
                     </div>
                 </div>
 
-                <div className="openErrorList">
-                    <OpenErrorListButton validationErrorsOutputFile={validationErrorsOutputFile} />
-                </div>
+                <OpenErrorListButton validationErrorsOutputFile={validationErrorsOutputFile} />
             </div>
 
-            <div className="buttonRow buttonRow2">
-                <OpenFileRegion label="Open a different file" />
-
-                <div className="retryButton">
-                    <button className="bigButton" onClick={retryFileLoad}>Retry the same file</button>
-                </div>
-            </div>
+            <BottomButtons l_content="Open a different file" l_onClick={preProcessFileOpenDialog} r_onClick={retryFileLoad} r_content="Retry the same file" />
 
 
         </div>

@@ -1,11 +1,11 @@
+import BottomButtons from "../components/BottomButtons";
 import FileInfo from "../components/FileInfo";
-import OpenFileRegion from "../components/OpenFileRegion";
-import SheetTabs from "../components/SheetTabs";
+import PreviewTable from "../components/PreviewTable";
 import { useAppStore } from "../store";
 import { filterColumnConfigForMapping } from "../util";
 
 function ValidationSuccess({config, inputData, inputFilePath, isMappingDocument}) {
-
+    const preProcessFileOpenDialog = useAppStore(store => store.preProcessFileOpenDialog);
     const startProcessingFile = useAppStore(store => store.startProcessingFile);
 
     function processTheFile(e) {
@@ -21,10 +21,10 @@ function ValidationSuccess({config, inputData, inputFilePath, isMappingDocument}
     }
 
     return (
-        <div className="ValidationSuccess appScreen">
+        <div className="ValidationSuccess">
             <FileInfo filePath={inputFilePath} helpText="Ready to process the file" />
 
-            <SheetTabs documentData={inputData} columnsConfig={columnsConfig}/>
+            <PreviewTable tableData={inputData.sheets[0].data} columnsConfig={columnsConfig}/>
 
             <div className="validationResult ok">
                 <div className="validationState">
@@ -39,13 +39,7 @@ function ValidationSuccess({config, inputData, inputFilePath, isMappingDocument}
                 </div>
             </div>
 
-            <div className="buttonRow buttonRow2">
-                <OpenFileRegion label="Open a different file" />
-
-                <div className="processButton">
-                    <button className="bigButton" onClick={processTheFile}>Process the file</button>
-                </div>
-            </div>
+            <BottomButtons l_content="Open a different file" l_onClick={preProcessFileOpenDialog} r_onClick={processTheFile} r_content="Process the file" />
 
         </div>
     )

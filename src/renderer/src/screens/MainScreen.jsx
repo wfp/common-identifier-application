@@ -1,15 +1,13 @@
 import { useState } from 'react';
-
-
-import OpenFileRegion from "../components/OpenFileRegion";
 import { useAppStore } from '../store';
 
 
-function MainScreen({config}) {
+function MainScreen() {
 
     // is anything dragged over the screen?
     const [isDraggedOver, setIsDraggedOver] = useState(false);
 
+    const preProcessFileOpenDialog = useAppStore(store => store.preProcessFileOpenDialog);
     const startPreProcessingFile = useAppStore((store) => store.startPreProcessingFile);
 
     const startConfigChange = useAppStore(store => store.startConfigChange);
@@ -64,13 +62,13 @@ function MainScreen({config}) {
 
 
     const divClassName = [
-        "MainScreen appScreen",
+        "main-screen",
         isDraggedOver ? "draggedOver" : "notDraggedOver",
     ].filter(v => v).join(' ');
 
     const dropTargetDiv = isDraggedOver ?
-        (<div className="dropTarget" onDragLeave={dragLeave} onDragOver={dragOver} onDrop={dropped}>
-            <div className="dropTargetInner">
+        (<div className="drop-target" onDragLeave={dragLeave} onDragOver={dragOver} onDrop={dropped}>
+            <div className="drop-target-inner">
                 Drop to open the file
             </div>
         </div>) :
@@ -78,16 +76,19 @@ function MainScreen({config}) {
 
     return (
         <div className={divClassName} onDragEnter={dragEnter}>
-            <div className="mainDragAndDropArea">
-                <span className="large">DRAG & DROP AN EXCEL OR CSV FILE</span>
-                <span className="small">to start processing</span>
+            <div className="region region-main">
+                <h1>DRAG & DROP AN EXCEL OR CSV FILE</h1>
+                <h2>to start processing</h2>
             </div>
 
+            <div className="region region-open-file">
+                <button className="open-file cid-button cid-button-primary" onClick={preProcessFileOpenDialog}>
+                Open a file
+                </button>
+            </div>
 
-            <OpenFileRegion label="Open a file" />
-
-            <div className="updateConfig">
-                <button onClick={startConfigChange} className="openConfigFile bigButton"><span class="icon">⚙</span>  Update the configuration </button>
+            <div className="region region-update-config">
+                <button onClick={startConfigChange} className="cid-button cid-button-secondary"><span className="icon">⚙</span>  Update the configuration </button>
             </div>
 
             { dropTargetDiv }

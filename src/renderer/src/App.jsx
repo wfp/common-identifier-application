@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import './App.css'
 
 import Boot from './screens/Boot'
 import MainScreen from './screens/MainScreen'

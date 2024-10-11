@@ -49,11 +49,6 @@ function FileInfo({filePath, helpText, otherFilePath}) {
             <div className="help">{ helpText }</div>
             <FileRow path={filePath} />
             {otherFileRow}
-            {/* <div className="fileName">
-                <a href={"file://" + filePath} onClick={clickHandler} target="_blank">
-                    {inputFileName}
-                </a>
-            </div> */}
         </div>
     )
 }

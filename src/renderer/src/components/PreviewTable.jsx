@@ -45,11 +45,13 @@ function PreviewTable({tableData, columnsConfig}) {
 
     //
     return (
-        <div className="PreviewTable">
-            <table className="PreviewTableMain">
-                { tableHeader }
-                { tableBody }
-            </table>
+        <div className="preview-table-wrapper">
+            <div className="preview-table-scroll">
+                <table className="preview-table">
+                    { tableHeader }
+                    { tableBody }
+                </table>
+            </div>
         </div>
     )
 }
