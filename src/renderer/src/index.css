@@ -717,6 +717,8 @@ button {
   justify-content: flex-start;
   width: 100%;
   overflow: auto;
+  scrollbar-color: var(--color-ui-04) transparent;
+  scrollbar-width: thin;
 }
 
 /* By setting a max-height here the overflow seems to be contained inside the grid's allowed space */
