@@ -25,21 +25,8 @@ pool:
   vmImage: windows-latest
 
 jobs:
-  - job: buildApplication
-    displayName: Build Application
-    strategy:
-      matrix:
-
-        'NWS Win32 x64':
-          # The name of the region (will be in the app title and the setup executable)
-          region: "nws"
-          # The algorithm to use (the name of the algorithm directory in src/main)
-          algo: "algo-uscadi"
-
-        'GOS Win32 x64':
-          region: "gos"
-          algo: "algo-gos"
-
+  - job: runTestSuite
+    displayName: Run test suite
     steps:
       - checkout: self
         submodules: true
@@ -49,183 +36,235 @@ jobs:
           version: "20.x"
         displayName: "Install Node.js"
 
-      # Frontend
-      # -------
-
       - script: |
-          (cd src/renderer && npm install && npm run build)
-        displayName: 'Build the renderer'
+          npm install
+          npm run test:ci
+        displayName: 'Npm install & build'
 
-
-
-      - bash: |
-            echo '{ "Endpoint": "$(ENDPOINT)", "CodeSigningAccountName": "$(CODE_SIGNING_ACCOUNT_NAME)", "CertificateProfileName": "$(CERTIFICATE_PROFILE_NAME)" }' > signing_metadata.json
-
-            cat signing_metadata.json
-        displayName: "Prepare Trusted Signing metadata"
-
-      # Application
-      # -------
-
-      - script: npm install
-        displayName: NPM install App
-
-      # NWS - WIN
-      # =========
-
-
-      # Signed package
-      # --------------
-
-      # Package for signing
-      - script: |
-          node tools/activate-algo.js $(algo)
-          npx electron-forge package --arch=x64 --platform=win32
-        displayName: "Build package for signing"
-
-
-      # Sign the executable(s) in the output folder
-      - task: TrustedSigning@0
-        displayName: "Sign the executable"
+      - task: PublishTestResults@2
+        displayName: 'Publish test results'
         inputs:
-          AzureTenantID: $(TENANT_ID)
-          AzureClientID: $(CLIENT_ID)
-          AzureClientSecret: $(CLIENT_SECRET)
-          Endpoint: $(ENDPOINT)
-          CodeSigningAccountName: $(CODE_SIGNING_ACCOUNT_NAME)
-          CertificateProfileName: $(CERTIFICATE_PROFILE_NAME)
+          testResultsFormat: 'JUnit'
+          testResultsFiles: '**/test-report.xml'
+          mergeTestResults: true
+          failTaskOnFailedTests: true
+          failTaskOnMissingResultsFile: true
 
-          TimestampRfc3161: 'http://timestamp.acs.microsoft.com'
-          TimestampDigest: SHA256
-
-          FilesFolder: $(System.DefaultWorkingDirectory)/out/commonid-tool-win32-x64
-          FilesFolderRecurse: true
-          FileDigest: SHA256
-          FilesFolderFilter: exe
-
-          ExcludeAzureCliCredential: true
-          ExcludeAzurePowerShellCredential: true
-          ExcludeInteractiveBrowserCredential: true
-          ExcludeManagedIdentityCredential: true
-          ExcludeSharedTokenCacheCredential: true
-          ExcludeVisualStudioCodeCredential: true
-          ExcludeVisualStudioCredential: true
-          ExcludeEnvironmentCredential: false
-
-      # This exaple signs an exe with the signtool left over from the previous task
-      # (this one actually works)
-
-      # - script: |
-      #     C:\Users\VssAdministrator\AppData\Local\TrustedSigning\Microsoft.Windows.SDK.BuildTools\Microsoft.Windows.SDK.BuildTools.10.0.22621.3233\bin\10.0.22621.0\x64\signtool.exe sign /v /debug /fd SHA256 /tr http://timestamp.acs.microsoft.com /td SHA256 /dlib "C:\Users\VssAdministrator\AppData\Local\TrustedSigning\Microsoft.Trusted.Signing.Client\Microsoft.Trusted.Signing.Client.1.0.53\bin\x64\Azure.CodeSigning.Dlib.dll" /dmdf "C:\Users\VssAdministrator\AppData\Local\TrustedSigning\Microsoft.Trusted.Signing.Client\Microsoft.Trusted.Signing.Client.1.0.53\bin\x64\metadata.json" "node_modules\electron-winstaller\vendor\StubExecutable.exe"
-      #   displayName: Signtool execution test
-      #   env:
-      #     AZURE_TENANT_ID: $(TENANT_ID)
-      #     AZURE_CLIENT_ID: $(CLIENT_ID)
-      #     AZURE_CLIENT_SECRET: $(CLIENT_SECRET)
-
-
-      # The following task demonstrates how Electron-Winstaller triggered squirrel builds trigger the code signing
-      # (this does not seems to work, even when overwriting the signtool with the original)
-
-      # - script: |
-      #     node_modules\electron-winstaller\vendor\signtool.exe sign /v /debug /fd SHA256 /tr http://timestamp.acs.microsoft.com /td SHA256 /dlib "C:\Users\VssAdministrator\AppData\Local\TrustedSigning\Microsoft.Trusted.Signing.Client\Microsoft.Trusted.Signing.Client.1.0.53\bin\x64\Azure.CodeSigning.Dlib.dll" /dmdf "C:\Users\VssAdministrator\AppData\Local\TrustedSigning\Microsoft.Trusted.Signing.Client\Microsoft.Trusted.Signing.Client.1.0.53\bin\x64\metadata.json" "out\commonid-tool-win32-x64\commonid-tool.exe"
-      #   displayName: electron-winstaller signtool execution test
-      #   env:
-      #     AZURE_TENANT_ID: $(TENANT_ID)
-      #     AZURE_CLIENT_ID: $(CLIENT_ID)
-      #     AZURE_CLIENT_SECRET: $(CLIENT_SECRET)
-
-
-      # This is how Electron-Windows sign attempts to sign the same executable (or Elecron-Winstaller when using the `windowsSign` settings)
-      # (this does not seem to work)
-
-      # - script: |
-      #     npx electron-windows-sign out/commonid-tool-win32-x64 --debug --appDirectory=out/commonid-tool-win32-x64 --signToolPath="C:\Users\VssAdministrator\AppData\Local\TrustedSigning\Microsoft.Windows.SDK.BuildTools\Microsoft.Windows.SDK.BuildTools.10.0.22621.3233\bin\10.0.22621.0\x64\signtool.exe" --signWithParams="/v /debug /fd SHA256 /tr http://timestamp.acs.microsoft.com /td SHA256 /dlib \"C:\\Users\\VssAdministrator\\AppData\\Local\\TrustedSigning\\Microsoft.Trusted.Signing.Client\\Microsoft.Trusted.Signing.Client.1.0.53\\bin\\x64\\Azure.CodeSigning.Dlib.dll\" /dmdf \"C:\\Users\\VssAdministrator\\AppData\\Local\\TrustedSigning\\Microsoft.Trusted.Signing.Client\\Microsoft.Trusted.Signing.Client.1.0.53\\bin\\x64\\metadata.json\""
-      #   displayName: electron-windows-sign execution test
-      #   env:
-      #     AZURE_TENANT_ID: $(TENANT_ID)
-      #     AZURE_CLIENT_ID: $(CLIENT_ID)
-      #     AZURE_CLIENT_SECRET: $(CLIENT_SECRET)
-
-
-      # Winstaller
-      # ----------
-
-      # Attempt to build the "Winstaller"
-      - script: |
-          node build-windows-installer.js $(region)
-        displayName: "Build Installer from signed output"
-        env:
-          AZURE_TENANT_ID: $(TENANT_ID)
-          AZURE_CLIENT_ID: $(CLIENT_ID)
-          AZURE_CLIENT_SECRET: $(CLIENT_SECRET)
-          DEBUG: "electron-windows-installer:main"
-
-
-      # Sign the installer
-      - task: TrustedSigning@0
-        displayName: "Code sign the application"
+      - task: PublishCodeCoverageResults@1
         inputs:
-          AzureTenantID: $(TENANT_ID)
-          AzureClientID: $(CLIENT_ID)
-          AzureClientSecret: $(CLIENT_SECRET)
-          Endpoint: $(ENDPOINT)
-          CodeSigningAccountName: $(CODE_SIGNING_ACCOUNT_NAME)
-          CertificateProfileName: $(CERTIFICATE_PROFILE_NAME)
-
-          TimestampRfc3161: 'http://timestamp.acs.microsoft.com'
-          TimestampDigest: SHA256
-
-          FilesFolder: $(System.DefaultWorkingDirectory)/out/installer-win32-x64
-          FilesFolderRecurse: true
-          FileDigest: SHA256
-          FilesFolderFilter: exe
-
-          ExcludeAzureCliCredential: true
-          ExcludeAzurePowerShellCredential: true
-          ExcludeInteractiveBrowserCredential: true
-          ExcludeManagedIdentityCredential: true
-          ExcludeSharedTokenCacheCredential: true
-          ExcludeVisualStudioCodeCredential: true
-          ExcludeVisualStudioCredential: true
-          ExcludeEnvironmentCredential: false
-
-      # Publish the signed zip as an artifact
-      - task: PublishBuildArtifacts@1
-        inputs:
-          pathtoPublish: $(System.DefaultWorkingDirectory)/out/installer-win32-x64
-          artifactName: app-$(region)-win-installer-signed
-        displayName: Publish app-$(region)-win-installer-signed
-        enabled: true
-
-      # Signed zip
-      # ----------
-
-      # package the signed zip
-      - task: ArchiveFiles@2
-        displayName: "Pack the signed ZIP"
-        inputs:
-          rootFolderOrFile: '$(System.DefaultWorkingDirectory)/out/commonid-tool-win32-x64'
-          includeRootFolder: true
-          archiveType: 'zip'
-          archiveFile: '$(System.DefaultWorkingDirectory)/out/signed-commonid-tool-win32-x64-$(region).zip'
-          verbose: true
-          quiet: false
-
-      # Publish the signed zip as an artifact
-      - task: PublishBuildArtifacts@1
-        inputs:
-          pathtoPublish: $(System.DefaultWorkingDirectory)/out/signed-commonid-tool-win32-x64-$(region).zip
-          artifactName: app-$(region)-win-zip-signed
-        displayName: Publish app-$(region)-win-zip-signed
-        enabled: true
-
-      - script: ls -laR out/
-        displayName: Lets look at the output
+          codeCoverageTool: 'Cobertura'
+          summaryFileLocation: '$(Build.SourcesDirectory)/coverage/cobertura-coverage.xml'
+          pathToSources: '$(Build.SourcesDirectory)'
+          failIfCoverageEmpty: true
 
     uses:
       repositories:
       - AlgoNws
       - AlgoGos
       - AlgoShared
+
+
+  # - job: buildApplication
+  #   displayName: Build Application
+  #   strategy:
+  #     matrix:
+
+  #       'NWS Win32 x64':
+  #         # The name of the region (will be in the app title and the setup executable)
+  #         region: "nws"
+  #         # The algorithm to use (the name of the algorithm directory in src/main)
+  #         algo: "algo-uscadi"
+
+  #       'GOS Win32 x64':
+  #         region: "gos"
+  #         algo: "algo-gos"
+
+  #   steps:
+  #     - checkout: self
+  #       submodules: true
+
+  #     - task: UseNode@1
+  #       inputs:
+  #         version: "20.x"
+  #       displayName: "Install Node.js"
+
+  #     # Frontend
+  #     # -------
+
+  #     - script: |
+  #         (cd src/renderer && npm install && npm run build)
+  #       displayName: 'Build the renderer'
+
+
+
+  #     - bash: |
+  #           echo '{ "Endpoint": "$(ENDPOINT)", "CodeSigningAccountName": "$(CODE_SIGNING_ACCOUNT_NAME)", "CertificateProfileName": "$(CERTIFICATE_PROFILE_NAME)" }' > signing_metadata.json
+
+  #           cat signing_metadata.json
+  #       displayName: "Prepare Trusted Signing metadata"
+
+  #     # Application
+  #     # -------
+
+  #     - script: npm install
+  #       displayName: NPM install App
+
+  #     # NWS - WIN
+  #     # =========
+
+
+  #     # Signed package
+  #     # --------------
+
+  #     # Package for signing
+  #     - script: |
+  #         node tools/activate-algo.js $(algo)
+  #         npx electron-forge package --arch=x64 --platform=win32
+  #       displayName: "Build package for signing"
+
+
+  #     # Sign the executable(s) in the output folder
+  #     - task: TrustedSigning@0
+  #       displayName: "Sign the executable"
+  #       inputs:
+  #         AzureTenantID: $(TENANT_ID)
+  #         AzureClientID: $(CLIENT_ID)
+  #         AzureClientSecret: $(CLIENT_SECRET)
+  #         Endpoint: $(ENDPOINT)
+  #         CodeSigningAccountName: $(CODE_SIGNING_ACCOUNT_NAME)
+  #         CertificateProfileName: $(CERTIFICATE_PROFILE_NAME)
+
+  #         TimestampRfc3161: 'http://timestamp.acs.microsoft.com'
+  #         TimestampDigest: SHA256
+
+  #         FilesFolder: $(System.DefaultWorkingDirectory)/out/commonid-tool-win32-x64
+  #         FilesFolderRecurse: true
+  #         FileDigest: SHA256
+  #         FilesFolderFilter: exe
+
+  #         ExcludeAzureCliCredential: true
+  #         ExcludeAzurePowerShellCredential: true
+  #         ExcludeInteractiveBrowserCredential: true
+  #         ExcludeManagedIdentityCredential: true
+  #         ExcludeSharedTokenCacheCredential: true
+  #         ExcludeVisualStudioCodeCredential: true
+  #         ExcludeVisualStudioCredential: true
+  #         ExcludeEnvironmentCredential: false
+
+  #     # This exaple signs an exe with the signtool left over from the previous task
+  #     # (this one actually works)
+
+  #     # - script: |
+  #     #     C:\Users\VssAdministrator\AppData\Local\TrustedSigning\Microsoft.Windows.SDK.BuildTools\Microsoft.Windows.SDK.BuildTools.10.0.22621.3233\bin\10.0.22621.0\x64\signtool.exe sign /v /debug /fd SHA256 /tr http://timestamp.acs.microsoft.com /td SHA256 /dlib "C:\Users\VssAdministrator\AppData\Local\TrustedSigning\Microsoft.Trusted.Signing.Client\Microsoft.Trusted.Signing.Client.1.0.53\bin\x64\Azure.CodeSigning.Dlib.dll" /dmdf "C:\Users\VssAdministrator\AppData\Local\TrustedSigning\Microsoft.Trusted.Signing.Client\Microsoft.Trusted.Signing.Client.1.0.53\bin\x64\metadata.json" "node_modules\electron-winstaller\vendor\StubExecutable.exe"
+  #     #   displayName: Signtool execution test
+  #     #   env:
+  #     #     AZURE_TENANT_ID: $(TENANT_ID)
+  #     #     AZURE_CLIENT_ID: $(CLIENT_ID)
+  #     #     AZURE_CLIENT_SECRET: $(CLIENT_SECRET)
+
+
+  #     # The following task demonstrates how Electron-Winstaller triggered squirrel builds trigger the code signing
+  #     # (this does not seems to work, even when overwriting the signtool with the original)
+
+  #     # - script: |
+  #     #     node_modules\electron-winstaller\vendor\signtool.exe sign /v /debug /fd SHA256 /tr http://timestamp.acs.microsoft.com /td SHA256 /dlib "C:\Users\VssAdministrator\AppData\Local\TrustedSigning\Microsoft.Trusted.Signing.Client\Microsoft.Trusted.Signing.Client.1.0.53\bin\x64\Azure.CodeSigning.Dlib.dll" /dmdf "C:\Users\VssAdministrator\AppData\Local\TrustedSigning\Microsoft.Trusted.Signing.Client\Microsoft.Trusted.Signing.Client.1.0.53\bin\x64\metadata.json" "out\commonid-tool-win32-x64\commonid-tool.exe"
+  #     #   displayName: electron-winstaller signtool execution test
+  #     #   env:
+  #     #     AZURE_TENANT_ID: $(TENANT_ID)
+  #     #     AZURE_CLIENT_ID: $(CLIENT_ID)
+  #     #     AZURE_CLIENT_SECRET: $(CLIENT_SECRET)
+
+
+  #     # This is how Electron-Windows sign attempts to sign the same executable (or Elecron-Winstaller when using the `windowsSign` settings)
+  #     # (this does not seem to work)
+
+  #     # - script: |
+  #     #     npx electron-windows-sign out/commonid-tool-win32-x64 --debug --appDirectory=out/commonid-tool-win32-x64 --signToolPath="C:\Users\VssAdministrator\AppData\Local\TrustedSigning\Microsoft.Windows.SDK.BuildTools\Microsoft.Windows.SDK.BuildTools.10.0.22621.3233\bin\10.0.22621.0\x64\signtool.exe" --signWithParams="/v /debug /fd SHA256 /tr http://timestamp.acs.microsoft.com /td SHA256 /dlib \"C:\\Users\\VssAdministrator\\AppData\\Local\\TrustedSigning\\Microsoft.Trusted.Signing.Client\\Microsoft.Trusted.Signing.Client.1.0.53\\bin\\x64\\Azure.CodeSigning.Dlib.dll\" /dmdf \"C:\\Users\\VssAdministrator\\AppData\\Local\\TrustedSigning\\Microsoft.Trusted.Signing.Client\\Microsoft.Trusted.Signing.Client.1.0.53\\bin\\x64\\metadata.json\""
+  #     #   displayName: electron-windows-sign execution test
+  #     #   env:
+  #     #     AZURE_TENANT_ID: $(TENANT_ID)
+  #     #     AZURE_CLIENT_ID: $(CLIENT_ID)
+  #     #     AZURE_CLIENT_SECRET: $(CLIENT_SECRET)
+
+
+  #     # Winstaller
+  #     # ----------
+
+  #     # Attempt to build the "Winstaller"
+  #     - script: |
+  #         node build-windows-installer.js $(region)
+  #       displayName: "Build Installer from signed output"
+  #       env:
+  #         AZURE_TENANT_ID: $(TENANT_ID)
+  #         AZURE_CLIENT_ID: $(CLIENT_ID)
+  #         AZURE_CLIENT_SECRET: $(CLIENT_SECRET)
+  #         DEBUG: "electron-windows-installer:main"
+
+
+  #     # Sign the installer
+  #     - task: TrustedSigning@0
+  #       displayName: "Code sign the application"
+  #       inputs:
+  #         AzureTenantID: $(TENANT_ID)
+  #         AzureClientID: $(CLIENT_ID)
+  #         AzureClientSecret: $(CLIENT_SECRET)
+  #         Endpoint: $(ENDPOINT)
+  #         CodeSigningAccountName: $(CODE_SIGNING_ACCOUNT_NAME)
+  #         CertificateProfileName: $(CERTIFICATE_PROFILE_NAME)
+
+  #         TimestampRfc3161: 'http://timestamp.acs.microsoft.com'
+  #         TimestampDigest: SHA256
+
+  #         FilesFolder: $(System.DefaultWorkingDirectory)/out/installer-win32-x64
+  #         FilesFolderRecurse: true
+  #         FileDigest: SHA256
+  #         FilesFolderFilter: exe
+
+  #         ExcludeAzureCliCredential: true
+  #         ExcludeAzurePowerShellCredential: true
+  #         ExcludeInteractiveBrowserCredential: true
+  #         ExcludeManagedIdentityCredential: true
+  #         ExcludeSharedTokenCacheCredential: true
+  #         ExcludeVisualStudioCodeCredential: true
+  #         ExcludeVisualStudioCredential: true
+  #         ExcludeEnvironmentCredential: false
+
+  #     # Publish the signed zip as an artifact
+  #     - task: PublishBuildArtifacts@1
+  #       inputs:
+  #         pathtoPublish: $(System.DefaultWorkingDirectory)/out/installer-win32-x64
+  #         artifactName: app-$(region)-win-installer-signed
+  #       displayName: Publish app-$(region)-win-installer-signed
+  #       enabled: true
+
+  #     # Signed zip
+  #     # ----------
+
+  #     # package the signed zip
+  #     - task: ArchiveFiles@2
+  #       displayName: "Pack the signed ZIP"
+  #       inputs:
+  #         rootFolderOrFile: '$(System.DefaultWorkingDirectory)/out/commonid-tool-win32-x64'
+  #         includeRootFolder: true
+  #         archiveType: 'zip'
+  #         archiveFile: '$(System.DefaultWorkingDirectory)/out/signed-commonid-tool-win32-x64-$(region).zip'
+  #         verbose: true
+  #         quiet: false
+
+  #     # Publish the signed zip as an artifact
+  #     - task: PublishBuildArtifacts@1
+  #       inputs:
+  #         pathtoPublish: $(System.DefaultWorkingDirectory)/out/signed-commonid-tool-win32-x64-$(region).zip
+  #         artifactName: app-$(region)-win-zip-signed
+  #       displayName: Publish app-$(region)-win-zip-signed
+  #       enabled: true
+
+  #     - script: ls -laR out/
+  #       displayName: Lets look at the output
+
+  #   uses:
+  #     repositories:
+  #     - AlgoNws
+  #     - AlgoGos
+  #     - AlgoShared
 
