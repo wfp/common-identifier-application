@@ -1,5 +1,3 @@
-import {INPUT_DATA, VALIDATION_RESULT, OUTPUT_DATA} from "./testdata";
-
 import {useAppStore} from "./store"
 
 import { unstable_batchedUpdates } from 'react-dom'
@@ -37,22 +35,9 @@ export function startPreProcessingFile(filePath) {
 
     // dispatch the event to the electron api
     withElectronAPI("fileDropped", (electronAPI) => {
-        console.log("Callong Electron with file path", filePath)
+        console.log("Calling Electron with file path", filePath)
         electronAPI.fileDropped(filePath);
-    }, () => {
-        // simulate a response
-        defer(500).then(() => {
-            console.log("TRIGGERING FAKE DONE CALLBACK")
-            let validationResult = VALIDATION_RESULT;
-            // randomize the validation for testing
-            // if (Math.random() > 0.5) {
-                // validationResult[0].ok = true;
-            // }
-            // preprocessingDoneCallback(filePath, INPUT_DATA, validationResult, "<NO FILE>");
-        })
     })
-
-
 }
 
 withElectronAPI("registerCallbacks", (electronAPI) => {
@@ -126,11 +111,6 @@ export function startProcessingFile(filePath, outputLocation) {
     withElectronAPI("startProcessing", (electronAPI) => {
         console.log("Callong Electron with file path", filePath)
         electronAPI.processFile(filePath);
-    }, () => {
-        defer(500).then(() => {
-            let outputData = OUTPUT_DATA;
-            processingDoneCallback(filePath, outputData);
-        })
     });
 }
 
