@@ -1,6 +1,6 @@
 
 function Boot() {
-    return (<div className="Boot appScreen progressIndicator">
+    return (<div className="Boot progressIndicator">
         <div className="loaderWrapper">
             <span className="loader"></span>
         </div>

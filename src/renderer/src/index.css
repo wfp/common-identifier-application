@@ -1,6 +1,7 @@
 :root {
-  /* font-family: Inter,system-ui,Avenir,Helvetica,Arial,sans-serif; */
-  font-family: "Open Sans", sans-serif;
+  font-family: Inter,system-ui,Avenir,Helvetica,Arial,sans-serif;
+  /* font-family: "Open Sans", sans-serif; */
+  color-scheme: light dark;
 
   --color-interactive-01: #0087cb;
   --color-interactive-02: #005e8d;
@@ -13,21 +14,60 @@
   --color-ui-05: #77a0b6;
   --color-ui-06: #11455f;
 
-  --color-alert-01: #c5192d;
-  --color-alert-02: #981323;
-
   --color-text-01: #031c2d;
   --color-text-02: #5a6872;
   --color-text-03: #9a9ea2;
 
-  --color-validation-good-back: rgba(10, 126, 1, 0.1);
-  --color-validation-good-text: #0b9e01;
+  --color-positive-01: #cae7b9;
+  --color-positive-02: #0b9e01;
+  --color-positive-03: #0a7902;
+  
+  --color-negative-01: #fecad0;
+  --color-negative-02: #c5192d;
+  --color-negative-03: #981323;
 
-  --color-validation-bad-back: rgba(255, 10, 0, 0.1);
-  --color-validation-bad-text: var(--color-alert-01);
+  --color-validation-good-back: var(--color-positive-01);
+  --color-validation-good-text: var(--color-positive-02);
+
+  --color-validation-bad-back: var(--color-negative-01);
+  --color-validation-bad-text: var(--color-negative-02);
 
   --border-radius: 4px;
 }
+
+/* TODO: implement theming if necessary */
+/* @media (prefers-color-scheme: dark) {
+  :root {
+    --color-interactive-01: #0087cb;
+    --color-interactive-02: #005e8d;
+    --color-inverse-01: #fff;
+    
+    --color-ui-06: #ffffff;
+    --color-ui-05: #ebf1f4;
+    --color-ui-04: #dde8ed;
+    --color-ui-03: #adcad8;
+    --color-ui-02: #77a0b6;
+    --color-ui-01: #11455f;
+
+    --color-text-03: #031c2d;
+    --color-text-02: #eee;
+    --color-text-01: #fff;
+
+    --color-positive-01: #cae7b9;
+    --color-positive-02: #0b9e01;
+    --color-positive-03: #0a7902;
+    
+    --color-negative-01: #fecad0;
+    --color-negative-02: #c5192d;
+    --color-negative-03: #981323;
+  
+    --color-validation-good-back: var(--color-positive-01);
+    --color-validation-good-text: var(--color-positive-02);
+  
+    --color-validation-bad-back: var(--color-negative-01);
+    --color-validation-bad-text: var(--color-negative-02);
+  }
+} */
 
 /*#region reset */
 
@@ -128,7 +168,7 @@ a:focus-visible {
 }
 
 *:focus-visible {
-  outline: 2px solid var(--color-alert-01);
+  outline: 2px solid var(--color-negative-02);
   outline-offset: 2px;
 }
 
@@ -188,6 +228,11 @@ button {
   /* font-size: 1em; */
   font-weight: bold;
   color: var(--color-text-01);
+}
+
+.Boot.progressIndicator {
+  position: absolute;
+  place-self: center;
 }
 
 /*#endregion
@@ -250,7 +295,7 @@ button {
 }
 
 .cid-button-alert {
-  background-color: var(--color-alert-01);
+  background-color: var(--color-negative-02);
   border-color: transparent;
   color: var(--color-inverse-01)
 }
@@ -269,7 +314,7 @@ button {
 
 .cid-button-alert:hover,
 .cid-button-alert:focus {
-  background-color: var(--color-alert-02);
+  background-color: var(--color-negative-03);
 }
 
 .cid-button-with-helptext {
@@ -310,7 +355,7 @@ button {
 .textContainer {
   overflow-y: scroll;
   overflow-x: hidden;
-  border: 1px solid #ccc;
+  border-top: 1px solid var(--color-ui-05);
 }
 
 .textFromConfig {
@@ -343,7 +388,7 @@ button {
   display: inline-block;
   border: white 1px solid;
   border-radius: var(--border-radius);
-  color: white;
+  color: var(--color-inverse-01);
   font-weight: bold;
   padding: .5em 2em;
 }
@@ -358,7 +403,7 @@ button {
 .version-info {
   display: flex;
   justify-content: flex-end;
-  color: var(--color-ui-02)
+  color: var(--color-inverse-01)
 }
 
 .version-info dl {
@@ -397,21 +442,23 @@ button {
 }
 
 .main-screen .region-main {
+  max-width: 1600px;
+  width: 80vw;
+  place-self: center;
   flex-direction: column;
   text-align: center;
   gap: 1em;
 }
 
 .main-screen .region-main h1 {
-  max-width: 60rem;
-  place-self: center;
-  font-size: 4em;
+  font-size: clamp(4em, 6vw, 6em);
   font-weight: bold;
   line-height: 1.3;
+  text-wrap: balance;
 }
 
 .main-screen .region-main h2 {
-  font-size: 1.8em;
+  font-size: clamp(1.8em, 6vw, 2.5em);
   font-weight: 400;
 }
 
@@ -553,6 +600,11 @@ button {
   text-decoration: underline;
 }
 
+.InvalidConfig {
+  position: absolute;
+  height: 100%;
+}
+
 /*#endregion */
 
 /*#region validation general */
@@ -615,6 +667,11 @@ button {
 
 .FileInfo .fileName a {
   text-decoration: underline;
+}
+
+.FileInfo .fileName a:focus-visible {
+  outline: none;
+  color: var(--color-negative-02);
 }
 
 .FileInfo .fileName.otherPath {
@@ -681,7 +738,7 @@ button {
   padding-bottom: 0.5em;
   border-left: 1px solid var(--color-ui-04);
   border-right: 1px solid var(--color-ui-04);
-  border-bottom: 3px solid #666;
+  border-bottom: 3px solid var(--color-ui-05);
 }
 
 .preview-table th,
@@ -698,7 +755,7 @@ button {
 .preview-table .td-row_number,
 .preview-table .th-errors,
 .preview-table .td-errors {
-  color: var(--color-alert-01);
+  color: var(--color-negative-02);
   font-weight: bold;
   border-right: 0.2em solid;
   white-space: pre;

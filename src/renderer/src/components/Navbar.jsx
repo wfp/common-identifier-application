@@ -1,4 +1,4 @@
-import { SCREEN_FILE_LOADING, SCREEN_MAIN, SCREEN_ERROR, SCREEN_CONFIG_UPDATED, useAppStore } from "../store";
+import { SCREEN_FILE_LOADING, SCREEN_MAIN, SCREEN_ERROR, SCREEN_CONFIG_UPDATED, useAppStore, SCREEN_LOAD_NEW_CONFIG, SCREEN_PROCESSING_CANCELED } from "../store";
 import VersionInfo from "./VersionInfo";
 
 // returns a navbar based on the name of the screen
@@ -12,6 +12,8 @@ function Navbar({ config, screenType }) {
     switch (screenType) {
         // Some screens dont need the back button
         case SCREEN_ERROR:
+        case SCREEN_PROCESSING_CANCELED:
+        case SCREEN_LOAD_NEW_CONFIG:
         case SCREEN_FILE_LOADING:
         case SCREEN_CONFIG_UPDATED:
         case SCREEN_MAIN:
