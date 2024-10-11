@@ -6,7 +6,7 @@ function resolveHtmlPath(htmlFileName) {
     if (process.env.NODE_ENV === 'development') {
       const port = process.env.PORT || 5173;
       const url = new URL(`http://localhost:${port}`);
-      url.pathname = htmlFileName;
+      url.pathname = "index.html";
       return url.href;
     }
     return `file://${path.resolve(__dirname, '../renderer/', htmlFileName)}`;
