@@ -38,8 +38,11 @@ jobs:
 
       - script: |
           npm install
+        displayName: 'Npm install'
+
+      - script: |
           npm run test:ci
-        displayName: 'Npm install & build'
+        displayName: 'Npm tun test:ci'
 
       - task: PublishTestResults@2
         displayName: 'Publish test results'
