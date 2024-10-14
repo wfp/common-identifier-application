@@ -3,7 +3,7 @@
 region="NWS"
 
 # The version of the configuration file
-version="0.1.2"
+version="0.1.3"
 
 [messages]
 
@@ -86,42 +86,37 @@ individual_reference = [
 
 first_name = [
     { op = "field_type", value = "str" },
-    # Example message for a language check if needed
     { op = "language_check", value = "Arabic", message="is not Arabic"}
 ]
 
 last_name = [
     { op = "field_type", value = "str" },
-    # The default error message for the 'lanaguage_check' is "languge is not <LANGUAGE>"
-    # so the default error messages should be enough
-    { op = "language_check", value = "Arabic"}
+    { op = "language_check", value = "Arabic", message="is not Arabic"}
 ]
 
 father_first_name = [
     { op = "field_type", value = "str" },
-    { op = "language_check", value = "Arabic"}
+    { op = "language_check", value = "Arabic", message="is not Arabic"}
 ]
 
 father_last_name = [
     { op = "field_type", value = "str" },
-    { op = "language_check", value = "Arabic"}
+    { op = "language_check", value = "Arabic", message="is not Arabic"}
 ]
 
 mother_first_name = [
     { op = "field_type", value = "str" },
-    { op = "language_check", value = "Arabic"}
+    { op = "language_check", value = "Arabic", message="is not Arabic"}
 ]
 
 
 dob_year = [
-    # default error message for these validators is "is not less then ..." / "is not greater then ..."
     { op = "min_value", value = 1901 },
     { op = "max_value", value = 2024 }, # TODO: not more than current year
 ]
 
 document_type = [
     { op = "field_type", value = "str" },
-    # default
     { op = "options", value = [ "", "NATIONAL_ID", "PERSONAL_ID", "LOCAL_COUNCIL_CARD" ] }
 ]
 
@@ -139,8 +134,7 @@ category = [
     { op = "field_type", value = "str" },
     { op = "min_field_length", value = 2 },
     { op = "max_field_length", value = 15 },
-    { op = "same_value_for_all_rows" },
-    # { op = "options", value = [ "FOOD-RFA", "FOOD-SFB", "FOOD-BA" ] }
+    { op = "same_value_for_all_rows" }
 ]
 
 currency = [
@@ -151,7 +145,7 @@ currency = [
 
 amount = [
     { op = "min_value", value = 1 },
-    { op = "max_value", value = 20000 },
+    { op = "max_value", value = 20_000 },
 ]
 
 start = [
@@ -252,4 +246,4 @@ postfix = "-ERRORS-NWS-1.0.8-{{yyyy-MM-dd--HH-mm-ss}}"
 
 
 [signature]
-config_signature="3b4b6ab8a68202ebcf3221d5c1a728b7"
+config_signature="15477bb1a3f0d8af2f68ca8020858688"
