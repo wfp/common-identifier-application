@@ -763,4 +763,23 @@ button {
   white-space: pre;
 }
 
+.preview-table th:first-of-type,
+.preview-table .TableRow td:first-of-type {
+  border-collapse: separate;
+  position: sticky;
+  left: 0px;
+}
+
+.preview-table th:first-of-type {
+  z-index: 2;
+  border-right: 3px solid var(--color-ui-05);
+}
+
+.preview-table .TableRow td:first-of-type {
+  z-index: 1;
+  text-align: center;
+  background-color: var(--color-ui-01);
+  border-right: 3px solid var(--color-ui-05);
+}
+
 /*#endregion */
