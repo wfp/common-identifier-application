@@ -42,20 +42,20 @@
     --color-interactive-02: #005e8d;
     --color-inverse-01: #fff;
     
-    --color-ui-06: #ffffff;
-    --color-ui-05: #ebf1f4;
-    --color-ui-04: #dde8ed;
-    --color-ui-03: #adcad8;
-    --color-ui-02: #77a0b6;
-    --color-ui-01: #11455f;
+    --color-ui-06: hsl(206, 63%, 100%);
+    --color-ui-05: hsl(206, 63%, 75%);
+    --color-ui-04: hsl(206, 63%, 48%);
+    --color-ui-03: hsl(206, 63%, 35%);
+    --color-ui-02: hsl(206, 63%, 22%);
+    --color-ui-01: hsl(206, 63%, 16%);
 
     --color-text-03: #031c2d;
     --color-text-02: #eee;
     --color-text-01: #fff;
 
     --color-positive-01: #cae7b9;
-    --color-positive-02: #0b9e01;
-    --color-positive-03: #0a7902;
+    --color-positive-02: #369432;
+    --color-positive-03: #16825D;
     
     --color-negative-01: #fecad0;
     --color-negative-02: #c5192d;
@@ -738,8 +738,6 @@ button {
   background-color: var(--color-ui-02);
   padding-top: 0.5em;
   padding-bottom: 0.5em;
-  border-left: 1px solid var(--color-ui-04);
-  border-right: 1px solid var(--color-ui-04);
   border-bottom: 3px solid var(--color-ui-05);
 }
 
@@ -747,10 +745,12 @@ button {
 .preview-table td {
   white-space: nowrap;
   padding: 0.1em 0.8em;
+  border-right: 1px solid var(--color-ui-05);
 }
 
 .preview-table td {
   border: 1px solid var(--color-ui-02);
+  border-right: 1px solid var(--color-ui-05);
 }
 
 .preview-table .th-row_number,
