@@ -97,6 +97,8 @@ function createWindow() {
     // set the icon on windows (setting the icon to a .ico file on Mac results in a throw)
     if (process.platform === "win32") {
         mainWindow.setIcon(`${path.resolve(__dirname, '../../assets/logo.ico')}`);
+    } else if (process.platform === "darwin") {
+        mainWindow.setIcon(`${path.resolve(__dirname, '../../assets/logo.icns')}`);
     }
 
     // Open the DevTools.
