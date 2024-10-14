@@ -5,3 +5,6 @@ test_files
 src/renderer/dist
 src/main/ALGO-NWS
 out/
+__build
+
+coverage

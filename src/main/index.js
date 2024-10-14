@@ -1,3 +1,19 @@
+/*
+ * This file is part of Building Blocks CommonID Tool
+ * Copyright (c) 2024 WFP
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, version 3.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 
 // Modules to control application life and create native browser window
 const { app, BrowserWindow, ipcMain } = require('electron/main')
@@ -17,9 +33,27 @@ const processFile = require('./ipc-handlers/processFile');
 const preProcessFileOpenDialog = require('./ipc-handlers/preProcessFileOpenDialog');
 const removeUserConfig = require('./ipc-handlers/removeUserConfig');
 
+const { handleSquirrelEvent, createDesktopShortcut } = require('./squirell-callbacks');
 
-// run this as early in the main process as possible
-if (require('electron-squirrel-startup')) app.quit();
+// INITIAL SQUIRELL EVENT HANDLING
+// -------------------------------
+
+
+
+// this should be placed at top of main.js to handle setup events quickly
+if (handleSquirrelEvent()) {
+    return;
+} else {
+
+    // Always attempt to create the shortcut to hopefully allow OneDrive
+    // Desktop shorcut creation on reinstall
+    createDesktopShortcut();
+}
+
+
+
+
+
 
 
 

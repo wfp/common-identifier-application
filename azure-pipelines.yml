@@ -25,6 +25,48 @@ pool:
   vmImage: windows-latest
 
 jobs:
+  - job: runTestSuite
+    displayName: Run test suite
+    steps:
+      - checkout: self
+        submodules: true
+
+      - task: UseNode@1
+        inputs:
+          version: "20.x"
+        displayName: "Install Node.js"
+
+      - script: |
+          npm install
+        displayName: 'Npm install'
+
+      - script: |
+          npm run test:ci
+        displayName: 'Npm tun test:ci'
+
+      - task: PublishTestResults@2
+        displayName: 'Publish test results'
+        inputs:
+          testResultsFormat: 'JUnit'
+          testResultsFiles: '**/test-report.xml'
+          mergeTestResults: true
+          failTaskOnFailedTests: true
+          failTaskOnMissingResultsFile: true
+
+      - task: PublishCodeCoverageResults@1
+        inputs:
+          codeCoverageTool: 'Cobertura'
+          summaryFileLocation: '$(Build.SourcesDirectory)/coverage/cobertura-coverage.xml'
+          pathToSources: '$(Build.SourcesDirectory)'
+          failIfCoverageEmpty: true
+
+    uses:
+      repositories:
+      - AlgoNws
+      - AlgoGos
+      - AlgoShared
+
+
   - job: buildApplication
     displayName: Build Application
     strategy:
@@ -44,12 +86,25 @@ jobs:
       - checkout: self
         submodules: true
 
+      - task: UseNode@1
+        inputs:
+          version: "20.x"
+        displayName: "Install Node.js"
+
       # Frontend
       # -------
 
       - script: |
           (cd src/renderer && npm install && npm run build)
         displayName: 'Build the renderer'
+
+
+
+      - bash: |
+            echo '{ "Endpoint": "$(ENDPOINT)", "CodeSigningAccountName": "$(CODE_SIGNING_ACCOUNT_NAME)", "CertificateProfileName": "$(CERTIFICATE_PROFILE_NAME)" }' > signing_metadata.json
+
+            cat signing_metadata.json
+        displayName: "Prepare Trusted Signing metadata"
 
       # Application
       # -------
@@ -69,6 +124,7 @@ jobs:
           node tools/activate-algo.js $(algo)
           npx electron-forge package --arch=x64 --platform=win32
         displayName: "Build package for signing"
+
 
       # Sign the executable(s) in the output folder
       - task: TrustedSigning@0
@@ -98,6 +154,41 @@ jobs:
           ExcludeVisualStudioCredential: true
           ExcludeEnvironmentCredential: false
 
+      # This exaple signs an exe with the signtool left over from the previous task
+      # (this one actually works)
+
+      # - script: |
+      #     C:\Users\VssAdministrator\AppData\Local\TrustedSigning\Microsoft.Windows.SDK.BuildTools\Microsoft.Windows.SDK.BuildTools.10.0.22621.3233\bin\10.0.22621.0\x64\signtool.exe sign /v /debug /fd SHA256 /tr http://timestamp.acs.microsoft.com /td SHA256 /dlib "C:\Users\VssAdministrator\AppData\Local\TrustedSigning\Microsoft.Trusted.Signing.Client\Microsoft.Trusted.Signing.Client.1.0.53\bin\x64\Azure.CodeSigning.Dlib.dll" /dmdf "C:\Users\VssAdministrator\AppData\Local\TrustedSigning\Microsoft.Trusted.Signing.Client\Microsoft.Trusted.Signing.Client.1.0.53\bin\x64\metadata.json" "node_modules\electron-winstaller\vendor\StubExecutable.exe"
+      #   displayName: Signtool execution test
+      #   env:
+      #     AZURE_TENANT_ID: $(TENANT_ID)
+      #     AZURE_CLIENT_ID: $(CLIENT_ID)
+      #     AZURE_CLIENT_SECRET: $(CLIENT_SECRET)
+
+
+      # The following task demonstrates how Electron-Winstaller triggered squirrel builds trigger the code signing
+      # (this does not seems to work, even when overwriting the signtool with the original)
+
+      # - script: |
+      #     node_modules\electron-winstaller\vendor\signtool.exe sign /v /debug /fd SHA256 /tr http://timestamp.acs.microsoft.com /td SHA256 /dlib "C:\Users\VssAdministrator\AppData\Local\TrustedSigning\Microsoft.Trusted.Signing.Client\Microsoft.Trusted.Signing.Client.1.0.53\bin\x64\Azure.CodeSigning.Dlib.dll" /dmdf "C:\Users\VssAdministrator\AppData\Local\TrustedSigning\Microsoft.Trusted.Signing.Client\Microsoft.Trusted.Signing.Client.1.0.53\bin\x64\metadata.json" "out\commonid-tool-win32-x64\commonid-tool.exe"
+      #   displayName: electron-winstaller signtool execution test
+      #   env:
+      #     AZURE_TENANT_ID: $(TENANT_ID)
+      #     AZURE_CLIENT_ID: $(CLIENT_ID)
+      #     AZURE_CLIENT_SECRET: $(CLIENT_SECRET)
+
+
+      # This is how Electron-Windows sign attempts to sign the same executable (or Elecron-Winstaller when using the `windowsSign` settings)
+      # (this does not seem to work)
+
+      # - script: |
+      #     npx electron-windows-sign out/commonid-tool-win32-x64 --debug --appDirectory=out/commonid-tool-win32-x64 --signToolPath="C:\Users\VssAdministrator\AppData\Local\TrustedSigning\Microsoft.Windows.SDK.BuildTools\Microsoft.Windows.SDK.BuildTools.10.0.22621.3233\bin\10.0.22621.0\x64\signtool.exe" --signWithParams="/v /debug /fd SHA256 /tr http://timestamp.acs.microsoft.com /td SHA256 /dlib \"C:\\Users\\VssAdministrator\\AppData\\Local\\TrustedSigning\\Microsoft.Trusted.Signing.Client\\Microsoft.Trusted.Signing.Client.1.0.53\\bin\\x64\\Azure.CodeSigning.Dlib.dll\" /dmdf \"C:\\Users\\VssAdministrator\\AppData\\Local\\TrustedSigning\\Microsoft.Trusted.Signing.Client\\Microsoft.Trusted.Signing.Client.1.0.53\\bin\\x64\\metadata.json\""
+      #   displayName: electron-windows-sign execution test
+      #   env:
+      #     AZURE_TENANT_ID: $(TENANT_ID)
+      #     AZURE_CLIENT_ID: $(CLIENT_ID)
+      #     AZURE_CLIENT_SECRET: $(CLIENT_SECRET)
+
 
       # Winstaller
       # ----------
@@ -106,6 +197,12 @@ jobs:
       - script: |
           node build-windows-installer.js $(region)
         displayName: "Build Installer from signed output"
+        env:
+          AZURE_TENANT_ID: $(TENANT_ID)
+          AZURE_CLIENT_ID: $(CLIENT_ID)
+          AZURE_CLIENT_SECRET: $(CLIENT_SECRET)
+          DEBUG: "electron-windows-installer:main"
+
 
       # Sign the installer
       - task: TrustedSigning@0
