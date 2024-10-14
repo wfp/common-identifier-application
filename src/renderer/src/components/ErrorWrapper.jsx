@@ -31,7 +31,7 @@ function ErrorWrapper({config, error, isRuntimeError}) {
 
     // if no messages present
     if (!config || !config.data || !config.data.messages || !config.data.messages[_messageKey]) {
-        return (<div className="userErrorMessage userErrorMessageMissing">
+        return (<div className="userErrorMessage textFromConfig">
             An internal error occured and the configuration is invalid.
         </div>)
     }

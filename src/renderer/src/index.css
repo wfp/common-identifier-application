@@ -589,7 +589,8 @@ button {
   font-size: 3rem;
 }
 
-.error-screen .textFromConfig {
+.error-screen .textFromConfig,
+.error-screen .userErrorMessage {
   line-height: 1.4em;
   font-size: 1.2rem;
   font-weight: 500;
