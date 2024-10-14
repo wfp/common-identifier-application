@@ -451,14 +451,14 @@ button {
 }
 
 .main-screen .region-main h1 {
-  font-size: clamp(4em, 6vw, 6em);
+  font-size: 4rem;
   font-weight: bold;
   line-height: 1.3;
   text-wrap: balance;
 }
 
 .main-screen .region-main h2 {
-  font-size: clamp(1.8em, 6vw, 2.5em);
+  font-size: 2.2rem;
   font-weight: 400;
 }
 

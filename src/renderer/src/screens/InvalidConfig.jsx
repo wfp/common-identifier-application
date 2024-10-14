@@ -21,7 +21,7 @@ function InvalidConfig({config, error}) {
         </div>
 
         <div className="developerInformation">
-            <h4>Technical details</h4>
+            <h4>Technical Details</h4>
             <code>{error}</code>
         </div>
 
