@@ -94,7 +94,10 @@ function createWindow() {
     // and load the index.html of the app.
     mainWindow.loadURL(resolveHtmlPath('renderer.html'))
 
-    mainWindow.setIcon(`${path.resolve(__dirname, '../../assets/logo.ico')}`);
+    // set the icon on windows (setting the icon to a .ico file on Mac results in a throw)
+    if (process.platform === "win32") {
+        mainWindow.setIcon(`${path.resolve(__dirname, '../../assets/logo.ico')}`);
+    }
 
     // Open the DevTools.
     // mainWindow.webContents.openDevTools()
