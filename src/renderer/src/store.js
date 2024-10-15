@@ -37,7 +37,7 @@ export const SCREEN_LOAD_NEW_CONFIG = storeLogic.SCREEN_LOAD_NEW_CONFIG
 export const SCREEN_CONFIG_UPDATED = storeLogic.SCREEN_CONFIG_UPDATED
 export const SCREEN_ERROR = storeLogic.SCREEN_ERROR
 export const SCREEN_INVALID_CONFIG = storeLogic.SCREEN_INVALID_CONFIG
-export const SCREEN_CONFIG_CHANGE = storeLogic.SCREEN_INVALID_CONFIG
+export const SCREEN_CONFIG_CHANGE = storeLogic.SCREEN_CONFIG_CHANGE
 
 
 export const useAppStore = createStore(storeLogic.storeLogic(intercomApi));
