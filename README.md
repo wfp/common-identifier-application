@@ -4,21 +4,22 @@
 
 Unit tests for the algorithm (shared and algorithm-specific) are written using the JEST test framework. Run the test suite:
 
-```
+(the `--experimental-vm-modules` node option is required to load the ES module code for the frontend tests)
+
+
+```bash
+# the `--experimental-vm-modules` node option is required to load the ES module code
+# for the frontend tests
+export NODE_OPTIONS="$NODE_OPTIONS --experimental-vm-modules"
+
+# Now both backend and frontend tests can be ran
 npx jest
 ```
 
 Or get the test coverage using
 
-```
+```bash
 npx jest --coverage
-```
-
-
-The unit tests for the "store" (the state keeping and business logic of the frontend) are ran separately:
-
-```
-cd src/renderer && npx jest
 ```
 
 

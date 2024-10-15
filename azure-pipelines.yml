@@ -43,6 +43,8 @@ jobs:
       - script: |
           npm run test:ci
         displayName: 'Npm tun test:ci'
+        env:
+          NODE_OPTIONS: "--experimental-vm-modules"
 
       - task: PublishTestResults@2
         displayName: 'Publish test results'
@@ -59,6 +61,7 @@ jobs:
           summaryFileLocation: '$(Build.SourcesDirectory)/coverage/cobertura-coverage.xml'
           pathToSources: '$(Build.SourcesDirectory)'
           failIfCoverageEmpty: true
+
 
     uses:
       repositories:
