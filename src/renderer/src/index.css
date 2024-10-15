@@ -389,8 +389,7 @@ button {
 /*#region Navbar */
 
 .main-navigation {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  display: flex;
   justify-content: flex-end;
   background-color: var(--color-interactive-01);
   color: var(--color-inverse-01);
@@ -462,8 +461,8 @@ button {
 
 .main-screen .region-main {
   max-width: 1600px;
-  width: 80vw;
   place-self: center;
+  margin: 0 15% 0 15%;
   flex-direction: column;
   text-align: center;
   gap: 1em;
@@ -533,7 +532,7 @@ button {
 }
 
 .config-change .cid-button-row {
-  width: 60em;
+  width: 100%;
   margin: 0 auto;
   gap: 2em;
 }
@@ -544,11 +543,11 @@ button {
 }
 
 .config-change .cid-button-row-horiz button {
-  width: max(60%, 320px);
+  width: 300px;
 }
 
 .config-change .cid-button-row-vert button {
-  width: max(50%, 250px);
+  width: 400px;
 }
 
 .loadNewConfig,
