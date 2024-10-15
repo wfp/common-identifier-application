@@ -104,6 +104,8 @@ async function runBuild() {
 
             // override the loading gif
             loadingGif: path.join(__dirname, "assets","installing_animation.gif"),
+            setupIcon: path.join(__dirname, "assets","logo.ico"),
+
 
             // Version and description should come from package.json in the build `app.asar`
 
