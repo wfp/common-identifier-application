@@ -157,6 +157,42 @@ jobs:
             }
         displayName: 'Create self-extracting 7Zip archive'
 
+      # Sign the executable(s) in the output folder
+      - task: TrustedSigning@0
+        displayName: "Sign the executable"
+        inputs:
+          AzureTenantID: $(TENANT_ID)
+          AzureClientID: $(CLIENT_ID)
+          AzureClientSecret: $(CLIENT_SECRET)
+          Endpoint: $(ENDPOINT)
+          CodeSigningAccountName: $(CODE_SIGNING_ACCOUNT_NAME)
+          CertificateProfileName: $(CERTIFICATE_PROFILE_NAME)
+
+          TimestampRfc3161: 'http://timestamp.acs.microsoft.com'
+          TimestampDigest: SHA256
+
+          FilesFolder: $(System.DefaultWorkingDirectory)/out/commonid-tool-nws-win32-x64-sfx.exe
+          FilesFolderRecurse: true
+          FileDigest: SHA256
+          FilesFolderFilter: exe
+
+          ExcludeAzureCliCredential: true
+          ExcludeAzurePowerShellCredential: true
+          ExcludeInteractiveBrowserCredential: true
+          ExcludeManagedIdentityCredential: true
+          ExcludeSharedTokenCacheCredential: true
+          ExcludeVisualStudioCodeCredential: true
+          ExcludeVisualStudioCredential: true
+          ExcludeEnvironmentCredential: false
+
+      # Publish the signed zip as an artifact
+      - task: PublishBuildArtifacts@1
+        inputs:
+          pathtoPublish: $(System.DefaultWorkingDirectory)/out/commonid-tool-nws-win32-x64-sfx.exe
+          artifactName: app-nws-win-sfx-signed
+        displayName: Publish app-nws-win-sfx-signed
+        enabled: true
+
       - script: ls -laR out/
         displayName: Lets look at the output
 
