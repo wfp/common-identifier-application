@@ -108,7 +108,7 @@ jobs:
 
             # Extract the file using 7z (assuming 7z is installed)
             Write-Host "Extracting 7zsd file to $extractDir..."
-            & 7z x $downloadPath -o$extractDir | Out-Null
+            & 7z x $downloadPath -o$extractDir
 
             # List extracted files
             Get-ChildItem $extractDir
