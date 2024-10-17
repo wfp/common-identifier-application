@@ -83,10 +83,10 @@ jobs:
           # The algorithm to use (the name of the algorithm directory in src/main)
           algo: "algo-uscadi"
 
-        # 'GOS Win32 x64':
-        #   region: "gos"
-        #   regionName: "GOS"
-        #   algo: "algo-gos"
+        'GOS Win32 x64':
+          region: "gos"
+          regionName: "GOS"
+          algo: "algo-gos"
 
     steps:
       - checkout: self
