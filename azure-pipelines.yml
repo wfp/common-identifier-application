@@ -100,7 +100,7 @@ jobs:
           targetType: 'inline'
           script: |
             $fileUrl = "https://github.com/chrislake/7zsfxmm/releases/download/1.7.1.3901/7zsd_171_3901.7z"
-            $downloadPath = "$(System.DefaultWorkingDirectory)\out\7zsd.7z"
+            $downloadPath = "$(System.DefaultWorkingDirectory)\out\7zsd_171_3901.7z"
             $extractDir = "$(System.DefaultWorkingDirectory)\out"
 
             Write-Host "Downloading from $fileUrl to $downloadPath..."
@@ -108,7 +108,7 @@ jobs:
 
             # Extract the file using 7z (assuming 7z is installed)
             Write-Host "Extracting 7zsd file to $extractDir..."
-            & 7z x $downloadPath -o$extractDir
+            & 7z x $downloadPath -oout
 
             # List extracted files
             Get-ChildItem $extractDir
