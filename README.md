@@ -126,7 +126,7 @@ https://github.com/chrislake/7zsfxmm
 Documentation of the configuration parameters is available at:
 https://github.com/OlegScherbakov/7zSFX/blob/master/docs/parameters.html
 
-
+NOTE: 7zsfxmm cannot handle LZMA2 archives, only LZMA -- use `-m0=lzma` when compressing the archive with 7zip.
 
 ## Some basic dev tasks
 
