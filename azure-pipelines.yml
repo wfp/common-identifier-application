@@ -78,12 +78,12 @@ jobs:
           mkdir out
         displayName: 'Create output directory'
 
-      # Install 7-Zip
-      - task: UseDotNet@2
-        inputs:
-          packageType: 'sdk'
-          version: '7z'
-        displayName: 'Install 7Zip'
+      # # Install 7-Zip
+      # - task: UseDotNet@2
+      #   inputs:
+      #     packageType: 'sdk'
+      #     version: '7z'
+      #   displayName: 'Install 7Zip'
 
       # # The 7Zip archive needs to use LZMA (not LZMA2, as that is not supported by the
       # # self-extraction wrapper), so we'll use the command-line version via powershell
