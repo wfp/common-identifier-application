@@ -218,7 +218,7 @@ jobs:
       # Publish the signed SFX as an artifact
       - task: PublishBuildArtifacts@1
         inputs:
-          pathtoPublish: "$(System.DefaultWorkingDirectory)\out\commonid-tool-win32-x64.7z"
+          pathtoPublish: $(System.DefaultWorkingDirectory)\out\commonid-tool-win32-x64.7z
           artifactName: app-$(region)-win-7z
         displayName: Publish app-$(region)-7z
         enabled: true
