@@ -102,6 +102,32 @@ if(require('electron-squirrel-startup')) return;
 ```
 
 
+## Self-extracting installers
+
+
+The self-extracting installers built by the pipeline use the [7zsfxmm](https://github.com/chrislake/7zsfxmm) SFX module.
+
+You can change the configuration by changing the generated configuration in `azure-pipelines.yml`:
+
+```
+;!@Install@!UTF-8!
+Title="Building blocks CommonID Tool $(regionName)"
+BeginPrompt="Do you want to install this application?"
+HelpText="This will install the application"
+RunProgram="commonid-tool.exe"
+GUIFlags="64"
+InstallPath="%LOCALAPPDATA%\Building Blocks Common ID Tool $(regionName)"
+;!@InstallEnd@!
+```
+
+Source and published package of the `7zsd.sfx` used (and some example configurations):
+https://github.com/chrislake/7zsfxmm
+
+Documentation of the configuration parameters is available at:
+https://github.com/OlegScherbakov/7zSFX/blob/master/docs/parameters.html
+
+
+
 ## Some basic dev tasks
 
 ### Activating an algorithm for use
