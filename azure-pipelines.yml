@@ -83,10 +83,10 @@ jobs:
           # The algorithm to use (the name of the algorithm directory in src/main)
           algo: "algo-uscadi"
 
-        'GOS Win32 x64':
-          region: "gos"
-          regionName: "GOS"
-          algo: "algo-gos"
+        # 'GOS Win32 x64':
+        #   region: "gos"
+        #   regionName: "GOS"
+        #   algo: "algo-gos"
 
     steps:
       - checkout: self
@@ -215,6 +215,14 @@ jobs:
 
         displayName: "Make an LZMA archive from the signed directory"
 
+      # Publish the signed SFX as an artifact
+      - task: PublishBuildArtifacts@1
+        inputs:
+          pathtoPublish: "$(System.DefaultWorkingDirectory)\out\commonid-tool-win32-x64.7z"
+          artifactName: app-$(region)-win-7z
+        displayName: Publish app-$(region)-7z
+        enabled: true
+
       # There is no task to directly download from a URL, so we'll use this
       - task: PowerShell@2
         inputs:
@@ -266,8 +274,8 @@ jobs:
             # Combine the SFX module, the .7z file, and the config file into an .exe
             Write-Host "Creating self-extracting archive..."
             Copy-Item $sfxModulePath $outputExePath
-            Add-Content -Path $outputExePath -Value (Get-Content -Raw $existingZipFile)
             Add-Content -Path $outputExePath -Value (Get-Content -Raw $configFilePath)
+            Add-Content -Path $outputExePath -Value (Get-Content -Raw $existingZipFile)
 
             # Verify the .exe has been created
             if (Test-Path $outputExePath) {
@@ -305,7 +313,7 @@ jobs:
           ExcludeVisualStudioCredential: true
           ExcludeEnvironmentCredential: false
 
-      # Publish the signed zip as an artifact
+      # Publish the signed SFX as an artifact
       - task: PublishBuildArtifacts@1
         inputs:
           pathtoPublish: $(System.DefaultWorkingDirectory)/out/commonid-tool-$(region)-win32-x64-sfx.exe
