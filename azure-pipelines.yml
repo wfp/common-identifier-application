@@ -137,15 +137,15 @@ jobs:
 
             # Create a config file for SFX
             @"
-;!@Install@!UTF-8!
-Title="Building blocks CommonID Tool NWS"
-BeginPrompt="Do you want to install this application?"
-HelpText="This will install the application"
-RunProgram="commonid-tool.exe"
-GUIFlags="64"
-InstallPath="%APPDATA%\Local\Building Blocks Common ID Tool NWS"
-;!@InstallEnd@!
-"@ | Set-Content -Path $configFilePath
+            ;!@Install@!UTF-8!
+            Title="Building blocks CommonID Tool NWS"
+            BeginPrompt="Do you want to install this application?"
+            HelpText="This will install the application"
+            RunProgram="commonid-tool.exe"
+            GUIFlags="64"
+            InstallPath="%APPDATA%\Local\Building Blocks Common ID Tool NWS"
+            ;!@InstallEnd@!
+            "@ | Set-Content -Path $configFilePath
 
             # Combine the SFX module, the .7z file, and the config file into an .exe
             Write-Host "Creating self-extracting archive..."
