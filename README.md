@@ -234,37 +234,19 @@ By uncommenting the `osxSign: {}` line, the MacOS build will use XCode (and the 
 
 
 
+### Setting up for development
 
-# IN THE CURRENT STATE INFORMATION BELLOW MAY OR MAY NOT BE ACCURATE
-
-SYMLINKING IS CURRENTLY NOT NEEDED (IT WILL MAKE A COMEBACK AFTER REPO RE-SEPARATION)
-
-# Setting up the current development environment
-
-Until the repository separation and build system is completed there are a number
-of manual steps that need to be done to get this repository working on your machine.
-
-
-#### Step 0: Clone & init this repo
+#### Step 1: Clone & init this repo and the algorithm repositories
 
 ```
 git clone ....
+git submodule init
+git submodule update
 npm install
 ```
 
-#### Step 1: Clone the Algorithm repository to a separate location
 
-#### Step 2: Symlink the Algorithm repository into `src/main/ALGO-NWS`
-
-(the path name, just like these build steps is only temporary)
-
-```
-# In this repo's directory
-ln -s <FULL PATH TO ALGO REPO> ./src/main/ALGO-NWS
-```
-
-
-#### Step 3: Build the UI
+#### Step 2: Build the UI
 
 ```
 # In the src/renderer directory
@@ -278,7 +260,7 @@ this'll output the compiled UI files into the `dist` directory.
 #### Step 4: Start the application
 
 ```
-npm start
+DEBUG=CID:* npm start
 ```
 
 
@@ -303,3 +285,253 @@ The SheetJS / node-xlsx library used in the application is sourced from the Shee
 
 Further details about this can be found in the SheetJS documentation.
 https://docs.sheetjs.com/docs/getting-started/installation/nodejs/
+
+# Processing pipeline overview
+
+The processing uses the following steps:
+
+## Configuration
+
+- The `src/main/algo-shared/config/ConfigStore` ConfigStore attempts to load the configuration from the appllication directory or the backup location (app bundle) if the primary configuration fails to load. It also handles updating the user configuration file on config changes.
+
+- The terms and conditions are also handled by the ConfigStore using the `src/main/algo-shared/config/appConfig` application config save/write process
+
+## Pre-processing (validation)
+
+- The `src/main/algo-shared/decoding` Decoders (CSV and XLSX) read the source file and convert it (using the `config.source` setup) to a Document with Sheets containing the input data with column aliases renamed
+
+- The `src/processing` pre-processing function identifies if the target is a mapping document based on the current configuration and the data in the file and sets up validation accordingly
+
+- The `src/main/algo-shared/validation` Validators are setup based on the active configuration, and ran against the Document.
+
+- If there are errors, the `src/main/algo-shared/encoding` Encoders (CSV and XLSX) write the validation error output based on `[destination_errors]` section of the active configuration
+
+- The frontend shows the results and either allows processing or shows the errors
+
+## Processing
+
+- The `src/main/algo-shared/decoding` Decoders (CSV and XLSX) read the source file and convert it (using the `config.source` setup) to a Document with Sheets containing the input data with column aliases renamed
+
+- The `src/processing` processing function identifies if the target is a mapping document based on the current configuration and the data in the file. Using the active configuration it collects data into `static` `to_translate` and `reference` buckets per-row and passes it to the active algorithm for processing
+
+- The active algorithm takes the `{ static:[...], to_translate:[...], reference: [...] }` per-row data and returns a map with the columns it wants to add -- ex: `{ USCADI: "....", DOCUMENT_HASH: "..." }`
+
+- The data returned by the algorithm is merged into the source rows so the encoders can package multiple different outputs
+
+- The `src/main/algo-shared/encoding` Encoders (CSV and XLSX) write the output based on the relevant `[destination]` / `[destination_map]` section of the active configuration.
+
+
+# Algorithm activation & backup configuration files
+
+To activate an algorithm for development / building with that algorithm use the `tools/activate-algo.js` scripts -- it copies the backup config file to the application's location and points the `src/main/active_algorithm.js` file to the right algorithm.
+
+```
+# for NWS
+node tools/activate-algo.js algo-uscadi
+
+# or for GOS
+node tools/activate-algo.js algo-gos
+```
+
+Each algorithm reposiutory contains  `config` subdirectory which houses a `config.backup.toml` which serves as the backup (and baseline) configuration for the application built.
+
+
+# Validator configuration
+
+## Setting up validators
+
+The validators are set up in the `[validations]` section of the configuration file on a per-column basis. The `*` column can be used to apply a validator to every column.
+
+```toml
+[validations]
+
+"*" = [
+    { op = "max_field_length", value = 200 },
+]
+
+# validators for the column with the alias `individual_reference`
+individual_reference = [
+    { op = "field_type", value = "str" },
+    { op = "regex_match", value = "[a-zA-Z0-9!\"#$%&'()*+\\-./:;?@[\\]^_{|}~]+", message="must only consist of alphanumeric characters and supported special characters" }
+]
+
+```
+
+## Validator types
+
+```toml
+{
+  op = "<VALIDATOR TYPE>"
+  value = ... # <MAIN VALIDATOR PARAMETER>
+  message="<OPTIONAL MESSAGE>"
+  ...
+}
+```
+
+- The type of the validator is indicated by the `op` of the validator.
+
+- Most Validators take their "main argument" as the `value`.
+
+- The validation error message can be customised by setting `message`.
+
+Each validator type is implemented as in `src/main/algo-shared/validation`.
+
+### Date difference from today
+
+```toml
+{ op = "date_diff", value = "<DATE OFFSET>" }
+```
+
+Expects the value of the column to be a date and to be before / after `<NOW> + <DATE_OFFSET>`.
+
+Date offset takes the format of: `<POSITIVE OR NEGATIVE INTEGER><RANGE TYPE>`. Some examples:
+
+- `+1d` means 'at most 1 day after today'
+- `-5d` means 'at most 5 days before today'
+- `+1M` means 'at most 1 month after today'
+- `-10M` means 'at most 10 months before today'
+- `+1Y` means 'at most 1 year after today'
+- `-2Y` means 'at most 2 years before today'
+
+Example:
+
+```toml
+{ op = "date_diff", value = "-1d"},
+{ op = "date_diff", value = "+2M"},
+{ op = "date_diff", value = "-2Y"}
+```
+
+### Date difference between columns
+
+```toml
+{ op = "date_field_diff", target = "<TARGET COLUMN>", value = "<DATE OFFSET>" }
+```
+
+Expects the value of the column specified by `<TARGET COLUMN>` to be a valid date, the value of the current column to be a valid date and to be before / after `<TARGET COLUMN VALUE> + <DATE_OFFSET>`.
+
+The date offset format is shared with `date_diff`.
+
+
+Example:
+
+```toml
+end = [
+  { op = "date_field_diff", target = "start", value="-12M", message="must be within a year of Start"},
+]
+```
+
+### Column type
+
+```toml
+{ op = "field_type", value = "<TYPE>" },
+```
+
+Expects the value of the column to be of the type specified by `<TYPE>`:
+
+- `str` for string / text
+- `num` for numbers
+
+Example:
+
+```toml
+{ op = "field_type", value = "str" },
+```
+
+
+### Language check
+
+```toml
+{ op = "language_check", value = "<LANGUAGE>" }
+```
+
+Expects the value of the column to have only characters used by the given language.
+
+Currently only the `Arabic` language is supported.
+
+Example:
+
+```toml
+{ op = "language_check", value = "Arabic", message="is not Arabic"}
+```
+
+### Minimum / maximum length
+
+```toml
+{ op = "min_field_length", value = "<A NUMBER>" },
+{ op = "max_field_length", value = "<A NUMBER>" },
+```
+
+Expects the length of the value (as a string) of the column to be:
+- at least `value` (in case of `min_field_length`)
+- at most `value` (in case of `max_field_length`)
+
+Example:
+
+```toml
+{ op = "min_field_length", value = 2 },
+{ op = "max_field_length", value = 15 },
+```
+
+### Minimum / maximum value
+
+```toml
+{ op = "min_value", value = "<A NUMBER>" },
+{ op = "max_value", value = "<A NUMBER>" },
+```
+
+Expects the numerical value of the column to be:
+- at least `value` (in case of `min_value`)
+- at most `value` (in case of `max_value`)
+
+Example:
+
+```toml
+{ op = "min_value", value = 1 },
+{ op = "max_value", value = 1000 },
+```
+
+
+
+### Options
+
+```toml
+{ op = "options", value = [ "<AN>", "<ARRAY>", "<OF>", "<OPTIONS>" ] }
+```
+
+Expects the value of the column to be one of the values in the `value` string array.
+
+Example:
+
+```toml
+{ op = "options", value = [ "", "NATIONAL_ID", "PERSONAL_ID", "LOCAL_COUNCIL_CARD" ] }
+```
+
+### Regexp
+
+```toml
+{ op = "regex_match", value = "<REGULAR EXPRESSION>" }
+```
+
+Expects the value of the column to match the regular expression. It is highly recommended to supply a custom error message here, as the users will need more context then just a regular expression.
+
+NOTE: this validator attempts to match the whole string, not just a substring
+
+Example:
+
+```toml
+{ op = "regex_match", value = "[a-zA-Z0-9!\"#$%&'()*+\\-./:;?@[\\]^_{|}~]+", message="must only consist of alphanumeric characters and supported special characters" } # TBD
+```
+
+### Same value for all rows
+
+```toml
+{ op = "same_value_for_all_rows" },
+```
+
+Expects the value of the column to equal the value of the column in the first row (thereby requiring the whole document to contain only a single value for this column).
+
+Example:
+
+```toml
+{ op = "same_value_for_all_rows" },
+```
