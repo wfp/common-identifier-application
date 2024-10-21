@@ -99,6 +99,8 @@ function createWindow() {
         mainWindow.setIcon(`${path.resolve(__dirname, '../../assets/logo.ico')}`);
     }
     else if (process.platform === "darwin") {
+        // MacOS requires a PNG (it does not seem to like ICNS here, but only accepts ICNS
+        // for the packaging) + changing this line does not seem to change the
         mainWindow.setIcon(`${path.resolve(__dirname, '../../assets/logo.png')}`);
     }
 

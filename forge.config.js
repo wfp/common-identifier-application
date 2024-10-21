@@ -4,6 +4,15 @@ const { FuseV1Options, FuseVersion } = require('@electron/fuses');
 module.exports = {
   packagerConfig: {
     asar: true,
+
+    // Package icon for Windows and MacOS
+    // The icon file is picked according the the target OS -- do not add
+    // any extensions here.
+
+    // A converter that seems to work for PNG -> ICNS conversion is
+    // https://cloudconvert.com/png-to-icns
+    icon: 'assets/logo',
+
     // asar: false,
 
     // algo repo symlinks should be followed
