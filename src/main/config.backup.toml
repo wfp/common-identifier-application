@@ -60,7 +60,6 @@ columns = [
     { name = "First Name", alias = "first_name" },
     { name = "Last Name", alias = "last_name" },
     { name = "Father First Name", alias = "father_first_name" },
-    { name = "Father Last Name", alias = "father_last_name" },
     { name = "Mother First Name", alias = "mother_first_name" },
     { name = "Year of Birth", alias = "dob_year" },
     # By specifying the default when the column is missing the default value will be added
@@ -97,11 +96,6 @@ last_name = [
 ]
 
 father_first_name = [
-    { op = "field_type", value = "str" },
-    { op = "language_check", value = "Arabic", message="is not Arabic"}
-]
-
-father_last_name = [
     { op = "field_type", value = "str" },
     { op = "language_check", value = "Arabic", message="is not Arabic"}
 ]
@@ -169,7 +163,6 @@ to_translate = [
     "first_name",
     "last_name",
     "father_first_name",
-    "father_last_name",
     "mother_first_name",
 ]
 static = [
@@ -232,7 +225,6 @@ columns = [
     { name = "First Name", alias = "first_name" },
     { name = "Last Name", alias = "last_name" },
     { name = "Father First Name", alias = "father_first_name" },
-    { name = "Father Last Name", alias = "father_last_name" },
     { name = "Mother First Name", alias = "mother_first_name" },
     { name = "Year of Birth", alias = "dob_year" },
     { name = "Document Type", alias = "document_type" },
@@ -248,4 +240,4 @@ postfix = "-ERRORS-NWS-1.0.8-{{yyyy-MM-dd--HH-mm-ss}}"
 
 
 [signature]
-config_signature="9841c65c327d3d4daa438b7a1af767fc"
+config_signature="b400336630216cd9bda1d279bdebf8c8"
