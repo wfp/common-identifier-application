@@ -21,6 +21,32 @@ trigger: none
 variables:
   - group: AZURE_VARS
 
+  # Is this a PR build?
+  - name: IsPRBuild
+    value: $[startsWith(variables['Build.SourceBranch'], 'refs/pull/')]
+
+  # Is this the main branch and not a PR?
+  - name: isMain
+    value: $[eq(variables['Build.SourceBranch'], 'refs/heads/main')]
+
+  # Is this the dev branch and not a PR?
+  - name: isDev
+    value: $[eq(variables['Build.SourceBranch'], 'refs/heads/dev')]
+
+  - name: buildPostfix
+    # Empty postfix for main branch
+    ${{ if eq( variables['Build.SourceBranchName'], 'main' ) }}:
+      value: ""
+    # 'dev' postfix for dev branch
+    ${{ elseif eq( variables['Build.SourceBranchName'], 'dev' ) }}:
+      value: "-dev"
+    # 'misc-<SOURCE_BRANCHNAME>' postfix for other branches
+    ${{ else }}:
+      value: "-misc-$(Build.SourceBranchName)"
+
+
+
+
 pool:
   vmImage: windows-latest
 
@@ -97,6 +123,14 @@ jobs:
           version: "20.x"
         displayName: "Install Node.js"
 
+
+      # Versioning
+      # ----------
+
+      - script: |
+          appVersion=$(node -p "require('./package.json').version") echo "##vso[task.setvariable variable=appVersion]$appVersion"
+        displayName: 'Get version from package.json'
+
       # Frontend
       # -------
 
@@ -104,13 +138,6 @@ jobs:
           (cd src/renderer && npm install && npm run build)
         displayName: 'Build the renderer'
 
-
-
-      - bash: |
-            echo '{ "Endpoint": "$(ENDPOINT)", "CodeSigningAccountName": "$(CODE_SIGNING_ACCOUNT_NAME)", "CertificateProfileName": "$(CERTIFICATE_PROFILE_NAME)" }' > signing_metadata.json
-
-            cat signing_metadata.json
-        displayName: "Prepare Trusted Signing metadata"
 
       # Application
       # -------
@@ -199,7 +226,7 @@ jobs:
 
             # Define the paths
             $existingZipFile = "$(System.DefaultWorkingDirectory)\out\commonid-tool-win32-x64.7z"
-            $outputExePath   = "$(System.DefaultWorkingDirectory)\out\commonid-tool-$(region)-win32-x64-sfx.exe"
+            $outputExePath   = "$(System.DefaultWorkingDirectory)\out\commonid-tool-$(region)$(buildPostfix)-$(appVersion)-win32-x64-sfx.exe"
 
             # Use the self-extracting installer version of the SFX files
             $sfxModulePath = "$(System.DefaultWorkingDirectory)\out\7zsd.sfx"
@@ -223,7 +250,7 @@ jobs:
             HelpText="This will install the application"
             RunProgram="commonid-tool.exe"
             GUIFlags="64"
-            InstallPath="%LOCALAPPDATA%\Building Blocks Common ID Tool $(regionName)"
+            InstallPath="%LOCALAPPDATA%\Building Blocks Common ID Tool $(regionName)\$(appVersion)$(buildPostfix)"
             ;!@InstallEnd@!
             "@ | Set-Content -Path $configFilePath
 
@@ -255,7 +282,7 @@ jobs:
           TimestampRfc3161: 'http://timestamp.acs.microsoft.com'
           TimestampDigest: SHA256
 
-          FilesFolder: $(System.DefaultWorkingDirectory)/out/commonid-tool-$(region)-win32-x64-sfx.exe
+          FilesFolder: $(System.DefaultWorkingDirectory)/out/commonid-tool-$(region)$(buildPostfix)-$(appVersion)-win32-x64-sfx.exe
           FilesFolderRecurse: true
           FileDigest: SHA256
           FilesFolderFilter: exe
@@ -272,7 +299,7 @@ jobs:
       # Publish the signed SFX as an artifact
       - task: PublishBuildArtifacts@1
         inputs:
-          pathtoPublish: $(System.DefaultWorkingDirectory)/out/commonid-tool-$(region)-win32-x64-sfx.exe
+          pathtoPublish: $(System.DefaultWorkingDirectory)/out/commonid-tool-$(region)$(buildPostfix)-$(appVersion)-win32-x64-sfx.exe
           artifactName: app-$(region)-win-sfx-signed
         displayName: Publish app-$(region)-win-sfx-signed
         enabled: true
