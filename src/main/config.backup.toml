@@ -3,7 +3,7 @@
 region="NWS"
 
 # The version of the configuration file
-version="0.1.3"
+version="0.1.4"
 
 [messages]
 
@@ -27,7 +27,9 @@ terms_and_conditions="""
     You should have received a copy of the GNU General Public License along with this program. If not, see <a href="https://www.gnu.org/licenses" target="_blank">gnu.org</a>.
 </p>
 <p>
-    World Food Programme (WFP) disclaims any responsibility for how the program is used. Users are solely
+    World Food Programme (WFP) disclaims any responsibility for how the program is used. This Program may collect, 
+    store or otherwise process personal data provided by you and/or Users. World Food Programme represents that it has 
+    no access to these personal data and that such access is not technically feasible. Users are solely
     responsible for ensuring their use of the program complies with all applicable norms and regulations, including
     those on data privacy and protection, and obtaining necessary consents and security measures where required.
 </p>
@@ -194,9 +196,9 @@ validator_regex = "-----BEGIN PGP PUBLIC KEY BLOCK-----[A-Za-z0-9+/=\\s]+-----EN
 
 [algorithm.salt.value]
 # $APPDATA can be used to substitute the application data directory
-win32 = "$APPDATA/BuildingBlocks/WFP SYR NWS stage (BE85CAE8) – Public.asc"
+win32 = "$APPDATA/BuildingBlocks/SYR-NWS-PROD (440E1B46) – Public.asc"
 # $HOME can be used to substitute the users home directory
-darwin = "$APPDATA/BuildingBlocks/WFP SYR NWS stage (BE85CAE8) – Public.asc"
+darwin = "$APPDATA/BuildingBlocks/SYR-NWS-PROD (440E1B46) – Public.asc"
 
 
 [destination]
@@ -246,4 +248,4 @@ postfix = "-ERRORS-NWS-1.0.8-{{yyyy-MM-dd--HH-mm-ss}}"
 
 
 [signature]
-config_signature="0966d8d1460782771af2c0303f9cf39a"
+config_signature="9841c65c327d3d4daa438b7a1af767fc"
