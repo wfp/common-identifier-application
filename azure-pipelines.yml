@@ -15,8 +15,9 @@ resources:
     type: Git
     name: ALGO-SHARED
 
-trigger: none
-# - main
+trigger:
+- main
+- dev
 
 variables:
   - group: AZURE_VARS
