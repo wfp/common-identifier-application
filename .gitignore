@@ -9,5 +9,5 @@ __build
 
 coverage
 
-# src/main/*.js
-# src/main/*.mjs
+src/main/**/*.js
+src/main/**/*.mjs
