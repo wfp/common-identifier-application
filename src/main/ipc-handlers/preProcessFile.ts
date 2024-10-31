@@ -17,7 +17,7 @@
 
 import { BrowserWindow } from "electron";
 import { ConfigStore } from "../algo-shared/config/configStore.js";
-import { preprocessFile, PreprocessFileResult } from "../algo-shared/processing/index.js";
+import { preprocessFile as backendPreProcessFile, PreprocessFileResult } from "../algo-shared/processing/index.js";
 
 interface IPCFileDroppedInput {
     mainWindow: BrowserWindow,
@@ -25,19 +25,18 @@ interface IPCFileDroppedInput {
     filePath: string,
 }
 
-export function preProcessFile({ mainWindow, configStore, filePath}: IPCFileDroppedInput) {
+export async function preProcessFile({ mainWindow, configStore, filePath}: IPCFileDroppedInput) {
 
     console.log('[IPC] [fileDropped] Dropped File:', filePath);
 
     const config = configStore.getConfig();
     const limit = undefined;
 
-    return preprocessFile(config, filePath, limit).then((result) => {
-        console.log("[IPC] [fileDropped] PREPROCESSING DONE")
-        mainWindow.webContents.send('preprocessingDone', Object.assign({
-            inputFilePath: filePath,
-        }, result)
-        )
-    });
+    const result_1 = await backendPreProcessFile(config, filePath, limit);
+    console.log("[IPC] [fileDropped] PREPROCESSING DONE");
+    mainWindow.webContents.send('preprocessingDone', Object.assign({
+        inputFilePath: filePath,
+    }, result_1)
+    );
 
 }

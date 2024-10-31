@@ -18,16 +18,15 @@
 import { ConfigStore } from "../algo-shared/config/configStore.js";
 
 export function requestConfigUpdate({configStore}: { configStore: ConfigStore }) {
+    console.log('[IPC] [requestConfigUpdate] App requesting config udpate');
 
-        console.log('[IPC] [requestConfigUpdate] App requesting config udpate');
-
-        const config = configStore.getConfig();
-        // return the data
-        return {
-            config,
-            isBackup: configStore.isUsingBackupConfig,
-            lastUpdated: configStore.lastUpdated,
-            error: configStore.loadError,
-            hasAcceptedTermsAndConditions: configStore.hasAcceptedTermsAndConditions(),
-        }
+    const config = configStore.getConfig();
+    // return the data
+    return {
+        config,
+        isBackup: configStore.isUsingBackupConfig,
+        lastUpdated: configStore.lastUpdated,
+        error: configStore.loadError,
+        hasAcceptedTermsAndConditions: configStore.hasAcceptedTermsAndConditions(),
+    }
 }
