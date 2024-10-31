@@ -3,12 +3,14 @@
   "version": "0.9.17",
   "description": "Common Identifier generation tool for Assistance and Mapping documents.",
   "main": "./src/main/index.js",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "start-web": "set NODE_ENV=development& electron-forge start",
     "start": "electron-forge start",
     "package": "electron-forge package",
     "make": "electron-forge make",
+    "tsc-watch": "tsc -w",
+    "test": "jest",
     "test:ci": "jest --ci --coverage --config=jest.ci.config.js"
   },
   "author": "WFP",
@@ -22,11 +24,15 @@
     "@electron-forge/plugin-auto-unpack-natives": "^7.4.0",
     "@electron-forge/plugin-fuses": "^7.4.0",
     "@electron/fuses": "^1.8.0",
+    "@types/debug": "^4.1.12",
+    "@types/jest": "^29.5.14",
     "commander": "^12.1.0",
     "electron": "^31.3.0",
     "jest": "^29.7.0",
     "jest-junit": "^16.0.0",
-    "jest-junit-reporter": "^1.1.0"
+    "jest-junit-reporter": "^1.1.0",
+    "ts-jest": "^29.2.5",
+    "typescript": "^5.6.3"
   },
   "dependencies": {
     "csv": "^6.3.9",

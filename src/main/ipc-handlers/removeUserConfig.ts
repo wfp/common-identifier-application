@@ -15,21 +15,32 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-const path = require('node:path');
+import { ConfigStore } from "../algo-shared/config/configStore.js";
 
-function requestConfigUpdate({configStore}) {
+// Removes the user configuration and falls back to the built-in default
+export function removeUserConfig({configStore}: { configStore: ConfigStore}) {
 
-        console.log('[IPC] [requestConfigUpdate] App requesting config udpate');
+    console.log("[IPC] [removeUserConfig] start")
 
-        const config = configStore.getConfig();
-        // return the data
+    const loadError = configStore.removeUserConfig();
+
+    console.log("[IPC] [removeUserConfig] result:", loadError);
+
+    //
+    if (!loadError) {
         return {
-            config,
-            isBackup: configStore.isUsingBackupConfig,
+            success: true,
+            config: configStore.getConfig(),
             lastUpdated: configStore.lastUpdated,
-            error: configStore.loadError,
-            hasAcceptedTermsAndConditions: configStore.hasAcceptedTermsAndConditions(),
-        }
-}
+        };
+    }
 
-module.exports = requestConfigUpdate;
+    return {
+        success: false,
+        // canceled: false,
+        error: loadError,
+        // config: configStore.getConfig(),
+    }
+
+
+}

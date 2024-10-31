@@ -15,10 +15,12 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-const path = require('node:path');
+import { resolve, dirname } from 'node:path';
+import { fileURLToPath } from 'node:url'
 
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
-function resolveHtmlPath(htmlFileName) {
+export function resolveHtmlPath(htmlFileName: string) {
     console.log(`ENV: ${process.env.NODE_ENV}`)
     if (process.env.NODE_ENV === 'development') {
       const port = process.env.PORT || 5173;
@@ -26,18 +28,13 @@ function resolveHtmlPath(htmlFileName) {
       url.pathname = "index.html";
       return url.href;
     }
-    return `file://${path.resolve(__dirname, '../renderer/', htmlFileName)}`;
+    return `file://${resolve(__dirname, '../renderer/', htmlFileName)}`;
 }
 
 
 // Returns the "base name" (the plain file name, the last component of the path, without any directories)
-function baseFileName(filePath) {
+export function baseFileName(filePath: string) {
     const splitName = filePath.split(/[\\/]/);
     const lastComponent = splitName[splitName.length - 1].split(/\.+/);
     return lastComponent.slice(0,-1).join('.')
-}
-
-module.exports = {
-    resolveHtmlPath,
-    baseFileName,
 }
