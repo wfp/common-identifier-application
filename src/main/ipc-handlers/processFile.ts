@@ -59,7 +59,7 @@ async function doProcessFile(
             break;
     }
 
-    return backendProcessFile(config, outputBasePath, inputFilePath, limit || Infinity, outputFormat)
+    return backendProcessFile(config, outputBasePath, inputFilePath, limit, outputFormat)
         .then((result: ProcessFileResult) => {
             console.log("[IPC] [processFile] PROCESSING DONE")
             mainWindow.webContents.send('processingDone', result)
