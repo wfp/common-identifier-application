@@ -15,14 +15,24 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-function fileDropped({mainWindow, configStore, filePath, processing}) {
+import { BrowserWindow } from "electron";
+import { ConfigStore } from "../algo-shared/config/configStore.js";
+import { preprocessFile, PreprocessFileResult } from "../algo-shared/processing/index.js";
+
+interface IPCFileDroppedInput {
+    mainWindow: BrowserWindow,
+    configStore: ConfigStore,
+    filePath: string,
+}
+
+export function preProcessFile({ mainWindow, configStore, filePath}: IPCFileDroppedInput) {
 
     console.log('[IPC] [fileDropped] Dropped File:', filePath);
 
     const config = configStore.getConfig();
     const limit = undefined;
 
-    return processing.preprocessFile(config, filePath, limit).then((result) => {
+    return preprocessFile(config, filePath, limit).then((result) => {
         console.log("[IPC] [fileDropped] PREPROCESSING DONE")
         mainWindow.webContents.send('preprocessingDone', Object.assign({
             inputFilePath: filePath,
@@ -31,6 +41,3 @@ function fileDropped({mainWindow, configStore, filePath, processing}) {
     });
 
 }
-
-
-module.exports = fileDropped;

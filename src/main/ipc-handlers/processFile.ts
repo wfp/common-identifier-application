@@ -15,12 +15,26 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-const path = require('node:path');
-const { dialog } = require('electron')
-const {baseFileName} = require('../util');
+import path from 'node:path';
+import { BrowserWindow, dialog } from 'electron';
+import { baseFileName } from '../util.js';
+import { ConfigStore } from '../algo-shared/config/configStore.js';
+import { processFile as backendProcessFile, ProcessFileResult } from '../algo-shared/processing/index.js';
+import { SUPPORTED_FILE_TYPES } from '../algo-shared/document.js';
+
+interface IPCProcessFileInput {
+    mainWindow: BrowserWindow;
+    configStore: ConfigStore;
+    filePath: string;
+}
 
 // The actual processing function called after the output path is selected
-async function doProcessFile(mainWindow, configStore, inputFilePath, outputPath, processing) {
+async function doProcessFile(
+    mainWindow: BrowserWindow,
+    configStore: ConfigStore,
+    inputFilePath: string,
+    outputPath: string,
+)  {
     const config = configStore.getConfig();
     const limit = undefined;
     let outputFormat = undefined;
@@ -32,17 +46,21 @@ async function doProcessFile(mainWindow, configStore, inputFilePath, outputPath,
 
     switch (extension.toLowerCase()) {
         case ".xlsx":
-            outputFormat = ".xlsx";
+            outputFormat = SUPPORTED_FILE_TYPES.XLSX;
             outputBasePath = basePath;
             break;
         case ".csv":
-            outputFormat = ".csv";
+            outputFormat = SUPPORTED_FILE_TYPES.CSV;
+            outputBasePath = basePath;
+            break;
+        default:
+            outputFormat = null;
             outputBasePath = basePath;
             break;
     }
 
-    return processing.processFile(config, outputBasePath, inputFilePath, limit, outputFormat)
-        .then((result) => {
+    return backendProcessFile(config, outputBasePath, inputFilePath, limit || Infinity, outputFormat)
+        .then((result: ProcessFileResult) => {
             console.log("[IPC] [processFile] PROCESSING DONE")
             mainWindow.webContents.send('processingDone', result)
         });
@@ -52,27 +70,22 @@ async function doProcessFile(mainWindow, configStore, inputFilePath, outputPath,
 
 
 // Process a file
-function processFile({mainWindow, configStore, filePath, processing}) {
+export async function processFile({mainWindow, configStore, filePath}: IPCProcessFileInput) {
 
     console.log('=========== Processing File:', filePath);
 
-    return dialog.showSaveDialog({
+    const response = await dialog.showSaveDialog({
         defaultPath: baseFileName(filePath),
-    }).then(function (response) {
-        if (response.canceled || response.filePath === '') {
-            console.log("[IPC] [processFile] no file selected");
-            // send the canceled message
-            mainWindow.webContents.send('processingCanceled', {});
-            return
-        }
-
-        const outputPath = response.filePath;
-        console.log("[IPC] [processFile] STARTING TO PROCESS AS", outputPath);
-        return doProcessFile(mainWindow, configStore, filePath, outputPath, processing);
     });
+    if (response.canceled || response.filePath === '') {
+        console.log("[IPC] [processFile] no file selected");
+        // send the canceled message
+        mainWindow.webContents.send('processingCanceled', {});
+        return;
+    }
+    const outputPath = response.filePath;
+    console.log("[IPC] [processFile] STARTING TO PROCESS AS", outputPath);
+    return doProcessFile(mainWindow, configStore, filePath, outputPath);
 
 
 }
-
-
-module.exports = processFile;

@@ -15,8 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-const { contextBridge, ipcRenderer } = require('electron')
-const path = require('node:path')
+import { contextBridge, ipcRenderer } from 'electron';
 
 const EVENT_FILE_DROPPED = "fileDropped";
 const EVENT_PREPROECSSING_DONE = "preprocessingDone";
@@ -47,23 +46,23 @@ contextBridge.exposeInMainWorld('electronAPI', {
     removeUserConfig: () => { return ipcRenderer.invoke(EVENT_REMOVE_USER_CONFIG); },
 
     // callback if the config has changed
-    onConfigChanged: (callback) => {
+    onConfigChanged: (callback: CallableFunction) => {
         ipcRenderer.on(EVENT_CONFIG_CHANGED, (_event, value) => callback(value))
     },
 
     // Pre-processing
-    fileDropped: (fileName) => {
+    fileDropped: (fileName: string) => {
         return ipcRenderer.send(EVENT_FILE_DROPPED, fileName)
     },
-    onPreprocessingDone: (callback) => {
+    onPreprocessingDone: (callback: CallableFunction) => {
         ipcRenderer.on(EVENT_PREPROECSSING_DONE, (_event, value) => callback(value))
     },
 
     // Processing
-    processFile: (fileName) => {
+    processFile: (fileName: string) => {
         return ipcRenderer.send(EVENT_PROCESS_FILE, fileName)
     },
-    onProcessingDone: (callback) => {
+    onProcessingDone: (callback: CallableFunction) => {
         ipcRenderer.on(EVENT_PROCESSING_DONE, (_event, value) => callback(value))
     },
 
@@ -73,18 +72,18 @@ contextBridge.exposeInMainWorld('electronAPI', {
     },
 
     // callback if the processing is canceled
-    onProcessingCanceled: (callback) => {
+    onProcessingCanceled: (callback: CallableFunction) => {
         ipcRenderer.on(EVENT_PROCESSING_CANCELED, (_event, value) => callback(value))
     },
 
 
     // if unexpected errors occur this gets triggered
-    onError: (callback) => {
+    onError: (callback: CallableFunction) => {
         ipcRenderer.on(EVENT_ERROR, (_event, value) => callback(value))
     },
 
     // open an output file using the OS default app
-    openOutputFile: (fileName) => {
+    openOutputFile: (fileName: string) => {
         return ipcRenderer.send(EVENT_OPEN_OUTPUT_FILE, fileName)
     },
 

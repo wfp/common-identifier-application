@@ -15,11 +15,17 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-const { dialog } = require('electron')
-const preProcessFile = require('./preProcessFile');
+import { BrowserWindow, dialog } from 'electron';
+import { preProcessFile } from './preProcessFile.js';
+import { ConfigStore } from '../algo-shared/config/configStore.js';
+
+interface IPCPreProcessFileOpenDialogInput {
+    mainWindow: BrowserWindow;
+    configStore: ConfigStore;
+}
 
 // Shows a file open dialog and starts preprocessing the selected file
-function preProcessFileOpenDialog({ mainWindow, configStore, processing}) {
+export function preProcessFileOpenDialog({ mainWindow, configStore}: IPCPreProcessFileOpenDialogInput) {
 
     return dialog.showOpenDialog({
         properties: ['openFile'],
@@ -31,7 +37,7 @@ function preProcessFileOpenDialog({ mainWindow, configStore, processing}) {
             // handle fully qualified file name
             const filePath = response.filePaths[0];
             console.log("[IPC] [preProcessFileOpenDialog] Starting to process file from open dialog:", filePath);
-            return preProcessFile({mainWindow, configStore, filePath, processing});
+            return preProcessFile({mainWindow, configStore, filePath});
         } else {
             console.log("[IPC] [preProcessFileOpenDialog] no file selected");
             // send the cancelec message
@@ -39,5 +45,3 @@ function preProcessFileOpenDialog({ mainWindow, configStore, processing}) {
         }
     });
 }
-
-module.exports = preProcessFileOpenDialog;

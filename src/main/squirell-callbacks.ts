@@ -15,35 +15,31 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-const os = require('os');
-const fs = require('fs');
-const path = require('path');
-const activeAlgorithm = require('./active_algorithm')
-const { app } = require('electron/main')
-const { shell } = require('electron')
+import fs from 'fs';
+import path from 'path';
+import { REGION } from './active_algorithm.js';
+import { app } from 'electron/main';
+import { shell } from 'electron';
 
 // The name of the shortcut as created on the Desktop
-const SHORTCUT_FILE_NAME = `Building Blocks Common ID Tool ${activeAlgorithm.REGION}`;
+const SHORTCUT_FILE_NAME = `Building Blocks Common ID Tool ${REGION}`;
 
 const SHORTCUT_DESCRIPTION = 'Common Identifier generation tool for Assistance and Mapping documents.'
 
-function desktopPath(...subPaths) {
+function desktopPath(...subPaths: string[]) {
     const desktopDir = path.join(app.getPath('desktop'), ...subPaths);
     return desktopDir;
 }
 
 
 // Attempts to create a desktop shortcut
-function createDesktopShortcut() {
+export function createDesktopShortcut() {
 
-    if (process.platform !== 'win32') {
-        return;
-    }
+    if (process.platform !== 'win32') return;
 
     const shortcutFullPath = desktopPath( `${SHORTCUT_FILE_NAME}.lnk`);
     const exePath = process.execPath;
     const appFolder = path.resolve(process.execPath, '..');
-
 
     console.log("Attempting to create shortcut:", shortcutFullPath);
 
@@ -64,7 +60,7 @@ function createDesktopShortcut() {
 }
 
 // Handles incoming Application Lifecycle events from Squirrel
-function handleSquirrelEvent() {
+export function handleSquirrelEvent() {
 
     // no arg means this is not for us
     if (process.argv.length === 1) {
@@ -111,6 +107,3 @@ function handleSquirrelEvent() {
         return true;
     }
 }
-
-
-module.exports = { handleSquirrelEvent, createDesktopShortcut };

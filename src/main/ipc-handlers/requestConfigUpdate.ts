@@ -15,33 +15,19 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-// Removes the user configuration and falls back to the built-in default
-function removeUserConfig({configStore}) {
+import { ConfigStore } from "../algo-shared/config/configStore.js";
 
-    console.log("[IPC] [removeUserConfig] start")
+export function requestConfigUpdate({configStore}: { configStore: ConfigStore }) {
 
-    const loadError = configStore.removeUserConfig();
+        console.log('[IPC] [requestConfigUpdate] App requesting config udpate');
 
-    console.log("[IPC] [removeUserConfig] result:", loadError);
-
-    //
-    if (!loadError) {
+        const config = configStore.getConfig();
+        // return the data
         return {
-            success: true,
-            config: configStore.getConfig(),
+            config,
+            isBackup: configStore.isUsingBackupConfig,
             lastUpdated: configStore.lastUpdated,
-        };
-    }
-
-    return {
-        success: false,
-        // canceled: false,
-        error: loadError,
-        // config: configStore.getConfig(),
-    }
-
-
+            error: configStore.loadError,
+            hasAcceptedTermsAndConditions: configStore.hasAcceptedTermsAndConditions(),
+        }
 }
-
-
-module.exports = removeUserConfig;

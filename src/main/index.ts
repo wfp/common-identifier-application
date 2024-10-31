@@ -16,33 +16,32 @@
  */
 
 // Modules to control application life and create native browser window
-const { app, BrowserWindow, ipcMain } = require('electron/main')
-const { dialog, shell } = require('electron')
-const path = require('node:path')
+import { app, BrowserWindow, ipcMain } from 'electron/main'
+import { shell } from 'electron'
+import { dirname, join, resolve } from 'node:path'
+import { fileURLToPath } from 'node:url';
 
-const { resolveHtmlPath, baseFileName } = require('./util')
-
-const processing = require('./algo-shared/processing')
-const makeConfigStore = require('./algo-shared/config/ConfigStore');
+import { resolveHtmlPath } from './util.js'
+import { ConfigStore, makeConfigStore } from './algo-shared/config/configStore.js'
 
 // IPC event handlers
-const requestConfigUpdate = require("./ipc-handlers/requestConfigUpdate");
-const loadNewConfig = require('./ipc-handlers/loadNewConfig');
-const preProcessFile = require('./ipc-handlers/preProcessFile');
-const processFile = require('./ipc-handlers/processFile');
-const preProcessFileOpenDialog = require('./ipc-handlers/preProcessFileOpenDialog');
-const removeUserConfig = require('./ipc-handlers/removeUserConfig');
+import { requestConfigUpdate } from "./ipc-handlers/requestConfigUpdate.js"
+import { loadNewConfig } from './ipc-handlers/loadNewConfig.js'
+import { preProcessFile } from './ipc-handlers/preProcessFile.js'
+import { processFile } from './ipc-handlers/processFile.js'
+import { preProcessFileOpenDialog } from './ipc-handlers/preProcessFileOpenDialog.js'
+import { removeUserConfig } from './ipc-handlers/removeUserConfig.js'
 
-const { handleSquirrelEvent, createDesktopShortcut } = require('./squirell-callbacks');
+import { handleSquirrelEvent, createDesktopShortcut } from './squirell-callbacks.js'
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 // INITIAL SQUIRELL EVENT HANDLING
 // -------------------------------
 
-
-
 // this should be placed at top of main.js to handle setup events quickly
 if (handleSquirrelEvent()) {
-    return;
+    process.exit();
 } else {
 
     // Always attempt to create the shortcut to hopefully allow OneDrive
@@ -50,14 +49,7 @@ if (handleSquirrelEvent()) {
     createDesktopShortcut();
 }
 
-
-
-
-
-
-
-
-function createMainWindow(configStore) {
+function createMainWindow(configStore: ConfigStore) {
 
     // figure out the existing window configuration
     const appConfig = configStore.appConfig;
@@ -73,9 +65,9 @@ function createMainWindow(configStore) {
         minHeight: 640,
 
         webPreferences: {
-            preload: path.join(__dirname, 'preload.js'),
+            preload: join(__dirname, 'preload.mjs'),
             contextIsolation: true,
-            nodeIntegration: true
+            nodeIntegration: true,
         },
         autoHideMenuBar: true
     });
@@ -96,12 +88,12 @@ function createWindow() {
 
     // set the icon on windows (setting the icon to a .ico file on Mac results in a throw)
     if (process.platform === "win32") {
-        mainWindow.setIcon(`${path.resolve(__dirname, '../../assets/logo.ico')}`);
+        mainWindow.setIcon(`${resolve(__dirname, '../../assets/logo.ico')}`);
     }
     else if (process.platform === "darwin") {
         // MacOS requires a PNG (it does not seem to like ICNS here, but only accepts ICNS
         // for the packaging) + changing this line does not seem to change the
-        mainWindow.setIcon(`${path.resolve(__dirname, '../../assets/logo.png')}`);
+        mainWindow.setIcon(`${resolve(__dirname, '../../assets/logo.png')}`);
     }
 
     // Open the DevTools.
@@ -111,9 +103,14 @@ function createWindow() {
     return {mainWindow, configStore};
 }
 
+interface IPCRegisterHandlersInput {
+    mainWindow: BrowserWindow;
+    configStore: ConfigStore;
+}
+
 // Registers all handlers for the window
-function registerIpcHandlers({mainWindow, configStore, processing}) {
-    function withErrorReporting(delegate) {
+function registerIpcHandlers({mainWindow, configStore}: IPCRegisterHandlersInput) {
+    function withErrorReporting(delegate: CallableFunction) {
         // catch errors that bubble up es exceptions and convert them to rejections
         return new Promise(function(resolve, reject) {
             try { resolve(delegate()); }
@@ -134,21 +131,21 @@ function registerIpcHandlers({mainWindow, configStore, processing}) {
     // Handle dropping of files
     ipcMain.on('fileDropped', (_, filePath) => {
         return withErrorReporting(() => {
-            return preProcessFile({mainWindow, configStore, filePath, processing})
+            return preProcessFile({mainWindow, configStore, filePath})
         });
     })
 
     // Start processing the file
     ipcMain.on('processFile', (event, filePath) => {
         return withErrorReporting(() => {
-            return processFile({mainWindow, configStore, filePath, processing});
+            return processFile({mainWindow, configStore, filePath});
         });
     });
 
     // open and process a file using an open file dialog
     ipcMain.on('preProcessFileOpenDialog', (event, _) => {
         return withErrorReporting(() => {
-            return preProcessFileOpenDialog({mainWindow, configStore, processing})
+            return preProcessFileOpenDialog({mainWindow, configStore})
         });
     });
 
@@ -220,7 +217,7 @@ app.whenReady().then(() => {
     function createAndRegisterWindow() {
         const {mainWindow, configStore} = createWindow();
 
-        registerIpcHandlers({mainWindow, configStore, processing})
+        registerIpcHandlers({mainWindow, configStore})
     }
 
     createAndRegisterWindow();
