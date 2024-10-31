@@ -787,6 +787,7 @@ button {
   border-collapse: separate;
   position: sticky;
   left: 0px;
+  max-width: 40ch;
 }
 
 .preview-table th:first-of-type {
@@ -799,6 +800,9 @@ button {
   text-align: center;
   background-color: var(--color-ui-01);
   border-right: 3px solid var(--color-ui-05);
+  max-width: 40ch;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 
 .ValidationFailed .preview-table th:first-of-type,
