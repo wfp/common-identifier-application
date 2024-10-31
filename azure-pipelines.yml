@@ -131,34 +131,33 @@ jobs:
       - bash: |
           appVersion=$(node -p "require('./package.json').version") && echo "##vso[task.setvariable variable=appVersion]$appVersion"
         displayName: 'Get version from package.json'
-
-      # Frontend
-      # -------
-
-      - script: |
-          (cd src/renderer && npm install && npm run build)
-        displayName: 'Build the renderer'
-
-
+      
       # Application
-      # -------
-
+      # -----------
       - script: npm install
         displayName: NPM install App
 
-      # NWS - WIN
-      # =========
+      - script: |
+          (cd src/renderer && npm install && npm run build)
+        displayName: 'Build the renderer' # build renderer before application so generated CSS can be modified by activate-algo script
 
+      - script: |
+          node tools/activate-algo.js $(algo) $(regionName)
+          npx tsc
+        displayName: "Activate algorithm and compile"
+
+      - script: |
+          npx electron-forge package --arch=x64 --platform=win32
+        displayName: "Build package for signing"
 
       # Signed package
       # --------------
 
       # Package for signing
-      - script: |
-          node tools/activate-algo.js $(algo)
-          npx electron-forge package --arch=x64 --platform=win32
-        displayName: "Build package for signing"
-
+      - bash: |
+            echo '{ "Endpoint": "$(ENDPOINT)", "CodeSigningAccountName": "$(CODE_SIGNING_ACCOUNT_NAME)", "CertificateProfileName": "$(CERTIFICATE_PROFILE_NAME)" }' > signing_metadata.json
+            cat signing_metadata.json
+        displayName: "Prepare Trusted Signing metadata"
 
       # Sign the executable(s) in the output folder
       - task: TrustedSigning@0
