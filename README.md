@@ -451,6 +451,12 @@ Example:
 { op = "max_value", value = 1000 },
 ```
 
+There is a special case for max value, whereby a date can be passed in as a maximum. This is to support date of birth entry without requiring complex date parsing:
+```toml
+{ op = "max_value", value = "{{currentYear}}" },
+{ op = "max_value", value = "{{currentMonth}}" },
+```
+
 
 
 ### Options
