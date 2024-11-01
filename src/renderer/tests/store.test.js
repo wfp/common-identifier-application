@@ -414,13 +414,11 @@ test("Intercom preProcessingDone OK", () => {
     const result = testStoreCall(
         TEST_STATE,
         store => store.preProcessingDone({
+            isValid: !TEST_VALIDATION_RESULT_OK.some(sheet => !sheet.ok),
             inputFilePath: TEST_PATH,
             inputData: TEST_DOCUMENT_DATA_A,
-
-            validationResult: TEST_VALIDATION_RESULT_OK,
             validationErrorsOutputFile: "ERROR PATH",
             validationResultDocument: TEST_DOCUMENT_DATA_B,
-
             isMappingDocument: false,
         })
     )
@@ -438,13 +436,10 @@ test("Intercom preProcessingDone ERROR", () => {
     const result = testStoreCall(
         TEST_STATE,
         store => store.preProcessingDone({
+            isValid: !TEST_VALIDATION_RESULT_ERROR.some(sheet => !sheet.ok),
             inputFilePath: TEST_PATH_B,
-            inputData: TEST_DOCUMENT_DATA_A,
-
-            validationResult: TEST_VALIDATION_RESULT_ERROR,
             validationErrorsOutputFile: TEST_PATH,
             validationResultDocument: TEST_DOCUMENT_DATA_B,
-
             isMappingDocument: true,
         })
     )
@@ -452,9 +447,7 @@ test("Intercom preProcessingDone ERROR", () => {
     expect(result.screen).toEqual(SCREEN_VALIDATION_FAILED);
     expect(result.config).toEqual(TEST_STATE.config);
 
-    expect(result.inputData).toEqual(TEST_DOCUMENT_DATA_A);
     expect(result.inputFilePath).toEqual(TEST_PATH_B);
-    expect(result.validationResult).toEqual(TEST_VALIDATION_RESULT_ERROR);
     expect(result.validationResultDocument).toEqual(TEST_DOCUMENT_DATA_B);
     expect(result.validationErrorsOutputFile).toEqual(TEST_PATH);
 

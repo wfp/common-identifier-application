@@ -1,11 +1,8 @@
 // COMMAND-LINE WRAPPER TO GENERATE SIGNATURES FOR CONFIG FILES
-const fs = require('node:fs');
-const toml = require('toml');
-const { program } = require('commander');
-// const generateConfigHash = require('./src  ../config/generateConfigHash');
-const generateConfigHash = require('../src/main/algo-shared/config/generateConfigHash');
-const { attemptToReadTOMLData } = require('../src/main/algo-shared/config/utils');
-const { CONFIG_FILE_ENCODING } = require('../src/main/algo-shared/config/loadConfig');
+import { program } from 'commander';
+import { generateConfigHash } from '../src/main/algo-shared/config/generateConfigHash.js';
+import { attemptToReadTOMLData } from '../src/main/algo-shared/config/utils.js';
+import { CONFIG_FILE_ENCODING } from '../src/main/algo-shared/config/loadConfig.js';
 
 program
     .argument('<path>', 'Config file to generate signatures for')

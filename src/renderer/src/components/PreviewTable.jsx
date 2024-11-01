@@ -34,9 +34,6 @@ function PreviewTable({tableData, columnsConfig}) {
         return <EmptyTable/>;
     }
 
-    // the first row is the header
-    const headerRow = tableData[0];
-
     // the header will be the field names
     const headerKeys = columnsConfig.map(c => c.alias);
     const headerLabels = columnsConfig.map(c => c.name);
@@ -51,8 +48,8 @@ function PreviewTable({tableData, columnsConfig}) {
         </tr>
     </thead>);
 
-    // Limit the amount of data displayed (adds significant memory)
-    const previewDataRange = tableData.slice(0, 200);
+    // Limit the amount of data displayed (adds significant memory), this should be done on the backend, but redo here
+    const previewDataRange = tableData.slice(0, 500);
 
     // build the body
     const tableBody = (<tbody>

@@ -37,7 +37,7 @@ function OpenErrorListButton({validationErrorsOutputFile}) {
     )
 }
 
-function ValidationFailed({config, inputData, inputFilePath, validationResult, validationErrorsOutputFile, isMappingDocument}) {
+function ValidationFailed({config, inputData, inputFilePath, validationErrorsOutputFile, isMappingDocument}) {
     
     const startPreProcessingFile = useAppStore(store => store.startPreProcessingFile)
     const preProcessFileOpenDialog = useAppStore(store => store.preProcessFileOpenDialog);

@@ -7,6 +7,7 @@
   "scripts": {
     "start-web": "set NODE_ENV=development& electron-forge start",
     "start": "electron-forge start",
+    "start:debug": "set DEBUG=CID:*& npm start",
     "package": "electron-forge package",
     "make": "electron-forge make",
     "compile": "tsc",

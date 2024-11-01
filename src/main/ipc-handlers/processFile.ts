@@ -22,6 +22,8 @@ import { ConfigStore } from '../algo-shared/config/configStore.js';
 import { processFile as backendProcessFile, ProcessFileResult } from '../algo-shared/processing/index.js';
 import { SUPPORTED_FILE_TYPES } from '../algo-shared/document.js';
 
+const MAX_ROWS_TO_PREVIEW = 500;
+
 interface IPCProcessFileInput {
     mainWindow: BrowserWindow;
     configStore: ConfigStore;
@@ -59,11 +61,13 @@ async function doProcessFile(
             break;
     }
 
-    return backendProcessFile(config, outputBasePath, inputFilePath, limit, outputFormat)
-        .then((result: ProcessFileResult) => {
-            console.log("[IPC] [processFile] PROCESSING DONE")
-            mainWindow.webContents.send('processingDone', result)
-        });
+    const { outputData, allOutputPaths } = await backendProcessFile(config, outputBasePath, inputFilePath, limit, outputFormat)
+    console.log("[IPC::processFile] PROCESSING DONE");
+    if (outputData.sheets[0].data.length > MAX_ROWS_TO_PREVIEW) {
+        console.log(`[IPC::preProcessFile] dataset has ${outputData.sheets[0].data.length} rows, trimming for frontend preview`);
+        outputData.sheets[0].data = outputData.sheets[0].data.slice(0, MAX_ROWS_TO_PREVIEW);
+    }
+    mainWindow.webContents.send('processingDone', { outputData, allOutputPaths });
 }
 
 
@@ -78,14 +82,12 @@ export async function processFile({mainWindow, configStore, filePath}: IPCProces
         defaultPath: baseFileName(filePath),
     });
     if (response.canceled || response.filePath === '') {
-        console.log("[IPC] [processFile] no file selected");
+        console.log("[IPC::processFile] no file selected");
         // send the canceled message
         mainWindow.webContents.send('processingCanceled', {});
         return;
     }
     const outputPath = response.filePath;
-    console.log("[IPC] [processFile] STARTING TO PROCESS AS", outputPath);
+    console.log("[IPC::processFile] STARTING TO PROCESS AS", outputPath);
     return doProcessFile(mainWindow, configStore, filePath, outputPath);
-
-
 }
