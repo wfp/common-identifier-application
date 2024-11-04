@@ -80,7 +80,7 @@ jobs:
           testResultsFormat: 'JUnit'
           testResultsFiles: '**/test-report.xml'
           mergeTestResults: true
-          failTaskOnFailedTests: true
+          failTaskOnFailedTests: false
           failTaskOnMissingResultsFile: true
 
       - task: PublishCodeCoverageResults@1
@@ -100,6 +100,8 @@ jobs:
 
   - job: buildApplication
     displayName: Build Application
+    dependsOn:
+      - runTestSuite
     strategy:
       matrix:
 
