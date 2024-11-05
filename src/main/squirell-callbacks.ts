@@ -22,7 +22,7 @@ import { app } from 'electron/main';
 import { shell } from 'electron';
 
 // The name of the shortcut as created on the Desktop
-const SHORTCUT_FILE_NAME = `Building Blocks Common ID Tool ${REGION}`;
+const SHORTCUT_FILE_NAME = `Common ID Tool ${REGION}`;
 
 const SHORTCUT_DESCRIPTION = 'Common Identifier generation tool for Assistance and Mapping documents.'
 

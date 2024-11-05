@@ -1,11 +1,11 @@
 {
   "name": "commonid-tool",
-  "version": "0.9.17",
+  "version": "1.0.0",
   "description": "Common Identifier generation tool for Assistance and Mapping documents.",
   "main": "./src/main/index.js",
   "type": "module",
   "scripts": {
-    "start-web": "set NODE_ENV=development& electron-forge start",
+    "start:web": "set NODE_ENV=development& electron-forge start",
     "start": "electron-forge start",
     "start:debug": "set DEBUG=CID:*& npm start",
     "package": "electron-forge package",
@@ -38,8 +38,9 @@
     "typescript": "^5.6.3"
   },
   "dependencies": {
+    "@date-fns/utc": "^2.1.0",
     "csv": "^6.3.9",
-    "date-fns": "^3.6.0",
+    "date-fns": "^4.1.0",
     "debug": "^4.3.7",
     "electron-squirrel-startup": "^1.0.1",
     "hi-base32": "^0.5.1",

@@ -184,12 +184,12 @@ You can change the configuration by changing the generated configuration in `azu
 
 ```
 ;!@Install@!UTF-8!
-Title="Building blocks CommonID Tool $(regionName)"
+Title="CommonID Tool $(regionName)"
 BeginPrompt="Do you want to install this application?"
 HelpText="This will install the application"
 RunProgram="commonid-tool.exe"
 GUIFlags="64"
-InstallPath="%LOCALAPPDATA%\Building Blocks Common ID Tool $(regionName)"
+InstallPath="%LOCALAPPDATA%\Common ID Tool $(regionName)"
 ;!@InstallEnd@!
 ```
 
