@@ -1,6 +1,6 @@
 {
   "name": "commonid-tool",
-  "version": "0.9.17",
+  "version": "1.0.0",
   "description": "Common Identifier generation tool for Assistance and Mapping documents.",
   "main": "./src/main/index.js",
   "type": "module",
