@@ -5,7 +5,7 @@
   "main": "./src/main/index.js",
   "type": "module",
   "scripts": {
-    "start-web": "set NODE_ENV=development& electron-forge start",
+    "start:web": "set NODE_ENV=development& electron-forge start",
     "start": "electron-forge start",
     "start:debug": "set DEBUG=CID:*& npm start",
     "package": "electron-forge package",
