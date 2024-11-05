@@ -16,6 +16,8 @@
  */
 
 // A version information box (config version, last update)
+import { format as dateFmt } from 'date-fns';
+
 function VersionInfo({config}) {
 
     // if the current config is the initial one we dont want to display anything
@@ -29,7 +31,7 @@ function VersionInfo({config}) {
 
     const classNameString = ["version-info"];
     let versionString = `${version}-${region}`
-    let lastUpdateDate = lastUpdated ? lastUpdated.toLocaleString([], { dateStyle: "short", timeStyle: "short" }) : "";
+    let lastUpdateDate = lastUpdated ? dateFmt(lastUpdated, "yyyy/MM/dd HH:mm") : "";
 
     // if this is a backup display that as the second element
     if (isBackup) {
