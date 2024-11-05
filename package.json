@@ -38,8 +38,9 @@
     "typescript": "^5.6.3"
   },
   "dependencies": {
+    "@date-fns/utc": "^2.1.0",
     "csv": "^6.3.9",
-    "date-fns": "^3.6.0",
+    "date-fns": "^4.1.0",
     "debug": "^4.3.7",
     "electron-squirrel-startup": "^1.0.1",
     "hi-base32": "^0.5.1",
