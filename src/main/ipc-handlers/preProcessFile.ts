@@ -17,7 +17,7 @@
 
 import { BrowserWindow } from "electron";
 import { ConfigStore } from "../algo-shared/config/configStore.js";
-import { preprocessFile as backendPreProcessFile, PreprocessFileResult } from "../algo-shared/processing/index.js";
+import { preprocessFile as backendPreProcessFile } from "../algo-shared/processing/index.js";
 
 const MAX_ROWS_TO_PREVIEW = 500;
 

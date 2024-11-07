@@ -69,7 +69,8 @@ function App() {
 
   const isMappingDocument = useAppStore(store => store.isMappingDocument);
 
-  const outputFilePaths = useAppStore(store => store.outputFilePaths);
+  const outputFilePath = useAppStore(store => store.outputFilePath);
+  const mappingFilePath = useAppStore(store => store.mappingFilePath);
   const outputData = useAppStore(store => store.outputData);
 
   const errorMessage = useAppStore(store => store.errorMessage);
@@ -136,7 +137,7 @@ function App() {
     }
 
     case SCREEN_PROCESSING_FINISHED: {
-      screen = (<ProcessingFinished config={config} outputFilePaths={outputFilePaths} outputData={outputData}  />)
+      screen = (<ProcessingFinished config={config} isMappingDocument={isMappingDocument} outputData={outputData} outputFilePath={outputFilePath} mappingFilePath={mappingFilePath} />)
       break;
     }
 

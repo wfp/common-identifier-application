@@ -20,24 +20,17 @@ import FileInfo from "../components/FileInfo";
 import PreviewTable from "../components/PreviewTable";
 import { useAppStore } from "../store";
 
-function ProcessingFinished({ config, outputData, outputFilePaths}) {
+function ProcessingFinished({ config, isMappingDocument, outputData, outputFilePath, mappingFilePath }) {
 
     const backToMainScreen = useAppStore(store => store.backToMainScreen);
     const preProcessFileOpenDialog = useAppStore(store => store.preProcessFileOpenDialog);
 
-    // clean the data we show to the user to only include the desired columns
-    const isMappingDocument = outputFilePaths.length === 1;
-
-
     const fileInfoRow = isMappingDocument ?
-        (<FileInfo filePath={outputFilePaths[0]} helpText="Saved as" />) :
-        (<FileInfo filePath={outputFilePaths[0]} otherFilePath={outputFilePaths[1]} helpText="Saved as" />);
+        (<FileInfo filePath={mappingFilePath} helpText="Saved as" />) : (<FileInfo filePath={outputFilePath} otherFilePath={mappingFilePath} helpText="Saved as" />);
 
 
     // if this was a mapping-only document
-    const columnsConfig = isMappingDocument ?
-        config.data.destination_map.columns :
-        config.data.destination.columns;
+    const columnsConfig = isMappingDocument ? config.data.destination_map.columns : config.data.destination.columns;
 
     return (
         <div className="ProcessingFinished">

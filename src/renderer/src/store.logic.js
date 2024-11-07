@@ -291,12 +291,14 @@ export function storeLogic(intercomApi) {
 
 
             // Callback after the processing of the file is finished
-            processingDone: ({ outputData, allOutputPaths }) => set(state => {
+            processingDone: ({ isMappingDocument, data, outputFilePath, mappingFilePath }) => set(state => {
                 return {
                     config: state.config,
                     screen: SCREEN_PROCESSING_FINISHED,
-                    outputData,
-                    outputFilePaths: allOutputPaths,
+                    isMappingDocument,
+                    outputData: data,
+                    outputFilePath,
+                    mappingFilePath
                 }
             }),
 
