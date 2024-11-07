@@ -21,6 +21,7 @@ import { baseFileName } from '../util.js';
 import { ConfigStore } from '../algo-shared/config/configStore.js';
 import { processFile as backendProcessFile } from '../algo-shared/processing/index.js';
 import { SUPPORTED_FILE_TYPES } from '../algo-shared/document.js';
+import { makeHasher } from '../active_algorithm.js';
 
 const MAX_ROWS_TO_PREVIEW = 500;
 
@@ -60,7 +61,7 @@ async function doProcessFile(
             break;
     }
 
-    const { outputData, allOutputPaths } = await backendProcessFile({config, outputPath: outputBasePath, inputFilePath, format: outputFormat})
+    const { outputData, allOutputPaths } = await backendProcessFile({config, outputPath: outputBasePath, inputFilePath, hasherFactory: makeHasher, format: outputFormat})
     console.log("[IPC::processFile] PROCESSING DONE");
     if (outputData.sheets[0].data.length > MAX_ROWS_TO_PREVIEW) {
         console.log(`[IPC::preProcessFile] dataset has ${outputData.sheets[0].data.length} rows, trimming for frontend preview`);
