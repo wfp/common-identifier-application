@@ -4,7 +4,7 @@
 	url = ../ALGO-GOS
 	ignore = dirty
 [submodule "src/main/aglo-uscadi"]
-	path = src/main/algo-uscadi
+	path = src/main/algo-nws
 	# url = https://worldfoodprogramme@dev.azure.com/worldfoodprogramme/SYR-BB-PREPROCESSING-APP/_git/ALGO-NWS
 	url = ../ALGO-NWS
 	ignore = dirty
