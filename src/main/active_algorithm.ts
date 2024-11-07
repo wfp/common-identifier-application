@@ -1,4 +1,4 @@
 
     // THIS FILE IS AUTO-GENERATED, YOUR EDITS MAY BE OVERWRITTEN DURING BUILD
-    export { REGION, makeHasher } from './algo-gos/index.js';
+    export { REGION, makeHasher } from './algo-nws/index.js';
     

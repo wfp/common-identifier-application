@@ -110,7 +110,7 @@ jobs:
           region: "nws"
           regionName: "NWS"
           # The algorithm to use (the name of the algorithm directory in src/main)
-          algo: "algo-uscadi"
+          algo: "algo-nws"
 
         'GOS Win32 x64':
           region: "gos"

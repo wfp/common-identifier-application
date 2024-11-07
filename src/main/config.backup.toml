@@ -1,9 +1,8 @@
 [meta]
-region="GOS"
+region="NWS"
 version="1.0.0"
 
 [messages]
-
 terms_and_conditions="""
 <strong>Common Identifier Application</strong>
 <p>
@@ -20,8 +19,7 @@ terms_and_conditions="""
     more details.
 </p>
 <p>
-    You should have received a copy of the GNU General Public License along with this program. If not, see 
-    <a href="https://www.gnu.org/licenses" target="_blank">gnu.org</a>.
+    You should have received a copy of the GNU General Public License along with this program. If not, see <a href="https://www.gnu.org/licenses" target="_blank">gnu.org</a>.
 </p>
 <p>
     World Food Programme (WFP) disclaims any responsibility for how the program is used. This Program may collect, 
@@ -42,24 +40,32 @@ error_in_config="""
 
 <p>The application encountered an error whilst attempting to load a configuration file.</p>
 
-<p>Please contact WFP support at <a href="mailto:Syria.BuildingBlocks@wfp.org">Syria.BuildingBlocks@wfp.org</a></p>
+<p>Please contact WFP support at <a href="mailto:NWS.BuildingBlocks@wfp.org">NWS.BuildingBlocks@wfp.org</a></p>
 """
 
 error_in_salt="""
 <p>The application encountered an error whilst attempting to load your individual salt file.</p>
 
-<p>Please contact WFP support at <a href="mailto:Syria.BuildingBlocks@wfp.org">Syria.BuildingBlocks@wfp.org</a></p>
+<p>Please contact WFP support at <a href="mailto:NWS.BuildingBlocks@wfp.org">NWS.BuildingBlocks@wfp.org</a></p>
 """
 
 [source]
 columns = [
-    { name = "National ID",      alias = "national_id"  },
-    { name = "Organization",     alias = "organization" },
-    { name = "Category",         alias = "category"     },
-    { name = "Currency",         alias = "currency"     },
-    { name = "Amount",           alias = "amount"       },
-    { name = "Start (yyyyMMdd)", alias = "start"        },
-    { name = "End (yyyyMMdd)",   alias = "end"          },
+    { name = "Individual Reference", alias = "individual_reference" },
+    { name = "First Name", alias = "first_name" },
+    { name = "Last Name", alias = "last_name" },
+    { name = "Father First Name", alias = "father_first_name" },
+    { name = "Mother First Name", alias = "mother_first_name" },
+    { name = "Year of Birth", alias = "dob_year" },
+    # By specifying the default when the column is missing the default value will be added
+    { name = "Document Type", alias = "document_type", default="" },
+    { name = "Document ID", alias = "document_id", default="" },
+    { name = "Organization", alias = "organization" },
+    { name = "Category", alias = "category" },
+    { name = "Currency", alias = "currency" },
+    { name = "Amount", alias = "amount" },
+    { name = "Start (yyyyMMdd)", alias = "start" },
+    { name = "End (yyyyMMdd)", alias = "end" },
 ]
 
 [validations]
@@ -68,55 +74,100 @@ columns = [
     { op = "max_field_length", value = 200 },
 ]
 
-national_id = [
-    { op = "field_type", value = "str" },
-    { op = "regex_match", value = '(\d{11})', message="must be 11 numeric digits" }
+individual_reference = [
+    { op = "field_type", value = "string" },
+    { op = "regex_match", value = "[a-zA-Z0-9!\"#$%&'()*+\\-./:;?@[\\]^_{|}~]+", message="must only consist of alphanumeric characters and supported special characters" }
 ]
 
+first_name = [
+    { op = "field_type", value = "string" },
+    { op = "language_check", value = "Arabic", message="is not Arabic"}
+]
+
+last_name = [
+    { op = "field_type", value = "string" },
+    { op = "language_check", value = "Arabic", message="is not Arabic"}
+]
+
+father_first_name = [
+    { op = "field_type", value = "string" },
+    { op = "language_check", value = "Arabic", message="is not Arabic"}
+]
+
+mother_first_name = [
+    { op = "field_type", value = "string" },
+    { op = "language_check", value = "Arabic", message="is not Arabic"}
+]
+
+dob_year = [
+    { op = "min_value", value = 1901 },
+    { op = "max_value", value = "{{currentYear}}" }
+]
+
+document_type = [
+    { op = "field_type", value = "string" },
+    { op = "options", value = [ "", "NATIONAL_ID", "PERSONAL_ID", "LOCAL_COUNCIL_CARD" ], message = "must be blank or one of NATIONAL_ID, PERSONAL_ID, or LOCAL_COUNCIL_CARD" },
+    { op = "linked_field", target = "document_id" }
+]
+
+document_id = [
+    { op = "regex_match", value = '(?!.*\S)|[a-zA-Z0-9-_]+', message="must only consist of alphanumeric characters and supported special characters" },
+    { op = "linked_field", target = "document_type" }
+]
+
+# assistance columns
 organization = [
-    { op = "field_type", value = "str" },
+    { op = "field_type", value = "string" },
     { op = "min_field_length", value = 2 },
     { op = "max_field_length", value = 10 },
     { op = "same_value_for_all_rows" },
 ]
 
 category = [
-    { op = "field_type", value = "str" },
-    { op = "field_type", value = "str" },
+    { op = "field_type", value = "string" },
     { op = "min_field_length", value = 2 },
     { op = "max_field_length", value = 15 },
-    { op = "same_value_for_all_rows" },
+    { op = "same_value_for_all_rows" }
 ]
 
 currency = [
-    { op = "field_type", value = "str" },
-    { op = "regex_match", value = 'SYP', message="must be SYP (Syrian Pounds)" },
+    { op = "field_type", value = "string" },
     { op = "same_value_for_all_rows" },
+    { op = "regex_match", value = 'USD', message="must be USD" },
 ]
 
 amount = [
     { op = "min_value", value = 1 },
-    { op = "max_value", value = 300_000_000 },
+    { op = "max_value", value = 20_000 },
 ]
 
 start = [
-    { op = "regex_match", value = '((?:19|20)\d{2}(?:0[1-9]|1[012])(?:0[1-9]|[12]\d|3[01]))', message="must be in the format of yyyyMMdd, e.g. 20240301" }, # yyyyMMdd
+    { op = "regex_match", value = '((?:19|20)\d{2}(?:0[1-9]|1[012])(?:0[1-9]|[12]\d|3[01]))', message="must be in the format of yyyyMMdd" },
     { op = "date_diff", value = "-12M:+2M", message = "must be within 1 year in the past or 2 months in the future"},
 ]
 
 end = [
-    { op = "regex_match", value = '((?:19|20)\d{2}(?:0[1-9]|1[012])(?:0[1-9]|[12]\d|3[01]))', message="must be in the format of yyyyMMdd, e.g. 20240301"  }, # yyyyMMdd
+    { op = "regex_match", value = '((?:19|20)\d{2}(?:0[1-9]|1[012])(?:0[1-9]|[12]\d|3[01]))', message="must be in the format of yyyyMMdd" },
     { op = "date_field_diff", target = "start", value=":+12M", message="must be within a year of Start"},
 ]
+
 
 [algorithm]
 
 [algorithm.columns]
-to_translate = []
-static = [
-    "national_id",
+to_translate = [
+    "first_name",
+    "last_name",
+    "father_first_name",
+    "mother_first_name",
 ]
-reference = []
+static = [
+    "dob_year"
+]
+reference = [
+    "document_type",
+    "document_id"
+]
 
 [algorithm.hash]
 strategy = "SHA256"
@@ -125,43 +176,52 @@ strategy = "SHA256"
 source = "FILE"
 validator_regex = "-----BEGIN PGP PUBLIC KEY BLOCK-----[A-Za-z0-9+/=\\s]+-----END PGP PUBLIC KEY BLOCK-----"
 
-
 [algorithm.salt.value]
-win32 = "$APPDATA\\BuildingBlocks\\SYR-GOS-PROD (FC14D1D5) – Public.asc"
-darwin = "$APPDATA\\BuildingBlocks\\SYR-GOS-PROD (FC14D1D5) – Public.asc"
+win32 = "$APPDATA/BuildingBlocks/SYR-NWS-PROD (440E1B46) – Public.asc"
+darwin = "$APPDATA/BuildingBlocks/SYR-NWS-PROD (440E1B46) – Public.asc"
 
 [destination]
 columns = [
-    { name = "Common Identifier", alias = "hashed_id" },
-    { name = "Organization",      alias = "organization" },
-    { name = "Category",          alias = "category" },
-    { name = "Currency",          alias = "currency" },
-    { name = "Amount",            alias = "amount" },
-    { name = "Start (yyyyMMdd)",  alias = "start" },
-    { name = "End (yyyyMMdd)",    alias = "end" },
+    { name = "Common Identifier", alias = "USCADI" },
+    { name = "Organization", alias = "organization" },
+    { name = "Category", alias = "category" },
+    { name = "Currency", alias = "currency" },
+    { name = "Amount", alias = "amount" },
+    { name = "Start (yyyyMMdd)", alias = "start" },
+    { name = "End (yyyyMMdd)", alias = "end" },
+    { name = "Reference Identifier", alias = "document_hash" },
 ]
-postfix = "-OUTPUT-GOS-0.0.9-{{yyyy-MM-dd--HH-mm-ss}}"
+
+postfix = "-OUTPUT-NWS-1.0.8-{{yyyy-MM-dd--HH-mm-ss}}"
 
 [destination_map]
 columns = [
-    { name = "National ID",       alias = "national_id" },
-    { name = "Common Identifier", alias = "hashed_id" }
+    { name = "Individual Reference", alias = "individual_reference" },
+    { name = "Common Identifier", alias = "USCADI" },
+    { name = "Reference Identifier", alias = "document_hash" },
 ]
-postfix = "-MAPPING-GOS-0.0.9-{{yyyy-MM-dd--HH-mm-ss}}"
+postfix = "-MAPPING-NWS-1.0.8-{{yyyy-MM-dd--HH-mm-ss}}"
 
 [destination_errors]
 columns = [
-    { name = "Errors",            alias = "errors" },
-    { name = "National ID",       alias = "national_id" },
-    { name = "Organization",      alias = "organization" },
-    { name = "Category",          alias = "category" },
-    { name = "Currency",          alias = "currency" },
-    { name = "Amount",            alias = "amount" },
-    { name = "Start (yyyyMMdd)",  alias = "start" },
-    { name = "End (yyyyMMdd)",    alias = "end" },
+    { name = "Errors", alias = "errors" },
+    { name = "Individual Reference", alias = "individual_reference" },
+    { name = "First Name", alias = "first_name" },
+    { name = "Last Name", alias = "last_name" },
+    { name = "Father First Name", alias = "father_first_name" },
+    { name = "Mother First Name", alias = "mother_first_name" },
+    { name = "Year of Birth", alias = "dob_year" },
+    { name = "Document Type", alias = "document_type" },
+    { name = "Document ID", alias = "document_id" },
+    { name = "Organization", alias = "organization" },
+    { name = "Category", alias = "category" },
+    { name = "Currency", alias = "currency" },
+    { name = "Amount", alias = "amount" },
+    { name = "Start (yyyyMMdd)", alias = "start" },
+    { name = "End (yyyyMMdd)", alias = "end" },
 ]
-postfix = "-ERRORS-GOS-0.0.9-{{yyyy-MM-dd--HH-mm-ss}}"
+postfix = "-ERRORS-NWS-1.0.8-{{yyyy-MM-dd--HH-mm-ss}}"
 
 
 [signature]
-config_signature="71a4a9e290286aa560af4e0ce28b5a3a"
+config_signature="e0f7cc31a33237217898920758170c61"
