@@ -32,14 +32,13 @@ export async function preProcessFile({ mainWindow, configStore, filePath}: IPCFi
     console.log('[IPC::preProcessFile] Dropped File:', filePath);
 
     const config = configStore.getConfig();
-    const limit = undefined;
 
     const {
         inputData,
         validationResultDocument,
         validationResult,
         validationErrorsOutputFile,
-        isMappingDocument } = await backendPreProcessFile(config, filePath, limit);
+        isMappingDocument } = await backendPreProcessFile({ config, inputFilePath: filePath});
     console.log("[IPC::preProcessFile] PREPROCESSING DONE");
 
     // don't return large datasets back to the frontend, instead splice and send n rows
