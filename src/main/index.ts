@@ -16,8 +16,8 @@
  */
 
 // Modules to control application life and create native browser window
-import { app, BrowserWindow, ipcMain } from 'electron/main'
-import { shell } from 'electron'
+import { app, BrowserWindow, ipcMain } from 'electron/main';
+import { shell } from 'electron';
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url';
 
@@ -31,6 +31,8 @@ import { preProcessFile } from './ipc-handlers/preProcessFile.js'
 import { processFile } from './ipc-handlers/processFile.js'
 import { preProcessFileOpenDialog } from './ipc-handlers/preProcessFileOpenDialog.js'
 import { removeUserConfig } from './ipc-handlers/removeUserConfig.js'
+
+import { REGION } from './active_algorithm.js';
 
 import { handleSquirrelEvent, createDesktopShortcut } from './squirell-callbacks.js'
 
@@ -77,7 +79,7 @@ function createMainWindow(configStore: ConfigStore) {
 
 function createWindow() {
 
-    const configStore = makeConfigStore();
+    const configStore = makeConfigStore({ region: REGION });
     // start loading the config here
     configStore.boot();
 
@@ -129,21 +131,21 @@ function registerIpcHandlers({mainWindow, configStore}: IPCRegisterHandlersInput
     // ------------------
 
     // Handle dropping of files
-    ipcMain.on('fileDropped', (_, filePath) => {
+    ipcMain.on('fileDropped', (_: any, filePath: any) => {
         return withErrorReporting(() => {
             return preProcessFile({mainWindow, configStore, filePath})
         });
     })
 
     // Start processing the file
-    ipcMain.on('processFile', (event, filePath) => {
+    ipcMain.on('processFile', (event: any, filePath: any) => {
         return withErrorReporting(() => {
             return processFile({mainWindow, configStore, filePath});
         });
     });
 
     // open and process a file using an open file dialog
-    ipcMain.on('preProcessFileOpenDialog', (event, _) => {
+    ipcMain.on('preProcessFileOpenDialog', (event: any, _: any) => {
         return withErrorReporting(() => {
             return preProcessFileOpenDialog({mainWindow, configStore})
         });
@@ -153,7 +155,7 @@ function registerIpcHandlers({mainWindow, configStore}: IPCRegisterHandlersInput
     // ----
 
     // open a file with the OS default app
-    ipcMain.on('openOutputFile', (event, filePath) => {
+    ipcMain.on('openOutputFile', (event: any, filePath: any) => {
         shell.openPath(filePath);
     });
 
@@ -171,15 +173,15 @@ function registerIpcHandlers({mainWindow, configStore}: IPCRegisterHandlersInput
     // --------------
 
     // Handle dropping of files
-    ipcMain.handle('requestConfigUpdate', (_) => {
+    ipcMain.handle('requestConfigUpdate', (_: any) => {
         return requestConfigUpdate({configStore})
     });
 
-    ipcMain.handle('loadNewConfig', (_) => {
+    ipcMain.handle('loadNewConfig', (_: any) => {
         return loadNewConfig({configStore});
     });
 
-    ipcMain.handle('removeUserConfig', (_) => {
+    ipcMain.handle('removeUserConfig', (_: any) => {
         return removeUserConfig({configStore});
     })
 
