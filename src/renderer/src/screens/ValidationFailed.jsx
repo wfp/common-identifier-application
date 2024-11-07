@@ -22,12 +22,12 @@ import { useAppStore } from "../store";
 import { filterColumnConfigForMapping } from "../util";
 
 
-function OpenErrorListButton({validationErrorsOutputFile}) {
+function OpenErrorListButton({errorFilePath}) {
     const openOutputPath = useAppStore(store => store.openOutputFile);
     
     // open the output file
     function openOutputFile() {
-        openOutputPath(validationErrorsOutputFile)
+        openOutputPath(errorFilePath)
     }
     
     
@@ -37,7 +37,7 @@ function OpenErrorListButton({validationErrorsOutputFile}) {
     )
 }
 
-function ValidationFailed({config, inputData, inputFilePath, validationErrorsOutputFile, isMappingDocument}) {
+function ValidationFailed({config, inputData, inputFilePath, errorFilePath, isMappingDocument}) {
     
     const startPreProcessingFile = useAppStore(store => store.startPreProcessingFile)
     const preProcessFileOpenDialog = useAppStore(store => store.preProcessFileOpenDialog);
@@ -93,7 +93,7 @@ function ValidationFailed({config, inputData, inputFilePath, validationErrorsOut
                     </div>
                 </div>
 
-                <OpenErrorListButton validationErrorsOutputFile={validationErrorsOutputFile} />
+                <OpenErrorListButton errorFilePath={errorFilePath} />
             </div>
 
             <BottomButtons l_content="Open a different file" l_onClick={preProcessFileOpenDialog} r_onClick={retryFileLoad} r_content="Retry the same file" />

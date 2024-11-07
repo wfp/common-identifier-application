@@ -64,9 +64,8 @@ function App() {
   const config = useAppStore(store => store.config);
 
   const inputFilePath = useAppStore(store => store.inputFilePath);
-  const inputData = useAppStore(store => store.inputData);
-  const validationResultDocument = useAppStore(store => store.validationResultDocument);
-  const validationErrorsOutputFile = useAppStore(store => store.validationErrorsOutputFile);
+  const data = useAppStore(store => store.data); // could be errors or input data
+  const errorFilePath = useAppStore(store => store.errorFilePath);
 
   const isMappingDocument = useAppStore(store => store.isMappingDocument);
 
@@ -122,12 +121,12 @@ function App() {
     }
 
     case SCREEN_VALIDATION_SUCCESS: {
-      screen = (<ValidationSuccess config={config} inputData={inputData} inputFilePath={inputFilePath} isMappingDocument={isMappingDocument}/>)
+      screen = (<ValidationSuccess config={config} inputData={data} inputFilePath={inputFilePath} isMappingDocument={isMappingDocument}/>)
       break;
     }
 
     case SCREEN_VALIDATION_FAILED: {
-      screen = (<ValidationFailed config={config} inputData={validationResultDocument} inputFilePath={inputFilePath} validationErrorsOutputFile={validationErrorsOutputFile} isMappingDocument={isMappingDocument}/>)
+      screen = (<ValidationFailed config={config} inputData={data} inputFilePath={inputFilePath} errorFilePath={errorFilePath} isMappingDocument={isMappingDocument}/>)
       break;
     }
 
