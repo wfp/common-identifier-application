@@ -20,7 +20,7 @@ import PreviewTable from "../components/PreviewTable";
 import { useAppStore } from "../store";
 import { filterColumnConfigForMapping } from "../util";
 
-function ValidationSuccess({config, inputData, inputFilePath, isMappingDocument}) {
+function ValidationSuccess({config, document, inputFilePath, isMappingDocument}) {
     const preProcessFileOpenDialog = useAppStore(store => store.preProcessFileOpenDialog);
     const startProcessingFile = useAppStore(store => store.startProcessingFile);
 
@@ -40,7 +40,7 @@ function ValidationSuccess({config, inputData, inputFilePath, isMappingDocument}
         <div className="ValidationSuccess">
             <FileInfo filePath={inputFilePath} helpText="Ready to process the file" />
 
-            <PreviewTable tableData={inputData.sheets[0].data} columnsConfig={columnsConfig}/>
+            <PreviewTable tableData={document.data} columnsConfig={columnsConfig}/>
 
             <div className="validationResult ok">
                 <div className="validationState">

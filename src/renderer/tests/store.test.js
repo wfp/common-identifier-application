@@ -69,8 +69,8 @@ const TEST_ERROR = "SOME ERROR";
 const TEST_PATH = "SOME PATH"
 const TEST_PATH_B = "OTHER PATH";
 
-const TEST_DOCUMENT_DATA_A = { sheets: [ { name: "SHEET_1", data: [{col_a:"A"}]}] }
-const TEST_DOCUMENT_DATA_B = { sheets: [ { name: "SHEET_1", data: [{col_b:"B"}]}] }
+const TEST_DOCUMENT_DATA_A = { name: "SHEET_1", data: [{col_a:"A"}] }
+const TEST_DOCUMENT_DATA_B = { name: "SHEET_1", data: [{col_b:"B"}] }
 const TEST_VALIDATION_RESULT_OK = [{ ok: true }]
 const TEST_VALIDATION_RESULT_ERROR = [{ok: true}, { ok: false }]
 // BOOT
@@ -418,7 +418,7 @@ test("Intercom preProcessingDone OK", () => {
                 isValid: !TEST_VALIDATION_RESULT_OK.some(sheet => !sheet.ok),
                 isMappingDocument: false,
                 inputFilePath: TEST_PATH,
-                data: TEST_DOCUMENT_DATA_A,
+                document: TEST_DOCUMENT_DATA_A,
         })}
     )
     expect(!TEST_VALIDATION_RESULT_OK.some(sheet => !sheet.ok)).not.toEqual(undefined)
@@ -426,7 +426,7 @@ test("Intercom preProcessingDone OK", () => {
     expect(result.screen).toEqual(SCREEN_VALIDATION_SUCCESS);
     expect(result.config).toEqual(TEST_STATE.config);
 
-    expect(result.data).toEqual(TEST_DOCUMENT_DATA_A);
+    expect(result.document).toEqual(TEST_DOCUMENT_DATA_A);
     expect(result.inputFilePath).toEqual(TEST_PATH);
     expect(result.isMappingDocument).toEqual(false)
 
@@ -439,7 +439,7 @@ test("Intercom preProcessingDone ERROR", () => {
         store => store.preProcessingDone({
             isValid: !TEST_VALIDATION_RESULT_ERROR.some(sheet => !sheet.ok),
             isMappingDocument: true,
-            data: TEST_DOCUMENT_DATA_B,
+            document: TEST_DOCUMENT_DATA_B,
             inputFilePath: TEST_PATH_B,
             errorFilePath: TEST_PATH,
         })
@@ -449,7 +449,7 @@ test("Intercom preProcessingDone ERROR", () => {
     expect(result.config).toEqual(TEST_STATE.config);
     
     expect(result.isMappingDocument).toEqual(true)
-    expect(result.data).toEqual(TEST_DOCUMENT_DATA_B);
+    expect(result.document).toEqual(TEST_DOCUMENT_DATA_B);
     expect(result.inputFilePath).toEqual(TEST_PATH_B);
     expect(result.errorFilePath).toEqual(TEST_PATH);
 
@@ -477,7 +477,7 @@ test("Intercom processingDone", () => {
         TEST_STATE,
         store => store.processingDone({
             isMappingDocument: false,
-            data: TEST_DOCUMENT_DATA_A,
+            document: TEST_DOCUMENT_DATA_A,
             outputFilePath: TEST_PATH,
             mappingFilePath: TEST_PATH_B,
         })
@@ -486,7 +486,7 @@ test("Intercom processingDone", () => {
     expect(result.isMappingDocument).toEqual(false)
     expect(result.screen).toEqual(SCREEN_PROCESSING_FINISHED);
     expect(result.config).toEqual(TEST_STATE.config);
-    expect(result.outputData).toEqual(TEST_DOCUMENT_DATA_A);
+    expect(result.document).toEqual(TEST_DOCUMENT_DATA_A);
     expect(result.outputFilePath).toEqual(TEST_PATH);
     expect(result.mappingFilePath).toEqual(TEST_PATH_B);
 })

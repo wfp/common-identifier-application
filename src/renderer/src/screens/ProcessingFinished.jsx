@@ -20,7 +20,7 @@ import FileInfo from "../components/FileInfo";
 import PreviewTable from "../components/PreviewTable";
 import { useAppStore } from "../store";
 
-function ProcessingFinished({ config, isMappingDocument, outputData, outputFilePath, mappingFilePath }) {
+function ProcessingFinished({ config, isMappingDocument, document, outputFilePath, mappingFilePath }) {
 
     const backToMainScreen = useAppStore(store => store.backToMainScreen);
     const preProcessFileOpenDialog = useAppStore(store => store.preProcessFileOpenDialog);
@@ -36,7 +36,7 @@ function ProcessingFinished({ config, isMappingDocument, outputData, outputFileP
         <div className="ProcessingFinished">
             {fileInfoRow}
 
-            <PreviewTable tableData={outputData.sheets[0].data} columnsConfig={columnsConfig} />
+            <PreviewTable tableData={document.data} columnsConfig={columnsConfig} />
 
             <BottomButtons l_content="Open a different file" l_onClick={preProcessFileOpenDialog} r_onClick={backToMainScreen} r_content="Done" />
         </div>

@@ -64,14 +64,13 @@ function App() {
   const config = useAppStore(store => store.config);
 
   const inputFilePath = useAppStore(store => store.inputFilePath);
-  const data = useAppStore(store => store.data); // could be errors or input data
+  const document = useAppStore(store => store.document); // could be errors or input data
   const errorFilePath = useAppStore(store => store.errorFilePath);
 
   const isMappingDocument = useAppStore(store => store.isMappingDocument);
 
   const outputFilePath = useAppStore(store => store.outputFilePath);
   const mappingFilePath = useAppStore(store => store.mappingFilePath);
-  const outputData = useAppStore(store => store.outputData);
 
   const errorMessage = useAppStore(store => store.errorMessage);
   const isRuntimeError = useAppStore(store => store.isRuntimeError);
@@ -122,12 +121,12 @@ function App() {
     }
 
     case SCREEN_VALIDATION_SUCCESS: {
-      screen = (<ValidationSuccess config={config} inputData={data} inputFilePath={inputFilePath} isMappingDocument={isMappingDocument}/>)
+      screen = (<ValidationSuccess config={config} document={document} inputFilePath={inputFilePath} isMappingDocument={isMappingDocument}/>)
       break;
     }
 
     case SCREEN_VALIDATION_FAILED: {
-      screen = (<ValidationFailed config={config} inputData={data} inputFilePath={inputFilePath} errorFilePath={errorFilePath} isMappingDocument={isMappingDocument}/>)
+      screen = (<ValidationFailed config={config} document={document} inputFilePath={inputFilePath} errorFilePath={errorFilePath} isMappingDocument={isMappingDocument}/>)
       break;
     }
 
@@ -137,7 +136,7 @@ function App() {
     }
 
     case SCREEN_PROCESSING_FINISHED: {
-      screen = (<ProcessingFinished config={config} isMappingDocument={isMappingDocument} outputData={outputData} outputFilePath={outputFilePath} mappingFilePath={mappingFilePath} />)
+      screen = (<ProcessingFinished config={config} isMappingDocument={isMappingDocument} document={document} outputFilePath={outputFilePath} mappingFilePath={mappingFilePath} />)
       break;
     }
 

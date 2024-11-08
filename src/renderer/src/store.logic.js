@@ -254,13 +254,13 @@ export function storeLogic(intercomApi) {
             }),
 
             // Signal from the Node backend that the validation step is finished, with
-            preProcessingDone: ({ isValid, isMappingDocument, data, inputFilePath, errorFilePath }) => set(state => {
+            preProcessingDone: ({ isValid, isMappingDocument, document, inputFilePath, errorFilePath }) => set(state => {
                 if (isValid) {
                     return {
                         config: state.config,
                         screen: SCREEN_VALIDATION_SUCCESS,
                         inputFilePath,
-                        data,
+                        document,
                         isMappingDocument,
                     }
                 } else {
@@ -268,7 +268,7 @@ export function storeLogic(intercomApi) {
                         config: state.config,
                         screen: SCREEN_VALIDATION_FAILED,
                         inputFilePath,
-                        data,
+                        document,
                         errorFilePath,
                         isMappingDocument,
                     }
@@ -291,12 +291,12 @@ export function storeLogic(intercomApi) {
 
 
             // Callback after the processing of the file is finished
-            processingDone: ({ isMappingDocument, data, outputFilePath, mappingFilePath }) => set(state => {
+            processingDone: ({ isMappingDocument, document, outputFilePath, mappingFilePath }) => set(state => {
                 return {
                     config: state.config,
                     screen: SCREEN_PROCESSING_FINISHED,
                     isMappingDocument,
-                    outputData: data,
+                    document,
                     outputFilePath,
                     mappingFilePath
                 }

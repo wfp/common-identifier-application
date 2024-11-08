@@ -37,7 +37,7 @@ function OpenErrorListButton({errorFilePath}) {
     )
 }
 
-function ValidationFailed({config, inputData, inputFilePath, errorFilePath, isMappingDocument}) {
+function ValidationFailed({config, document, inputFilePath, errorFilePath, isMappingDocument}) {
     
     const startPreProcessingFile = useAppStore(store => store.startPreProcessingFile)
     const preProcessFileOpenDialog = useAppStore(store => store.preProcessFileOpenDialog);
@@ -45,17 +45,6 @@ function ValidationFailed({config, inputData, inputFilePath, errorFilePath, isMa
     // on retry we simply re-submit the same path
     function retryFileLoad(e) {
         startPreProcessingFile(inputFilePath);
-    }
-
-
-    // filter the error table to only include the ones with an error
-    const documentData = {
-        sheets: inputData.sheets.map(sheet => (
-            {
-                name: sheet.name,
-                data: sheet.data.filter( row => row.errors)
-            }
-        ))
     }
 
     // Add the row number to the list of regular error columns for display
@@ -83,7 +72,7 @@ function ValidationFailed({config, inputData, inputFilePath, errorFilePath, isMa
         <div className="ValidationFailed appScreen">
             <FileInfo filePath={inputFilePath} helpText="The input file is invalid" />
 
-            <PreviewTable tableData={documentData.sheets[0].data} columnsConfig={errorColumns}/>
+            <PreviewTable tableData={document.data} columnsConfig={errorColumns}/>
 
             <div className="validationResult error">
                 <div className="validationState">

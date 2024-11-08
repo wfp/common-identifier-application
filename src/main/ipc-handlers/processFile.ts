@@ -61,15 +61,15 @@ async function doProcessFile(
             break;
     }
 
-    const { isMappingDocument, data, outputFilePath, mappingFilePath } = await backendProcessFile({config, outputPath: outputBasePath, inputFilePath, hasherFactory: makeHasher, format: outputFormat});
+    const { isMappingDocument, document, outputFilePath, mappingFilePath } = await backendProcessFile({config, outputPath: outputBasePath, inputFilePath, hasherFactory: makeHasher, format: outputFormat});
 
     console.log("[IPC::processFile] PROCESSING DONE");
 
-    if (data.sheets[0].data.length > MAX_ROWS_TO_PREVIEW) {
-        console.log(`[IPC::preProcessFile] dataset has ${data.sheets[0].data.length} rows, trimming for frontend preview`);
-        data.sheets[0].data = data.sheets[0].data.slice(0, MAX_ROWS_TO_PREVIEW);
+    if (document.data.length > MAX_ROWS_TO_PREVIEW) {
+        console.log(`[IPC::preProcessFile] dataset has ${document.data.length} rows, trimming for frontend preview`);
+        document.data = document.data.slice(0, MAX_ROWS_TO_PREVIEW);
     }
-    mainWindow.webContents.send('processingDone', { isMappingDocument, data, outputFilePath, mappingFilePath });
+    mainWindow.webContents.send('processingDone', { isMappingDocument, document, outputFilePath, mappingFilePath });
 }
 
 
