@@ -1,46 +1,6 @@
-Description of tool
+# Common Identifier Application
 
-## Key Features
-
-### hashing
-Hashing is a cryptographic process that transforms input data of any size into a fixed-size string of characters, typically a sequence of numbers and letters, known as a hash value or hash code. This operation is secure because it is designed to be a one-way function, meaning that it is computationally infeasible to reverse the process and retrieve the original input from the hash. Additionally, even a small change in the input data results in a significantly different hash, making it highly sensitive to alterations. Hashing is widely used in various applications, including data integrity verification, password storage, and digital signatures, as it ensures that sensitive information remains protected and unaltered.
-
-The Building Blocks Common Identifier application uses SHA256, which is an industry standard hashing implementation, used everywhere from securing internet connectivity to banking. It also implements a salting process whereby an additional set of characters is included into the original input before hashing; this increases the level of randomness in the algorithm, making it more difficult to reverse engineer. For this purpose, the Building Blocks GPG public key is used as the salt value.
-
-In GOS, users submit an intended assistance file to the desktop application, which includes the following fields:
-
-- [National ID] The Syria National Id of the individual to be assisted.
-- [Organization] The BB acronym of the organisation delivering the assistance.
-- [Category] The assistance category.
-- [Currency] The currency of the assistance (SYP in this case).
-- [Amount] The amount of intended assistance.
-- [Start (yyyyMMdd)] The assistance start date.
-- [End (yyyyMMdd)] The assistance end date.
-
-The application takes the National ID value in each row of the uploaded document, concatenates it with the salt value, and passes it through the SHA256 hashing algorithm to produce a pseudorandom string consisting of 56 characters. The same National ID provided as input results in the same hashed common identifier in the output.
-
-In NWS, users submit an intended assistance file to the desktop application, which should include the following fields:
-
-- [Individual Reference] A unique value referencing this individual internally to the organisation providing assistance.
-- [First Name] The first name of the individal (in Arabic).
-- [Last Name] The lasr name of the individal (in Arabic).
-- [Father First Name] The first name of the individals father (in Arabic).
-- [Mother First Name] The first name of the individals mother (in Arabic).
-- [Year of Birth] The year of birth of the individual.
-- [Document Type] An optional field specifying either Local Council Card, Personal Id, or National Id.
-- [Document ID] An optional field specifying a Local Council Card, Personal Id, or National Id number.
-- [Organization] The BB acronym of the organisation delivering the assistance.
-- [Category] The assistance category.
-- [Currency] The currency of the assistance (SYP in this case).
-- [Amount] The amount of intended assistance.
-- [Start (yyyyMMdd)] The assistance start date.
-- [End (yyyyMMdd)] The assistance end date.
-
-For each row of the uploaded document, the application uses the biographic fields (names and year of birth) to create a common identifier for the individual. The names are first transliterated into Latin characters and then passed through a phonetics algorithm, which produces a unique code based on how a human would physically say the name; this helps to standardise the output by removing the impact of spelling mistakes or malformed data. In parallel, the Arabic names are passed through a Soundex algorithm which performs a similar phonetics operation to produce a unique code, but this time purely based on Arabic characters.
-
-Both of these codes are concatenated with the year of birth and the salt value, and passed through the SHA256 hasing algorithm to produce a pseudorandom string consisting of 56 characters. The same biographic data provided as input results in the same hashed common identifier in the output.
-
-Working with purely biographic data is inherently difficult as it is reliant on human data entry and thus is subject to data quality issues. To decrease the likelihood of false-positive duplicated common identifiers, a user can also optionally specify Id numbers and Id type to produce a reference hash; this is not used in Building Blocks to make duplication decisions, but can be used referentially to increase the confidence in a decision post-factum. If Document ID and Document Type are provided in the input file, these are concatenated together and hashed using the same SHA256 algorithm to produce a 56 character reference identifier.
+The purpose of this Common Identifier application is to generate pseudonomous hashed identifiers for individuals, either directly from unique ID numbers or using biographic data. 
 
 ## Usage
 
@@ -53,7 +13,8 @@ There are three ways to "use" this application:
    - It is possible to use purely the backend of this application (without the UI), while maintaining all of the built-in features, by calling the `preprocessFile` and `processFile` functions with file-based data respectively.
    - Currently only CSV and XLSX data formats are supported; an example of this approach is provided in the [Standalone Repo](https://dev.azure.com/worldfoodprogramme/SYR-BB-PREPROCESSING-APP/_git/SYR-BB-PREPROCESSING-STANDALONE).
 3. Programmatically, with array-based data
-   - h
+   - Implement solely the algorithm class and provide it with data directly.
+   - If using this approach, it is recommended to also implement the data validation checks and error handling.
 
 ## Data Processing Pipeline (file-based data)
 
@@ -92,7 +53,7 @@ There are three ways to "use" this application:
 
 ### Defining a Configuration File
 
-
+See [Configuration Files](./Configuration%20Files.md)
 
 ### Activating an Algorithm
 

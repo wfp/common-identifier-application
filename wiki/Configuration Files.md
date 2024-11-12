@@ -2,8 +2,6 @@
 
 Configuration files in the common ID application are used to define the input schemas, validation rules, algorithm specifications, and output formats of intended assistance files. These are defined as `toml` files and must be included within any algorithm implementation at the path `src/main/<algo-dir>/config/config.backup.toml` if using the UI component.
 
-[[__TOC__]]
-
 ## Schema
 
 Look in any of the existing algorithm implementation repositories for examples of specific config usages.
