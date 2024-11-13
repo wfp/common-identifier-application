@@ -16,6 +16,17 @@ There are three ways to "use" this application:
    - Implement solely the algorithm class and provide it with data directly.
    - If using this approach, it is recommended to also implement the data validation checks and error handling.
 
+## Project Structure
+
+Here is a list of all repositories included as part of this Azure Devops project:
+
+ - [SYR-BB-PREPROCESSING-APP](https://dev.azure.com/worldfoodprogramme/_git/SYR-BB-PREPROCESSING-APP) - This is the primary project repo containing the UI implementation and linked algorithms
+ - [SYR-BB-PREPROCESSING-STANDALONE](https://dev.azure.com/worldfoodprogramme/SYR-BB-PREPROCESSING-APP/_git/SYR-BB-PREPROCESSING-STANDALONE) - This respository contains an example implementation of the common identifier application without the UI.
+ - [ALGO-SHARED](https://dev.azure.com/worldfoodprogramme/SYR-BB-PREPROCESSING-APP/_git/ALGO-SHARED) - This is the main functional component of the application. This repository contains all code relating to file handling, configuration management, and data processing, but importantly is algorithm-agnostic.
+ - [ALGO-GOS](https://dev.azure.com/worldfoodprogramme/SYR-BB-PREPROCESSING-APP/_git/ALGO-GOS) - This repo contains the algorithm implementation for the GOS region.
+ - [ALGO-NWS](https://dev.azure.com/worldfoodprogramme/SYR-BB-PREPROCESSING-APP/_git/ALGO-NWS) - This repo contains the algorithm implementation for the NWS region.
+ - [ALGO-*] - any future algorithm implementations would follow this naming convention.
+
 ## Data Processing Pipeline (file-based data)
 
 ### Configuration
