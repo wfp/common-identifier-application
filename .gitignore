@@ -13,3 +13,4 @@ src/main/**/*.js
 src/main/**/*.mjs
 
 src/main/config.backup.toml
+src/main/algo/*

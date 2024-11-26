@@ -65,12 +65,19 @@ Here is a list of all repositories included as part of this project:
 ### Getting Started
 
 ```bash
-git clone <this repo>
+git clone https://github.com/wfp/common-identifier-application.git
 git submodule init
 git submodule update
 
-# include submodule of the relevant git repository
-git submodule add <algo_repo_url> ./src/main/<algo_name>
+# clone the relevant algorithm subdirectory into src/main
+# unfortunately this is a little complex with the current git tooling
+git clone --filter=blob:none --no-checkout --depth 1 https://github.com/wfp/common-identifier-algorithms algo_repo
+cd algo_repo
+git sparse-checkout init --no-cone
+git sparse-checkout set <algo_name> # this is the name of the subdirectory containing the algorithm code
+git checkout
+mv <algo_name> ../src/main/algo
+cd ../ && rm -r algo_repo
 
 # renderer
 cd ./src/renderer
@@ -134,7 +141,7 @@ There are three ways to "use" this application:
 
 The `ALGO-SHARED` repository in this project is the backbone of the Common Identifier application and contains all functional components for reading / writing / validating / processing data and configuration management. This functionality is entirely decoupled from any specific algorithm implementation, instead providing all of the supporting functionality to actual run the application with any compliant pluggable algorithm.
 
-```toml
+```
 📦algo-shared
  ┣ 📂config         # functions related to the handling of configuration files
  ┣ 📂decoding       # reading and decoding files - CSV or XLSX
@@ -150,7 +157,7 @@ Independently, this repository can't do anything; it MUST be implemented with at
 
 ### Algorithm
 
-```toml
+```
 📦algo-*
  ┣ 📂config         # contains the default configuration file and any UI styling overrides
  ┣ 📂tests          # tests for the algorithm where necessary
@@ -186,7 +193,7 @@ Within the main application, the return value from `generateHashForObject` is in
 
 The API layer is the `electron` part of this application, explicitly exposing certain backend functional components to the frontend.
 
-```toml
+```
 📦main
  ┣ 📂algo-*                 # the selected algorithm for this application
  ┣ 📂algo-shared            # the shared backend components
@@ -207,7 +214,7 @@ The frontend of element of this application is an entirely independent element w
 
 > TODO: Port rendered components and comm interfaces to Typescript
 
-```toml
+```
 📦renderer
  ┣ 📂dist                   # output directory for built assets
  ┣ 📂src
@@ -259,10 +266,10 @@ To activate an algorithm for development / building with that algorithm use the 
 
 ```
 # for NWS
-node tools/activate-algo.js algo-uscadi
+node tools/activate-algo.js "NWS""
 
 # or for GOS
-node tools/activate-algo.js algo-gos
+node tools/activate-algo.js "GOS"
 ```
 
 Each algorithm repository contains `config` subdirectory which houses a `config.backup.toml` which serves as the backup (and baseline) configuration for the application built.
