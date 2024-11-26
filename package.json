@@ -10,8 +10,8 @@
     "start:debug": "set DEBUG=CID:*& npm start",
     "package": "electron-forge package",
     "make": "electron-forge make",
-    "compile": "tsc",
-    "tsc-watch": "tsc -w",
+    "tsc": "tsc",
+    "tsc:watch": "tsc -w",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --coverage --config=jest.config.js",
     "test:ci": "node --experimental-vm-modules node_modules/jest/bin/jest.js --ci --coverage --config=jest.ci.config.js"
   },

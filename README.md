@@ -82,6 +82,7 @@ npm run build # build the rendered components
 cd ../../
 npm install
 node tools/activate-algo.js <algo_name> <region_name>
+npm run tsc
 npm run start # to use the pre-built rendered components
 # OR, npm run start:web to link with live server
 ```
