@@ -1,15 +1,9 @@
 [submodule "src/main/algo-gos"]
 	path = src/main/algo-gos
-	# url = https://worldfoodprogramme@dev.azure.com/worldfoodprogramme/SYR-BB-PREPROCESSING-APP/_git/ALGO-GOS
-	url = ../ALGO-GOS
-	ignore = dirty
-[submodule "src/main/aglo-uscadi"]
+	url = https://github.com/wfp/cid-algorithm-gos
+[submodule "src/main/algo-nws"]
 	path = src/main/algo-nws
-	# url = https://worldfoodprogramme@dev.azure.com/worldfoodprogramme/SYR-BB-PREPROCESSING-APP/_git/ALGO-NWS
-	url = ../ALGO-NWS
-	ignore = dirty
+	url = https://github.com/wfp/cid-algorithm-nws
 [submodule "src/main/algo-shared"]
 	path = src/main/algo-shared
-	# url = https://worldfoodprogramme@dev.azure.com/worldfoodprogramme/SYR-BB-PREPROCESSING-APP/_git/ALGO-SHARED
-	url = ../ALGO-SHARED
-	ignore = dirty
+	url = https://github.com/wfp/cid-algorithm-shared
