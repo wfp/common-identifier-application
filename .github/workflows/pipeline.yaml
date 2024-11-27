@@ -40,8 +40,7 @@ jobs:
         uses: EnricoMi/publish-unit-test-result-action@v2.18.0
         if: always()
         with:
-          files: |
-            **\test-report.xml
+          files: ./coverage/test-report/test-report.xml
       
       - name: Publish Code Coverage
         uses: irongut/CodeCoverageSummary@v1.3.0
