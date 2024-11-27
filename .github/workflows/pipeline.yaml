@@ -15,14 +15,14 @@ jobs:
       - name: Checkout repo and submodules
         uses: actions/checkout@v4
         with:
-          submodules: true
-          token: ${{ secrets.REPO_PAT }}
-          fetch-depth: 2
+          persist-credentials: false
 
       - name: Install NodeJS
         uses: actions/setup-node@v4
         with:
           node-version: 20
+      
+      - run: git config --global url."https://${{ secrets.REPO_PAT }}@github.com/".insteadOf ssh://git@github.com/
 
       - name: Install node packages
         run: npm install
