@@ -31,10 +31,6 @@ jobs:
         run: npm run test:ci
         env:
           NODE_OPTIONS: "--experimental-vm-modules"
-      
-      - name: List files
-        run: ls -laR .
-        if: always()
 
       - name: Publish Test Results
         uses: EnricoMi/publish-unit-test-result-action@v2.18.0
