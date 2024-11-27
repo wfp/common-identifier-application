@@ -73,7 +73,6 @@ Expects the value of the column specified by `<TARGET COLUMN>` to be a valid dat
 
 The date offset format is shared with `date_diff`.
 
-
 Example:
 
 ```toml
@@ -99,7 +98,6 @@ Example:
 { op = "field_type", value = "str" },
 ```
 
-
 ### Language check
 
 ```toml
@@ -124,6 +122,7 @@ Example:
 ```
 
 Expects the length of the value (as a string) of the column to be:
+
 - at least `value` (in case of `min_field_length`)
 - at most `value` (in case of `max_field_length`)
 
@@ -142,6 +141,7 @@ Example:
 ```
 
 Expects the numerical value of the column to be:
+
 - at least `value` (in case of `min_value`)
 - at most `value` (in case of `max_value`)
 
@@ -153,12 +153,11 @@ Example:
 ```
 
 There is a special case for max value, whereby a date can be passed in as a maximum. This is to support date of birth entry without requiring complex date parsing:
+
 ```toml
 { op = "max_value", value = "{{currentYear}}" },
 { op = "max_value", value = "{{currentMonth}}" },
 ```
-
-
 
 ### Options
 

@@ -2,7 +2,7 @@
 export default {
   // [...]
   extensionsToTreatAsEsm: ['.ts'],
-  moduleFileExtensions: [ "ts", "js" ],
+  moduleFileExtensions: ['ts', 'js'],
   moduleNameMapper: {
     '^(\\.{1,2}/.*)\\.js$': '$1',
   },
@@ -31,7 +31,7 @@ export default {
   // coverage directory
   coverageDirectory: './coverage',
   collectCoverage: true,
-  coverageReporters: ["cobertura", "lcov", "html"],
+  coverageReporters: ['cobertura', 'lcov', 'html'],
 
   verbose: true,
-}
+};

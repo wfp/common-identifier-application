@@ -1,3 +1,0 @@
-[submodule "src/main/algo-shared"]
-	path = src/main/algo-shared
-	url = https://github.com/wfp/common-identifier-algorithm-shared

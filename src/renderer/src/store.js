@@ -15,29 +15,28 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import { create as createStore } from 'zustand';
+import * as intercomApi from './intercomApi';
 
-import {create as createStore} from 'zustand'
-import * as intercomApi from './intercomApi'
-
-import * as storeLogic from '../src/store.logic'
+import * as storeLogic from '../src/store.logic';
 
 export const SCREEN_BOOT = storeLogic.SCREEN_BOOT;
-export const SCREEN_WELCOME = storeLogic.SCREEN_WELCOME
-export const SCREEN_MAIN = storeLogic.SCREEN_MAIN
-export const SCREEN_FILE_LOADING = storeLogic.SCREEN_FILE_LOADING
+export const SCREEN_WELCOME = storeLogic.SCREEN_WELCOME;
+export const SCREEN_MAIN = storeLogic.SCREEN_MAIN;
+export const SCREEN_FILE_LOADING = storeLogic.SCREEN_FILE_LOADING;
 
-export const SCREEN_VALIDATION_SUCCESS = storeLogic.SCREEN_VALIDATION_SUCCESS
-export const SCREEN_VALIDATION_FAILED = storeLogic.SCREEN_VALIDATION_FAILED
+export const SCREEN_VALIDATION_SUCCESS = storeLogic.SCREEN_VALIDATION_SUCCESS;
+export const SCREEN_VALIDATION_FAILED = storeLogic.SCREEN_VALIDATION_FAILED;
 
-export const SCREEN_PROCESSING_IN_PROGRESS = storeLogic.SCREEN_PROCESSING_IN_PROGRESS
-export const SCREEN_PROCESSING_FINISHED = storeLogic.SCREEN_PROCESSING_FINISHED
-export const SCREEN_PROCESSING_CANCELED = storeLogic.SCREEN_PROCESSING_CANCELED
+export const SCREEN_PROCESSING_IN_PROGRESS =
+  storeLogic.SCREEN_PROCESSING_IN_PROGRESS;
+export const SCREEN_PROCESSING_FINISHED = storeLogic.SCREEN_PROCESSING_FINISHED;
+export const SCREEN_PROCESSING_CANCELED = storeLogic.SCREEN_PROCESSING_CANCELED;
 
-export const SCREEN_LOAD_NEW_CONFIG = storeLogic.SCREEN_LOAD_NEW_CONFIG
-export const SCREEN_CONFIG_UPDATED = storeLogic.SCREEN_CONFIG_UPDATED
-export const SCREEN_ERROR = storeLogic.SCREEN_ERROR
-export const SCREEN_INVALID_CONFIG = storeLogic.SCREEN_INVALID_CONFIG
-export const SCREEN_CONFIG_CHANGE = storeLogic.SCREEN_CONFIG_CHANGE
-
+export const SCREEN_LOAD_NEW_CONFIG = storeLogic.SCREEN_LOAD_NEW_CONFIG;
+export const SCREEN_CONFIG_UPDATED = storeLogic.SCREEN_CONFIG_UPDATED;
+export const SCREEN_ERROR = storeLogic.SCREEN_ERROR;
+export const SCREEN_INVALID_CONFIG = storeLogic.SCREEN_INVALID_CONFIG;
+export const SCREEN_CONFIG_CHANGE = storeLogic.SCREEN_CONFIG_CHANGE;
 
 export const useAppStore = createStore(storeLogic.storeLogic(intercomApi));

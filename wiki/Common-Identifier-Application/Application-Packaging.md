@@ -15,7 +15,6 @@ Triggering an `electron-forge make` always re-packages the application files (an
 
 The main problem with this approach is that Squirrel adds two extra executables (`StubExecutable` which'll be renamed to the app executable name, and act as a launcher + `Updater.exe` which will handle updates), but also modifies them, so we cannot previously sign them, and will be added to the installer unsigned.
 
-
 ## Installation and shortcuts
 
 The current implementation uses the code in `src/main/squirell-callbacks.js` to
@@ -54,9 +53,7 @@ can be replaced with a simple call to `electron-squirell-startup` that uses the
 if(require('electron-squirrel-startup')) return;
 ```
 
-
 ## Self-extracting installers
-
 
 The self-extracting installers built by the pipeline use the [7zsfxmm](https://github.com/chrislake/7zsfxmm) SFX module.
 
@@ -81,35 +78,28 @@ https://github.com/OlegScherbakov/7zSFX/blob/master/docs/parameters.html
 
 NOTE: 7zsfxmm cannot handle LZMA2 archives, only LZMA -- use `-m0=lzma` when compressing the archive with 7zip.
 
-
 ### Building a signed app for MacOS
 
 The `forge.config.js` file contains the following (commented out) snippet:
 
 ```js
+// ....
+packagerConfig: {
+  // CODE SIGNING THINGS GO HERE
+  // ---------------------------
+  // enable this to create signed executables on macOS
+  // XCode and the developer account must be set up to sign executables --
+  // more on setting this up:
+  // https://github.com/electron/osx-sign
+  // object must exist even if empty
+  // osxSign: {}
+  // END OF CODE SIGNING THINGS
+  // --------------------------
   // ....
-  packagerConfig: {
-    // CODE SIGNING THINGS GO HERE
-    // ---------------------------
-
-
-    // enable this to create signed executables on macOS
-    // XCode and the developer account must be set up to sign executables --
-    // more on setting this up:
-    // https://github.com/electron/osx-sign
-
-    // object must exist even if empty
-    // osxSign: {}
-
-
-    // END OF CODE SIGNING THINGS
-    // --------------------------
-    // ....
-  }
+}
 ```
 
 By uncommenting the `osxSign: {}` line, the MacOS build will use XCode (and the developer account associated with it) to sign the executable. For more information, check [the electron osx-sign documentation](https://github.com/electron/osx-sign)
-
 
 #### Prerequisites
 

@@ -16,25 +16,24 @@
  */
 
 import { resolve, dirname } from 'node:path';
-import { fileURLToPath } from 'node:url'
+import { fileURLToPath } from 'node:url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 export function resolveHtmlPath(htmlFileName: string) {
-    console.log(`ENV: ${process.env.NODE_ENV}`)
-    if (process.env.NODE_ENV === 'development') {
-      const port = process.env.PORT || 5173;
-      const url = new URL(`http://localhost:${port}`);
-      url.pathname = "index.html";
-      return url.href;
-    }
-    return `file://${resolve(__dirname, '../renderer/', htmlFileName)}`;
+  console.log(`ENV: ${process.env.NODE_ENV}`);
+  if (process.env.NODE_ENV === 'development') {
+    const port = process.env.PORT || 5173;
+    const url = new URL(`http://localhost:${port}`);
+    url.pathname = 'index.html';
+    return url.href;
+  }
+  return `file://${resolve(__dirname, '../renderer/', htmlFileName)}`;
 }
-
 
 // Returns the "base name" (the plain file name, the last component of the path, without any directories)
 export function baseFileName(filePath: string) {
-    const splitName = filePath.split(/[\\/]/);
-    const lastComponent = splitName[splitName.length - 1].split(/\.+/);
-    return lastComponent.slice(0,-1).join('.')
+  const splitName = filePath.split(/[\\/]/);
+  const lastComponent = splitName[splitName.length - 1].split(/\.+/);
+  return lastComponent.slice(0, -1).join('.');
 }

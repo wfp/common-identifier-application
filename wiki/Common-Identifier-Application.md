@@ -27,15 +27,14 @@ This is a fully typescript backend application with an optional ElectronJS front
   </tbody>
 </table>
 
-
 ### Key Features
 
-* Generation of pseudonymous identifiers from tabular data
-* Supports CSV, XLSX, or programmatic use
-* Supports pluggable algorithms to meet wide use-cases
-* Entirely configurable via external configuration files
-* Customisable, performant, and robust data validation
-* Shiny Microsoft Windows frontend
+- Generation of pseudonymous identifiers from tabular data
+- Supports CSV, XLSX, or programmatic use
+- Supports pluggable algorithms to meet wide use-cases
+- Entirely configurable via external configuration files
+- Customisable, performant, and robust data validation
+- Shiny Microsoft Windows frontend
 
 ### Feature Roadmap
 
@@ -50,17 +49,16 @@ This is a fully typescript backend application with an optional ElectronJS front
   - [ ] Encryption of output files using PGP
   - [ ] Direct upload of files to target system
 
-
 ### Project Repo Structure
 
 Here is a list of all repositories included as part of this project:
 
- * [SYR-BB-PREPROCESSING-APP](https://dev.azure.com/worldfoodprogramme/_git/SYR-BB-PREPROCESSING-APP) - This is the primary project repo containing the UI implementation and linked algorithms
- * [SYR-BB-PREPROCESSING-STANDALONE](https://dev.azure.com/worldfoodprogramme/SYR-BB-PREPROCESSING-APP/_git/SYR-BB-PREPROCESSING-STANDALONE) - This repository contains an example implementation of the common identifier application without the UI.
- * [ALGO-SHARED](https://dev.azure.com/worldfoodprogramme/SYR-BB-PREPROCESSING-APP/_git/ALGO-SHARED) - This is the main functional component of the application. This repository contains all code relating to file handling, configuration management, and data processing, but importantly is algorithm-agnostic.
- * [ALGO-GOS](https://dev.azure.com/worldfoodprogramme/SYR-BB-PREPROCESSING-APP/_git/ALGO-GOS) - This repo contains the algorithm implementation for the GOS region.
- * [ALGO-NWS](https://dev.azure.com/worldfoodprogramme/SYR-BB-PREPROCESSING-APP/_git/ALGO-NWS) - This repo contains the algorithm implementation for the NWS region.
- * [ALGO-*] - any future algorithm implementations would follow this naming convention.
+- [SYR-BB-PREPROCESSING-APP](https://dev.azure.com/worldfoodprogramme/_git/SYR-BB-PREPROCESSING-APP) - This is the primary project repo containing the UI implementation and linked algorithms
+- [SYR-BB-PREPROCESSING-STANDALONE](https://dev.azure.com/worldfoodprogramme/SYR-BB-PREPROCESSING-APP/_git/SYR-BB-PREPROCESSING-STANDALONE) - This repository contains an example implementation of the common identifier application without the UI.
+- [ALGO-SHARED](https://dev.azure.com/worldfoodprogramme/SYR-BB-PREPROCESSING-APP/_git/ALGO-SHARED) - This is the main functional component of the application. This repository contains all code relating to file handling, configuration management, and data processing, but importantly is algorithm-agnostic.
+- [ALGO-GOS](https://dev.azure.com/worldfoodprogramme/SYR-BB-PREPROCESSING-APP/_git/ALGO-GOS) - This repo contains the algorithm implementation for the GOS region.
+- [ALGO-NWS](https://dev.azure.com/worldfoodprogramme/SYR-BB-PREPROCESSING-APP/_git/ALGO-NWS) - This repo contains the algorithm implementation for the NWS region.
+- [ALGO-*] - any future algorithm implementations would follow this naming convention.
 
 ### Getting Started
 
@@ -112,10 +110,10 @@ All logging lines are prefixed with `CID:` (for CommonID), and should look like 
   CID:ConfigStore Backup config validation success - using it as config +34ms
 ```
 
-
 ## 🚀 Usage
 
 There are three ways to "use" this application:
+
 1. [INTENDED USAGE] Desktop UI
    - Users can install the ElectronJS application on Windows and submit their intended assistance files for processing.
    - The application will validate the input data against validation rules defined within a separate configuration file.
@@ -221,7 +219,7 @@ The frontend of element of this application is an entirely independent element w
  ┃ ┗ 📜util.js              # data processing related utils
  ┣ 📂tests                  # FE tests (store-only)
  ┣ 📜index.html             # HTML for development (npm run dev)
- ┣ 📜package.json           
+ ┣ 📜package.json
  ┣ 📜renderer.html          # HTML for build (npm run build)
  ┗ 📜vite.config.js
 ```
@@ -251,7 +249,6 @@ The frontend of element of this application is an entirely independent element w
 - The data returned by the algorithm is merged into the source rows so the encoders can package multiple different outputs
 - The `src/main/algo-shared/encoding` Encoders (CSV and XLSX) write the output based on the relevant `[destination]` / `[destination_map]` section of the active configuration.
 
-
 ### Activating an Algorithm
 
 To activate an algorithm for development / building with that algorithm use the `tools/activate-algo.js` scripts -- it copies the backup config file to the application's location and points the `src/main/active_algorithm.js` file to the right algorithm.
@@ -265,7 +262,6 @@ node tools/activate-algo.js algo-gos
 ```
 
 Each algorithm repository contains `config` subdirectory which houses a `config.backup.toml` which serves as the backup (and baseline) configuration for the application built.
-
 
 ### Generating a config signature hash
 

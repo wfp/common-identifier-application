@@ -65,6 +65,7 @@ column_name = [
     { op = "field_type", value = "string" }
 ]
 ```
+
 ```toml
 # the structure of a validation rule is as follows:
 {
@@ -81,20 +82,20 @@ column_name = [
 
 This is the list of currently supported validation rules, these are further described in the [Validation rules wiki page](./Validation%20Rules.md).
 
-| Validation Rule Name (op) | Argument                | Target | Description                                    |
-|---------------------------|-------------------------|--------|------------------------------------------------|
-| options                   | Array<string \| number> | ❌     | Is value in the argument array?                |
-| regex_match               | string                  | ❌     | Does value match provided regex?               |
-| field_type                | "string" \| "number"    | ❌     | Is value type only the specified value?        |
-| language_check            | string                  | ❌     | Is the value in the correct language?          |
-| max_field_length          | number                  | ❌     | Maximum number of characters                   |
-| min_field_length          | number                  | ❌     | Minimum number of characters                   |
-| max_value                 | number \| string        | ❌     | Is value less than argument?                   |
-| min_value                 | number                  | ❌     | Is value more than argument?                   |
-| date_diff                 | string                  | ❌     | Is value within the specified date range?      |
-| date_field_diff           | string                  | ✅     | Is value within the date of another column?    |
-| linked_field              | string                  | ✅     | Link two columns together and ensure not blank.|
-| same_value_for_all_rows   | ❌                      | ❌    | Entire column must be the same value.          |
+| Validation Rule Name (op) | Argument                | Target | Description                                     |
+| ------------------------- | ----------------------- | ------ | ----------------------------------------------- |
+| options                   | Array<string \| number> | ❌     | Is value in the argument array?                 |
+| regex_match               | string                  | ❌     | Does value match provided regex?                |
+| field_type                | "string" \| "number"    | ❌     | Is value type only the specified value?         |
+| language_check            | string                  | ❌     | Is the value in the correct language?           |
+| max_field_length          | number                  | ❌     | Maximum number of characters                    |
+| min_field_length          | number                  | ❌     | Minimum number of characters                    |
+| max_value                 | number \| string        | ❌     | Is value less than argument?                    |
+| min_value                 | number                  | ❌     | Is value more than argument?                    |
+| date_diff                 | string                  | ❌     | Is value within the specified date range?       |
+| date_field_diff           | string                  | ✅     | Is value within the date of another column?     |
+| linked_field              | string                  | ✅     | Link two columns together and ensure not blank. |
+| same_value_for_all_rows   | ❌                      | ❌     | Entire column must be the same value.           |
 
 ### Algorithm
 
@@ -118,7 +119,7 @@ strategy = "SHA256"
 [algorithm.salt]
 # should the salt value be pulled from a file or a static value - options are "FILE" or "STRING"
 source = "FILE"
-# a compilable regex string to validate that the salt is valid     
+# a compilable regex string to validate that the salt is valid
 validator_regex = ".*"
 
 # the actual value to use for the salt
@@ -187,7 +188,6 @@ columns = [
 # for XLSX, this is also the name of the sheet containing the final data
 postfix = "_ERRORS"
 ```
-
 
 ### Config Signature
 

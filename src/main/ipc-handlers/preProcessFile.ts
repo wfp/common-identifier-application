@@ -15,42 +15,55 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { BrowserWindow } from "electron";
-import { ConfigStore } from "../algo-shared/config/configStore.js";
-import { preprocessFile as backendPreProcessFile } from "../algo-shared/processing/index.js";
+import { BrowserWindow } from 'electron';
+import {
+  ConfigStore,
+  preprocessFile as backendPreProcessFile,
+} from 'common-identifier-algorithm-shared';
 
 const MAX_ROWS_TO_PREVIEW = 500;
 
 interface IPCFileDroppedInput {
-    mainWindow: BrowserWindow,
-    configStore: ConfigStore,
-    filePath: string,
+  mainWindow: BrowserWindow;
+  configStore: ConfigStore;
+  filePath: string;
 }
 
-export async function preProcessFile({ mainWindow, configStore, filePath}: IPCFileDroppedInput) {
+export async function preProcessFile({
+  mainWindow,
+  configStore,
+  filePath,
+}: IPCFileDroppedInput) {
+  console.log('[IPC::preProcessFile] Dropped File:', filePath);
 
-    console.log('[IPC::preProcessFile] Dropped File:', filePath);
+  const config = configStore.getConfig();
 
-    const config = configStore.getConfig();
+  const { isValid, isMappingDocument, document, errorFilePath, inputFilePath } =
+    await backendPreProcessFile({ config, inputFilePath: filePath });
+  console.log('[IPC::preProcessFile] PREPROCESSING DONE');
 
-    const {  isValid, isMappingDocument, document, errorFilePath, inputFilePath  } = await backendPreProcessFile({ config, inputFilePath: filePath});
-    console.log("[IPC::preProcessFile] PREPROCESSING DONE");
+  // if this is error data, filter to only errors first.
+  if (!isValid) {
+    const errors = document.data.filter((r) => r.errors);
+    console.log(
+      `[IPC::preProcessFile] ${errors.length} validation errors found`,
+    );
+    document.data = errors;
+  }
 
-    // if this is error data, filter to only errors first.
-    if (!isValid) {
-        const errors = document.data.filter(r => r.errors);
-        console.log(`[IPC::preProcessFile] ${errors.length} validation errors found`)
-        document.data = errors;
-    }
-    
-    // don't return large datasets back to the frontend, instead splice and send n rows
-    if (document.data.length > MAX_ROWS_TO_PREVIEW) {
-        console.log(`[IPC::preProcessFile] input data array has ${document.data.length} rows, trimming for frontend preview`);
-        document.data = document.data.slice(0, MAX_ROWS_TO_PREVIEW);
-    }
-    
-    mainWindow.webContents.send('preprocessingDone', {
-        isValid, isMappingDocument, document, errorFilePath, inputFilePath
-    });
+  // don't return large datasets back to the frontend, instead splice and send n rows
+  if (document.data.length > MAX_ROWS_TO_PREVIEW) {
+    console.log(
+      `[IPC::preProcessFile] input data array has ${document.data.length} rows, trimming for frontend preview`,
+    );
+    document.data = document.data.slice(0, MAX_ROWS_TO_PREVIEW);
+  }
 
+  mainWindow.webContents.send('preprocessingDone', {
+    isValid,
+    isMappingDocument,
+    document,
+    errorFilePath,
+    inputFilePath,
+  });
 }

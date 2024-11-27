@@ -1,16 +1,16 @@
 name: BuildTestSignPublish
 on:
   push:
-    branches: [ "main", "develop" ]
+    branches: ['main', 'develop']
   pull_request:
-    branches: [ "main" ]
+    branches: ['main']
     types: [opened, reopened, edited]
 
 jobs:
   RunTestSuite:
     name: Run Test Suite
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout repo and submodules
         uses: actions/checkout@v4
@@ -30,14 +30,14 @@ jobs:
       - name: Run tests
         run: npm run test:ci
         env:
-          NODE_OPTIONS: "--experimental-vm-modules"
+          NODE_OPTIONS: '--experimental-vm-modules'
 
       - name: Publish Test Results
         uses: EnricoMi/publish-unit-test-result-action@v2.18.0
         if: always()
         with:
           files: ./coverage/test-report/test-report.xml
-      
+
       - name: Publish Code Coverage
         uses: irongut/CodeCoverageSummary@v1.3.0
         with:
@@ -45,17 +45,16 @@ jobs:
           badge: true
           format: markdown
           output: both
-      
+
       - name: Add Coverage PR Comment
         uses: marocchino/sticky-pull-request-comment@v2
         if: github.event_name == 'pull_request'
         with:
           recreate: true
           path: code-coverage-results.md
-      
+
       - name: Write to job Summary
         run: cat code-coverage-results.md >> $GITHUB_STEP_SUMMARY
-
 
   # BuildApplication:
   #   name: Build Application
@@ -67,13 +66,13 @@ jobs:
   #     matrix:
   #       region: [ nws, gos ]
   #       include:
-  #         - region: nws            
+  #         - region: nws
   #           regionName: NWS
   #           algorithm: algo-nws
   #         - region: gos
   #           regionName: GOS
   #           algorithm: algo-gos
-    
+
   #   steps:
   #     - name: Checkout repo and submodules
   #       uses: actions/checkout@v4
@@ -92,17 +91,17 @@ jobs:
   #     - name: Get Application Version
   #       id: appVersion
   #       run: APP_VERSION=$(node -p "require('./package.json').version") >> "$GITHUB_OUTPUT"
-      
+
   #     - name: Build renderer
   #       run: cd src/renderer && npm install && npm run build
-      
+
   #     - name: Activate algorithm and compile
   #       run: |
   #         node tools/activate-algo.js ${{ matrix.algorithm }} ${{ matrix.regionName }}
-        
+
   #     - name: Building package for signing (Win32)
   #       run: npx electron-forge package --arch=x64 --platform=win32
-      
+
   #     # package signing
   #     - name: Sign the executable (Win32)
   #       uses: Azure/trusted-signing-action@v0.5.0
@@ -131,7 +130,7 @@ jobs:
   #         exclude-azure-powershell-credential: true
   #         exclude-azure-developer-cli-credential: true
   #         exclude-interactive-browser-credential: true
-      
+
   #     - name: Build LZMA archive from the signed directory
   #       shell: powershell
   #       run: |
@@ -142,7 +141,7 @@ jobs:
 
   #         Write-Host "Packing $targetPath with 7Zip..."
   #         & 7z a -m0=lzma $zipFilePath $zipSrc
-      
+
   #     - name: Create self-extracting 7Zip archive
   #       shell: powershell
   #       run: |
@@ -201,10 +200,10 @@ jobs:
   #         } else {
   #           Write-Error "Failed to create self-extracting archive."
   #         }
-      
+
   #     - name: Get Version
   #       run: echo "The application version is ${{ steps.appVersion.outputs.APP_VERSION }}"
-      
+
   #     # package signing
   #     - name: Sign the executable (Win32)
   #       uses: Azure/trusted-signing-action@v0.5.0
@@ -233,7 +232,7 @@ jobs:
   #         exclude-azure-powershell-credential: true
   #         exclude-azure-developer-cli-credential: true
   #         exclude-interactive-browser-credential: true
-      
+
   #     - name: Publish app-${{ matrix.region }}-win-sfx-signed
   #       uses: actions/upload-artifact@v4
   #       with:

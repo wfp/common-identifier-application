@@ -15,32 +15,33 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { ConfigStore } from "../algo-shared/config/configStore.js";
+import { ConfigStore } from 'common-identifier-algorithm-shared';
 
 // Removes the user configuration and falls back to the built-in default
-export function removeUserConfig({configStore}: { configStore: ConfigStore}) {
+export function removeUserConfig({
+  configStore,
+}: {
+  configStore: ConfigStore;
+}) {
+  console.log('[IPC] [removeUserConfig] start');
 
-    console.log("[IPC] [removeUserConfig] start")
+  const loadError = configStore.removeUserConfig();
 
-    const loadError = configStore.removeUserConfig();
+  console.log('[IPC] [removeUserConfig] result:', loadError);
 
-    console.log("[IPC] [removeUserConfig] result:", loadError);
-
-    //
-    if (!loadError) {
-        return {
-            success: true,
-            config: configStore.getConfig(),
-            lastUpdated: configStore.lastUpdated,
-        };
-    }
-
+  //
+  if (!loadError) {
     return {
-        success: false,
-        // canceled: false,
-        error: loadError,
-        // config: configStore.getConfig(),
-    }
+      success: true,
+      config: configStore.getConfig(),
+      lastUpdated: configStore.lastUpdated,
+    };
+  }
 
-
+  return {
+    success: false,
+    // canceled: false,
+    error: loadError,
+    // config: configStore.getConfig(),
+  };
 }

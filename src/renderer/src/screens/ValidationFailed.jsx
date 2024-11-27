@@ -15,81 +15,95 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import BottomButtons from "../components/BottomButtons";
-import FileInfo from "../components/FileInfo";
-import PreviewTable from "../components/PreviewTable";
-import { useAppStore } from "../store";
-import { filterColumnConfigForMapping } from "../util";
+import BottomButtons from '../components/BottomButtons';
+import FileInfo from '../components/FileInfo';
+import PreviewTable from '../components/PreviewTable';
+import { useAppStore } from '../store';
+import { filterColumnConfigForMapping } from '../util';
 
+function OpenErrorListButton({ errorFilePath }) {
+  const openOutputPath = useAppStore((store) => store.openOutputFile);
 
-function OpenErrorListButton({errorFilePath}) {
-    const openOutputPath = useAppStore(store => store.openOutputFile);
-    
-    // open the output file
-    function openOutputFile() {
-        openOutputPath(errorFilePath)
-    }
-    
-    
-    return (
-        <button className="cid-button cid-button-lg cid-button-alert" onClick={openOutputFile}>Open error list</button>
-        
-    )
+  // open the output file
+  function openOutputFile() {
+    openOutputPath(errorFilePath);
+  }
+
+  return (
+    <button
+      className="cid-button cid-button-lg cid-button-alert"
+      onClick={openOutputFile}
+    >
+      Open error list
+    </button>
+  );
 }
 
-function ValidationFailed({config, document, inputFilePath, errorFilePath, isMappingDocument}) {
-    
-    const startPreProcessingFile = useAppStore(store => store.startPreProcessingFile)
-    const preProcessFileOpenDialog = useAppStore(store => store.preProcessFileOpenDialog);
+function ValidationFailed({
+  config,
+  document,
+  inputFilePath,
+  errorFilePath,
+  isMappingDocument,
+}) {
+  const startPreProcessingFile = useAppStore(
+    (store) => store.startPreProcessingFile,
+  );
+  const preProcessFileOpenDialog = useAppStore(
+    (store) => store.preProcessFileOpenDialog,
+  );
 
-    // on retry we simply re-submit the same path
-    function retryFileLoad(e) {
-        startPreProcessingFile(inputFilePath);
-    }
+  // on retry we simply re-submit the same path
+  function retryFileLoad(e) {
+    startPreProcessingFile(inputFilePath);
+  }
 
-    // Add the row number to the list of regular error columns for display
-    let columnsConfig = config.data.destination_errors.columns;
+  // Add the row number to the list of regular error columns for display
+  let columnsConfig = config.data.destination_errors.columns;
 
-    // if this is a mapping document we need to clean the schema
-    if (isMappingDocument) {
-        columnsConfig = [
-            // we need to re-add the errors column here to keep the column filtering
-            // logic consistent across mapping and non-mapping documents
-            { name: "Errors", alias: "errors" },
-        ].concat(filterColumnConfigForMapping(config.data, columnsConfig));
-    }
+  // if this is a mapping document we need to clean the schema
+  if (isMappingDocument) {
+    columnsConfig = [
+      // we need to re-add the errors column here to keep the column filtering
+      // logic consistent across mapping and non-mapping documents
+      { name: 'Errors', alias: 'errors' },
+    ].concat(filterColumnConfigForMapping(config.data, columnsConfig));
+  }
 
-    // add the error column to the front of the column list
-    const errorColumns = [
-        { name: "Row #", alias: "row_number" },
-    ].concat(columnsConfig)
+  // add the error column to the front of the column list
+  const errorColumns = [{ name: 'Row #', alias: 'row_number' }].concat(
+    columnsConfig,
+  );
 
+  // The file invalid message differs between mapping & assistance documents
+  const fileIsNotValidMessage =
+    'Validation finished. Critical errors encountered.';
 
-    // The file invalid message differs between mapping & assistance documents
-    const fileIsNotValidMessage = "Validation finished. Critical errors encountered."
+  return (
+    <div className="ValidationFailed appScreen">
+      <FileInfo filePath={inputFilePath} helpText="The input file is invalid" />
 
-    return (
-        <div className="ValidationFailed appScreen">
-            <FileInfo filePath={inputFilePath} helpText="The input file is invalid" />
+      <PreviewTable tableData={document.data} columnsConfig={errorColumns} />
 
-            <PreviewTable tableData={document.data} columnsConfig={errorColumns}/>
-
-            <div className="validationResult error">
-                <div className="validationState">
-                    {fileIsNotValidMessage}
-                    <div className="help">
-                        You cannot continue until the noted issues are resolved.
-                    </div>
-                </div>
-
-                <OpenErrorListButton errorFilePath={errorFilePath} />
-            </div>
-
-            <BottomButtons l_content="Open a different file" l_onClick={preProcessFileOpenDialog} r_onClick={retryFileLoad} r_content="Retry the same file" />
-
-
+      <div className="validationResult error">
+        <div className="validationState">
+          {fileIsNotValidMessage}
+          <div className="help">
+            You cannot continue until the noted issues are resolved.
+          </div>
         </div>
-    )
+
+        <OpenErrorListButton errorFilePath={errorFilePath} />
+      </div>
+
+      <BottomButtons
+        l_content="Open a different file"
+        l_onClick={preProcessFileOpenDialog}
+        r_onClick={retryFileLoad}
+        r_content="Retry the same file"
+      />
+    </div>
+  );
 }
 
 export default ValidationFailed;
