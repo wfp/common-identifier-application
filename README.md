@@ -76,7 +76,7 @@ cd algo_repo
 git sparse-checkout init --no-cone
 git sparse-checkout set <algo_name> # this is the name of the subdirectory containing the algorithm code
 git checkout
-mv <algo_name> ../src/main/algo
+cp -r <algo_name> ../src/main/algo
 cd ../ && rm -r algo_repo
 
 # renderer
