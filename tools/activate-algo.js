@@ -13,38 +13,33 @@ import { program } from 'commander';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 program.argument(
-  '<algo>',
-  'The name of the directory inside "src/main/" to activate',
-);
-program.argument(
   '<region>',
   'The region suffix to append to rendered title components.',
 );
 
 program.parse();
 
-const ALGO_NAME = program.args[0];
 const ALGO_REGION = program.args[1];
 
 const SRC_MAIN_DIR = join(__dirname, '..', 'src', 'main');
 const ACTIVE_ALGORITHM_FILE = join(SRC_MAIN_DIR, 'active_algorithm.ts');
 const BACKUP_CONFIG_TARGET_PATH = join(SRC_MAIN_DIR, 'config.backup.toml');
 
-const ALGO_DIR = join(SRC_MAIN_DIR, ALGO_NAME);
+const ALGO_DIR = join(SRC_MAIN_DIR, "algo");
 
 const RENDERER_DIR = join(__dirname, '..', 'src', 'renderer');
 const RENDERER_CSS_PATH = join(RENDERER_DIR, 'dist', 'assets', 'index.css');
 const OVERRIDE_CSS_PATH = join(ALGO_DIR, 'config', 'override.css');
 const RENDERER_HTML_PATH = join(RENDERER_DIR, 'renderer.html');
 
-console.log('Activating algorithm:', ALGO_NAME);
+console.log('Activating algorithm:', "algo");
 
 function writeActiveAlgorithm() {
   console.log('Generating', ACTIVE_ALGORITHM_FILE);
 
   const ACTIVE_ALGO_CONTENTS = `
     // THIS FILE IS AUTO-GENERATED, YOUR EDITS MAY BE OVERWRITTEN DURING BUILD
-    export { REGION, makeHasher } from './${ALGO_NAME}/index.js';
+    export { REGION, makeHasher } from './${"algo"}/index.js';
     `;
 
   writeFileSync(ACTIVE_ALGORITHM_FILE, ACTIVE_ALGO_CONTENTS, 'utf-8');
@@ -52,7 +47,7 @@ function writeActiveAlgorithm() {
 
 function copyBackupConfig() {
   // the algorithm directory
-  const algoDir = join(SRC_MAIN_DIR, ALGO_NAME);
+  const algoDir = join(SRC_MAIN_DIR, "algo");
 
   const backupConfigSource = join(algoDir, 'config', 'config.backup.toml');
 

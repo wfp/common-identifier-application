@@ -25,6 +25,7 @@ import { resolveHtmlPath } from './util.js';
 import {
   ConfigStore,
   makeConfigStore,
+  appDataLocation,
 } from 'common-identifier-algorithm-shared';
 
 // IPC event handlers
@@ -43,6 +44,18 @@ import {
 } from './squirell-callbacks.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
+
+// CONSTANTS FOR FILE PATHS, INSTALLATION DIRECTORIES ETC.
+const APP_DIR_NAME = `commonid-tool-${REGION.toLowerCase()}`;
+const CONFIG_FILE_NAME = `config.${REGION}.json`;
+const APP_CONFIG_FILE_NAME = `appconfig.${REGION}.json`;
+const BACKUP_CONFIG_FILE_PATH = join(__dirname, 'config.backup.toml');
+// the path of the application's data files
+const APP_DIR_PATH = join(appDataLocation(), APP_DIR_NAME);
+// the path of the store configuration file
+const CONFIG_FILE_PATH = join(APP_DIR_PATH, CONFIG_FILE_NAME);
+// the path of the application config file (containing config-independent settings)
+const APP_CONFIG_FILE_PATH = join(APP_DIR_PATH, APP_CONFIG_FILE_NAME);
 
 // INITIAL SQUIRELL EVENT HANDLING
 // -------------------------------
@@ -82,7 +95,12 @@ function createMainWindow(configStore: ConfigStore) {
 }
 
 function createWindow() {
-  const configStore = makeConfigStore({ region: REGION });
+  const configStore = makeConfigStore({
+    configFilePath: CONFIG_FILE_PATH,
+    appConfigFilePath: APP_CONFIG_FILE_PATH,
+    backupConfigFilePath: BACKUP_CONFIG_FILE_PATH,
+    region: REGION
+  });
   // start loading the config here
   configStore.boot();
 
