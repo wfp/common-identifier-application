@@ -19,7 +19,7 @@ jobs:
       
       - name: Checkout Algorithm Repo
         run: |
-          git clone --filter=blob:none --no-checkout --depth 1 https://${{ secrets.REPO_PAT }}github.com/wfp/common-identifier-algorithms algo_repo
+          git clone --filter=blob:none --no-checkout --depth 1 https://${{ secrets.REPO_PAT }}@github.com/wfp/common-identifier-algorithms algo_repo
           cd algo_repo
           git sparse-checkout init --no-cone
           git sparse-checkout set _generic_hasher
