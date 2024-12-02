@@ -84,158 +84,161 @@ jobs:
         with:
           node-version: 20
 
-      - name: Install node packages
-        run: npm install
+      # - name: Install node packages
+      #   run: npm install
 
       - name: Get Application Version
         id: appVersion
-        run: set APP_VERSION=$(node -p "require('./package.json').version") >> "$GITHUB_OUTPUT"
+        run: echo APP_VERSION=$(node -p "require('./package.json').version") >> $ENV:GITHUB_OUTPUT
+      
+      - name: Echo Application Version
+        run: echo ${{ steps.appVersion.outputs.APP_VERSION }}
 
-      - name: Build renderer
-        run: cd src/renderer && npm install && npm run build
+      # - name: Build renderer
+      #   run: cd src/renderer && npm install && npm run build
 
-      - name: Activate algorithm and compile
-        run: |
-          # activate before build to ensure REGION and makeHasher are correctly exported
-          node tools/activate-algo.js ${{ inputs.regionName }}
-          npm run build
+      # - name: Activate algorithm and compile
+      #   run: |
+      #     # activate before build to ensure REGION and makeHasher are correctly exported
+      #     node tools/activate-algo.js ${{ inputs.regionName }}
+      #     npm run build
 
-      - name: Building package for signing (Win32)
-        run: npx electron-forge package --arch=x64 --platform=win32
+      # - name: Building package for signing (Win32)
+      #   run: npx electron-forge package --arch=x64 --platform=win32
 
-      # package signing
-      - name: Sign the executable (Win32)
-        uses: Azure/trusted-signing-action@v0.5.0
-        with:
-          azure-tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          azure-client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          azure-client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
-          endpoint: ${{ secrets.AZURE_ENDPOINT }}
-          trusted-signing-account-name: ${{ secrets.AZURE_TRUSTED_SIGNING_ACCOUNT_NAME }}
-          certificate-profile-name: ${{ secrets.AZURE_CERTIFICATE_PROFILE_NAME }}
+      # # package signing
+      # - name: Sign the executable (Win32)
+      #   uses: Azure/trusted-signing-action@v0.5.0
+      #   with:
+      #     azure-tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+      #     azure-client-id: ${{ secrets.AZURE_CLIENT_ID }}
+      #     azure-client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
+      #     endpoint: ${{ secrets.AZURE_ENDPOINT }}
+      #     trusted-signing-account-name: ${{ secrets.AZURE_TRUSTED_SIGNING_ACCOUNT_NAME }}
+      #     certificate-profile-name: ${{ secrets.AZURE_CERTIFICATE_PROFILE_NAME }}
 
-          files-folder: ${{ github.workspace }}\out\commonid-tool-win32-x64
-          files-folder-filter: exe
-          file-digest: SHA256
+      #     files-folder: ${{ github.workspace }}\out\commonid-tool-win32-x64
+      #     files-folder-filter: exe
+      #     file-digest: SHA256
 
-          timestamp-rfc3161: http://timestamp.acs.microsoft.com
-          timestamp-digest: SHA256
+      #     timestamp-rfc3161: http://timestamp.acs.microsoft.com
+      #     timestamp-digest: SHA256
 
-          exclude-environment-credential: false
-          exclude-workload-identity-credential: true
-          exclude-managed-identity-credential: true
-          exclude-shared-token-cache-credential: true
-          exclude-visual-studio-credential: true
-          exclude-visual-studio-code-credential: true
-          exclude-azure-cli-credential: true
-          exclude-azure-powershell-credential: true
-          exclude-azure-developer-cli-credential: true
-          exclude-interactive-browser-credential: true
+      #     exclude-environment-credential: false
+      #     exclude-workload-identity-credential: true
+      #     exclude-managed-identity-credential: true
+      #     exclude-shared-token-cache-credential: true
+      #     exclude-visual-studio-credential: true
+      #     exclude-visual-studio-code-credential: true
+      #     exclude-azure-cli-credential: true
+      #     exclude-azure-powershell-credential: true
+      #     exclude-azure-developer-cli-credential: true
+      #     exclude-interactive-browser-credential: true
 
-      - name: Build LZMA archive from the signed directory
-        shell: powershell
-        run: |
-          # Relative path is required here to not have the directory names present
-          # at the root of the resulting zip
-          $zipSrc = ".\out\commonid-tool-win32-x64\*"
-          $zipFilePath = "${{ github.workspace }}\out\commonid-tool-win32-x64.7z"
+      # - name: Build LZMA archive from the signed directory
+      #   shell: powershell
+      #   run: |
+      #     # Relative path is required here to not have the directory names present
+      #     # at the root of the resulting zip
+      #     $zipSrc = ".\out\commonid-tool-win32-x64\*"
+      #     $zipFilePath = "${{ github.workspace }}\out\commonid-tool-win32-x64.7z"
 
-          Write-Host "Packing $targetPath with 7Zip..."
-          & 7z a -m0=lzma $zipFilePath $zipSrc
+      #     Write-Host "Packing $targetPath with 7Zip..."
+      #     & 7z a -m0=lzma $zipFilePath $zipSrc
 
-      - name: Create self-extracting 7Zip archive
-        shell: powershell
-        run: |
-          $fileUrl = "https://github.com/chrislake/7zsfxmm/releases/download/1.7.1.3901/7zsd_171_3901.7z"
-          $downloadPath = "${{ github.workspace }}\out\7zsd_171_3901.7z"
-          $extractDir = "${{ github.workspace }}\out"
+      # - name: Create self-extracting 7Zip archive
+      #   shell: powershell
+      #   run: |
+      #     $fileUrl = "https://github.com/chrislake/7zsfxmm/releases/download/1.7.1.3901/7zsd_171_3901.7z"
+      #     $downloadPath = "${{ github.workspace }}\out\7zsd_171_3901.7z"
+      #     $extractDir = "${{ github.workspace }}\out"
 
-          Write-Host "Downloading 7zSD from $fileUrl to $downloadPath..."
-          Invoke-WebRequest -Uri $fileUrl -OutFile $downloadPath
+      #     Write-Host "Downloading 7zSD from $fileUrl to $downloadPath..."
+      #     Invoke-WebRequest -Uri $fileUrl -OutFile $downloadPath
 
-          Write-Host "Extracting 7zsd..."
-          & 7z x $downloadPath -oout
+      #     Write-Host "Extracting 7zsd..."
+      #     & 7z x $downloadPath -oout
 
-          # List extracted files
-          Get-ChildItem $extractDir
+      #     # List extracted files
+      #     Get-ChildItem $extractDir
 
-          # Define the paths
-          $existingZipFile = "${{ github.workspace }}\out\commonid-tool-win32-x64.7z"
-          $outputExePath   = "${{ github.workspace }}\out\commonid-tool-${{ inputs.regionCode }}${{ github.ref_name }}-${{ steps.appVersion.outputs.APP_VERSION }}-win32-x64-sfx.exe"
+      #     # Define the paths
+      #     $existingZipFile = "${{ github.workspace }}\out\commonid-tool-win32-x64.7z"
+      #     $outputExePath   = "${{ github.workspace }}\out\commonid-tool-${{ inputs.regionCode }}${{ github.ref_name }}-${{ steps.appVersion.outputs.APP_VERSION }}-win32-x64-sfx.exe"
 
-          # Use the self-extracting installer version of the SFX files
-          $sfxModulePath = "${{ github.workspace }}\out\7zsd.sfx"
+      #     # Use the self-extracting installer version of the SFX files
+      #     $sfxModulePath = "${{ github.workspace }}\out\7zsd.sfx"
 
-          $configFilePath = "${{ github.workspace }}\out\config.txt"
+      #     $configFilePath = "${{ github.workspace }}\out\config.txt"
 
-          # Ensure that the .7z file and SFX module exist
-          if (-not (Test-Path $existingZipFile)) {
-            Write-Error "7Zip archive not found at $existingZipFile"
-          }
+      #     # Ensure that the .7z file and SFX module exist
+      #     if (-not (Test-Path $existingZipFile)) {
+      #       Write-Error "7Zip archive not found at $existingZipFile"
+      #     }
 
-          if (-not (Test-Path $sfxModulePath)) {
-            Write-Error "SFX module not found at $sfxModulePath"
-          }
+      #     if (-not (Test-Path $sfxModulePath)) {
+      #       Write-Error "SFX module not found at $sfxModulePath"
+      #     }
 
-          # Create a config file for SFX
-          @"
-          ;!@Install@!UTF-8!
-          Title="CommonID Tool ${{ inputs.regionName }}"
-          BeginPrompt="Do you want to install this application?"
-          HelpText="This will install the application"
-          RunProgram="commonid-tool.exe"
-          GUIFlags="64"
-          InstallPath="%LOCALAPPDATA%\Common ID Tool ${{ inputs.regionName }}\${{ steps.appVersion.outputs.APP_VERSION }}${{ github.ref_name }}"
-          ;!@InstallEnd@!
-          "@ | Set-Content -Path $configFilePath
+      #     # Create a config file for SFX
+      #     @"
+      #     ;!@Install@!UTF-8!
+      #     Title="CommonID Tool ${{ inputs.regionName }}"
+      #     BeginPrompt="Do you want to install this application?"
+      #     HelpText="This will install the application"
+      #     RunProgram="commonid-tool.exe"
+      #     GUIFlags="64"
+      #     InstallPath="%LOCALAPPDATA%\Common ID Tool ${{ inputs.regionName }}\${{ steps.appVersion.outputs.APP_VERSION }}${{ github.ref_name }}"
+      #     ;!@InstallEnd@!
+      #     "@ | Set-Content -Path $configFilePath
 
-          # Combine the SFX module, the .7z file, and the config file into an .exe
-          Write-Host "Creating self-extracting archive..."
-          Copy-Item $sfxModulePath $outputExePath
-          Add-Content -Path $outputExePath -Value (Get-Content -Raw $configFilePath)
-          Add-Content -Path $outputExePath -Value (Get-Content -Raw $existingZipFile)
+      #     # Combine the SFX module, the .7z file, and the config file into an .exe
+      #     Write-Host "Creating self-extracting archive..."
+      #     Copy-Item $sfxModulePath $outputExePath
+      #     Add-Content -Path $outputExePath -Value (Get-Content -Raw $configFilePath)
+      #     Add-Content -Path $outputExePath -Value (Get-Content -Raw $existingZipFile)
 
-          # Verify the .exe has been created
-          if (Test-Path $outputExePath) {
-            Write-Host "Self-extracting archive created at $outputExePath"
-          } else {
-            Write-Error "Failed to create self-extracting archive."
-          }
+      #     # Verify the .exe has been created
+      #     if (Test-Path $outputExePath) {
+      #       Write-Host "Self-extracting archive created at $outputExePath"
+      #     } else {
+      #       Write-Error "Failed to create self-extracting archive."
+      #     }
 
-      - name: Get Version
-        run: echo "The application version is ${{ steps.appVersion.outputs.APP_VERSION }}"
+      # - name: Get Version
+      #   run: echo "The application version is ${{ steps.appVersion.outputs.APP_VERSION }}"
 
-      # package signing
-      - name: Sign the executable (Win32)
-        uses: Azure/trusted-signing-action@v0.5.0
-        with:
-          azure-tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          azure-client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          azure-client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
-          endpoint: ${{ secrets.AZURE_ENDPOINT }}
-          trusted-signing-account-name: ${{ secrets.AZURE_TRUSTED_SIGNING_ACCOUNT_NAME }}
-          certificate-profile-name: ${{ secrets.AZURE_CERTIFICATE_PROFILE_NAME }}
+      # # package signing
+      # - name: Sign the executable (Win32)
+      #   uses: Azure/trusted-signing-action@v0.5.0
+      #   with:
+      #     azure-tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+      #     azure-client-id: ${{ secrets.AZURE_CLIENT_ID }}
+      #     azure-client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
+      #     endpoint: ${{ secrets.AZURE_ENDPOINT }}
+      #     trusted-signing-account-name: ${{ secrets.AZURE_TRUSTED_SIGNING_ACCOUNT_NAME }}
+      #     certificate-profile-name: ${{ secrets.AZURE_CERTIFICATE_PROFILE_NAME }}
 
-          files-folder: ${{ github.workspace }}\out\commonid-tool-${{ inputs.regionCode }}${{ github.ref_name }}-${{ steps.appVersion.outputs.APP_VERSION }}-win32-x64-sfx.exe
-          files-folder-filter: exe
-          file-digest: SHA256
+      #     files-folder: ${{ github.workspace }}\out\commonid-tool-${{ inputs.regionCode }}${{ github.ref_name }}-${{ steps.appVersion.outputs.APP_VERSION }}-win32-x64-sfx.exe
+      #     files-folder-filter: exe
+      #     file-digest: SHA256
 
-          timestamp-rfc3161: http://timestamp.acs.microsoft.com
-          timestamp-digest: SHA256
+      #     timestamp-rfc3161: http://timestamp.acs.microsoft.com
+      #     timestamp-digest: SHA256
 
-          exclude-environment-credential: false
-          exclude-workload-identity-credential: true
-          exclude-managed-identity-credential: true
-          exclude-shared-token-cache-credential: true
-          exclude-visual-studio-credential: true
-          exclude-visual-studio-code-credential: true
-          exclude-azure-cli-credential: true
-          exclude-azure-powershell-credential: true
-          exclude-azure-developer-cli-credential: true
-          exclude-interactive-browser-credential: true
+      #     exclude-environment-credential: false
+      #     exclude-workload-identity-credential: true
+      #     exclude-managed-identity-credential: true
+      #     exclude-shared-token-cache-credential: true
+      #     exclude-visual-studio-credential: true
+      #     exclude-visual-studio-code-credential: true
+      #     exclude-azure-cli-credential: true
+      #     exclude-azure-powershell-credential: true
+      #     exclude-azure-developer-cli-credential: true
+      #     exclude-interactive-browser-credential: true
 
-      - name: Publish app-${{ inputs.regionCode }}-win-sfx-signed
-        uses: actions/upload-artifact@v4
-        with:
-          name: app-${{ inputs.regionCode }}-win-sfx-signed
-          path: ${{ github.workspace }}\out\commonid-tool-${{ inputs.regionCode }}${{ github.ref_name }}-${{ steps.appVersion.outputs.APP_VERSION }}-win32-x64-sfx.exe
+      # - name: Publish app-${{ inputs.regionCode }}-win-sfx-signed
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: app-${{ inputs.regionCode }}-win-sfx-signed
+      #     path: ${{ github.workspace }}\out\commonid-tool-${{ inputs.regionCode }}${{ github.ref_name }}-${{ steps.appVersion.outputs.APP_VERSION }}-win32-x64-sfx.exe
