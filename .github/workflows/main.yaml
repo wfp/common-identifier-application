@@ -8,7 +8,25 @@ on:
     types: [opened, reopened, edited]
 
 jobs:
-  algoMatrix:
+  SetVariables:
+    runs-on: ubuntu-latest
+    outputs:
+      BUILD_POSTFIX: ${{ steps.setVars.outputs.BUILD_POSTFIX }}
+    steps:
+      - name: Set postfix to develop
+        id: setVars
+        run: |
+          if [[ "${{ github.ref_name }}" == "main"]; then
+            echo BUILD_POSTFIX="" >> $ENV:GITHUB_OUTPUT
+          elif [[ "${{ github.ref_name }}" == "develop"]]; then
+            echo BUILD_POSTFIX="dev" >> $ENV:GITHUB_OUTPUT
+          else
+            echo BUILD_POSTFIX="${{ github.ref_name }}" >> $ENV:GITHUB_OUTPUT
+          fi
+     
+  
+  AlgorithmMatrix:
+    needs: SetVariables
     strategy:
       fail-fast: false
       matrix:
@@ -22,7 +40,9 @@ jobs:
           #   regionCode: gos
     uses: "./.github/workflows/test.yaml"
     with:
+      buildPostfix: ${{ needs.SetVariables.outputs.BUILD_POSTFIX }}
       region: ${{ matrix.region }}
       regionName: ${{ matrix.regionName }}
       regionCode: ${{ matrix.regionCode }}
     secrets: inherit
+

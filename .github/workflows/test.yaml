@@ -2,6 +2,9 @@ name: BuildTestSignPublish
 on:
   workflow_call:
     inputs:
+      buildPostfix:
+        required: true
+        type: string
       region:
         required: true
         type: string
@@ -185,7 +188,7 @@ jobs:
           HelpText="This will install the application"
           RunProgram="commonid-tool.exe"
           GUIFlags="64"
-          InstallPath="%LOCALAPPDATA%\Common ID Tool ${{ inputs.regionName }}\${{ steps.appVersion.outputs.APP_VERSION }}${{ github.ref_name }}"
+          InstallPath="%LOCALAPPDATA%\Common ID Tool ${{ inputs.regionName }}\${{ steps.appVersion.outputs.APP_VERSION }}${{ inputs.buildPostfix }}"
           ;!@InstallEnd@!
           "@ | Set-Content -Path $configFilePath
 
@@ -216,7 +219,7 @@ jobs:
           trusted-signing-account-name: ${{ secrets.AZURE_TRUSTED_SIGNING_ACCOUNT_NAME }}
           certificate-profile-name: ${{ secrets.AZURE_CERTIFICATE_PROFILE_NAME }}
 
-          files-folder: ${{ github.workspace }}\out\commonid-tool-${{ inputs.regionCode }}-${{ steps.appVersion.outputs.APP_VERSION }}-${{ github.ref_name }}-win32-x64-sfx.exe
+          files-folder: ${{ github.workspace }}\out\commonid-tool-${{ inputs.regionCode }}-${{ steps.appVersion.outputs.APP_VERSION }}${{ inputs.buildPostfix }}-win32-x64-sfx.exe
           files-folder-filter: exe
           file-digest: SHA256
 
@@ -238,4 +241,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: app-${{ inputs.regionCode }}-win-sfx-signed
-          path: ${{ github.workspace }}\out\commonid-tool-${{ inputs.regionCode }}-${{ steps.appVersion.outputs.APP_VERSION }}-${{ github.ref_name }}-win32-x64-sfx.exe
+          path: ${{ github.workspace }}\out\commonid-tool-${{ inputs.regionCode }}-${{ steps.appVersion.outputs.APP_VERSION }}${{ inputs.buildPostfix }}-win32-x64-sfx.exe
