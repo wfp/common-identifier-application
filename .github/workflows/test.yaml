@@ -89,7 +89,7 @@ jobs:
 
       - name: Get Application Version
         id: appVersion
-        run: APP_VERSION=$(node -p "require('./package.json').version") >> "$GITHUB_OUTPUT"
+        run: set APP_VERSION=$(node -p "require('./package.json').version") >> "$GITHUB_OUTPUT"
 
       - name: Build renderer
         run: cd src/renderer && npm install && npm run build
