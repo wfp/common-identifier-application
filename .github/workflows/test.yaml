@@ -9,13 +9,23 @@ on:
 jobs:
   RunTestSuite:
     name: Run Test Suite
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
         with:
           persist-credentials: false
+      
+      - name: Checkout Algorithm Repo
+        run: |
+          git clone --filter=blob:none --no-checkout --depth 1 https://${{ secrets.REPO_PAT }}github.com/wfp/common-identifier-algorithms algo_repo
+          cd algo_repo
+          git sparse-checkout init --no-cone
+          git sparse-checkout set _generic_hasher
+          git checkout
+          cp -r _generic_hasher ../src/main/algo
+          cd ../ && rm algo_repo -r -fo
 
       - name: Install NodeJS
         uses: actions/setup-node@v4
@@ -33,28 +43,10 @@ jobs:
           NODE_OPTIONS: '--experimental-vm-modules'
 
       - name: Publish Test Results
-        uses: EnricoMi/publish-unit-test-result-action@v2.18.0
+        uses: EnricoMi/publish-unit-test-result-action/windows@v2
         if: always()
         with:
           files: ./coverage/test-report/test-report.xml
-
-      - name: Publish Code Coverage
-        uses: irongut/CodeCoverageSummary@v1.3.0
-        with:
-          filename: coverage/cobertura-coverage.xml
-          badge: true
-          format: markdown
-          output: both
-
-      - name: Add Coverage PR Comment
-        uses: marocchino/sticky-pull-request-comment@v2
-        if: github.event_name == 'pull_request'
-        with:
-          recreate: true
-          path: code-coverage-results.md
-
-      - name: Write to job Summary
-        run: cat code-coverage-results.md >> $GITHUB_STEP_SUMMARY
 
   # BuildApplication:
   #   name: Build Application
