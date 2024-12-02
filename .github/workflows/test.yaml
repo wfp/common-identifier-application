@@ -17,7 +17,7 @@ on:
 
 jobs:
   RunTestSuite:
-    name: Run Test Suite
+    name: 1. Run Test Suite
     runs-on: windows-latest
 
     steps:
@@ -58,10 +58,10 @@ jobs:
           files: ./coverage/test-report/test-report.xml
 
   BuildApplication:
-    name: Build Application
-    # needs:
-    #   - RunTestSuite
-    # if: needs.RunTestSuite.result == 'success'
+    name: 2. Build Application
+    needs:
+      - RunTestSuite
+    if: needs.RunTestSuite.result == 'success'
     runs-on: windows-latest
 
     steps:
@@ -164,7 +164,7 @@ jobs:
 
           # Define the paths
           $existingZipFile = "${{ github.workspace }}\out\commonid-tool-win32-x64.7z"
-          $outputExePath   = "${{ github.workspace }}\out\commonid-tool-${{ inputs.regionCode }}-${{ steps.appVersion.outputs.APP_VERSION }}-${{ github.ref_name }}-win32-x64-sfx.exe"
+          $outputExePath   = "${{ github.workspace }}\out\commonid-tool-${{ inputs.regionCode }}-${{ steps.appVersion.outputs.APP_VERSION }}${{ inputs.buildPostfix }}-win32-x64-sfx.exe"
 
           # Use the self-extracting installer version of the SFX files
           $sfxModulePath = "${{ github.workspace }}\out\7zsd.sfx"
