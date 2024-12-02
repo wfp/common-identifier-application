@@ -12,7 +12,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        region: [ syria_north_west, syria ]
+        region: [ syria_north_west ]
         include:
           - region: syria_north_west
             regionName: NWS

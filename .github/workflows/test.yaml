@@ -96,6 +96,7 @@ jobs:
 
       - name: Activate algorithm and compile
         run: |
+          cd ../../ && npm run build
           node tools/activate-algo.js ${{ inputs.regionName }}
 
       - name: Building package for signing (Win32)
