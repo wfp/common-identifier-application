@@ -96,8 +96,9 @@ jobs:
 
       - name: Activate algorithm and compile
         run: |
-          npm run build
+          # activate before build to ensure REGION and makeHasher are correctly exported
           node tools/activate-algo.js ${{ inputs.regionName }}
+          npm run build
 
       - name: Building package for signing (Win32)
         run: npx electron-forge package --arch=x64 --platform=win32
