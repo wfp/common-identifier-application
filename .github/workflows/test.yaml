@@ -11,6 +11,17 @@ jobs:
     name: Run Test Suite
     runs-on: windows-latest
 
+    strategy:
+      matrix:
+        region: [ syria_north_west, syria ]
+        include:
+          - region: syria_north_west
+            regionName: NWS
+            regionCode: nws
+          - region: syria
+            regionName: GOS
+            regionCode: gos
+
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -22,9 +33,9 @@ jobs:
           git clone --filter=blob:none --no-checkout --depth 1 https://${{ secrets.REPO_PAT }}@github.com/wfp/common-identifier-algorithms algo_repo
           cd algo_repo
           git sparse-checkout init --no-cone
-          git sparse-checkout set _generic_hasher
+          git sparse-checkout set ${{ matrix.region }}
           git checkout
-          cp -r _generic_hasher ../src/main/algo
+          cp -r ${{ matrix.region }} ../src/main/algo
           cd ../ && rm algo_repo -r -fo
 
       - name: Install NodeJS
