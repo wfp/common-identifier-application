@@ -17,7 +17,7 @@ jobs:
         id: setVars
         shell: bash
         run: |
-          if [[ "${{ github.ref_name }}" = "main"]; then
+          if [[ "${{ github.ref_name }}" = "main"]]; then
             echo BUILD_POSTFIX="" >> $ENV:GITHUB_OUTPUT
           elif [[ "${{ github.ref_name }}" = "develop"]]; then
             echo BUILD_POSTFIX="dev" >> $ENV:GITHUB_OUTPUT
