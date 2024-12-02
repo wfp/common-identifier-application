@@ -17,9 +17,9 @@ jobs:
           - region: syria_north_west
             regionName: NWS
             regionCode: nws
-          - region: syria
-            regionName: GOS
-            regionCode: gos
+          # - region: syria
+          #   regionName: GOS
+          #   regionCode: gos
     uses: "./.github/workflows/test.yaml"
     with:
       region: ${{ matrix.region }}
