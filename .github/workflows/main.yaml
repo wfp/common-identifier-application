@@ -15,14 +15,16 @@ jobs:
     steps:
       - name: Set postfix to develop
         id: setVars
+        shell: bash
         run: |
-          if "${{ github.ref_name }}" == "main" (
+          if [[ "${{ github.ref_name }}" = "main"]; then
             echo BUILD_POSTFIX="" >> $ENV:GITHUB_OUTPUT
-          ) else if "${{ github.ref_name }}" == "develop" (
+          elif [[ "${{ github.ref_name }}" = "develop"]]; then
             echo BUILD_POSTFIX="dev" >> $ENV:GITHUB_OUTPUT
-          ) else (
+          else
             echo BUILD_POSTFIX="${{ github.ref_name }}" >> $ENV:GITHUB_OUTPUT
-          )
+          fi
+     
   
   AlgorithmMatrix:
     needs: SetVariables
