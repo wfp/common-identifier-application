@@ -16,46 +16,46 @@ on:
         type: string
 
 jobs:
-  # RunTestSuite:
-  #   name: Run Test Suite
-  #   runs-on: windows-latest
+  RunTestSuite:
+    name: Run Test Suite
+    runs-on: windows-latest
 
-  #   steps:
-  #     - name: Checkout repo
-  #       uses: actions/checkout@v4
-  #       with:
-  #         persist-credentials: false
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       
-  #     - name: Checkout Algorithm Repo
-  #       run: |
-  #         git clone --filter=blob:none --no-checkout --depth 1 https://${{ secrets.REPO_PAT }}@github.com/wfp/common-identifier-algorithms algo_repo
-  #         cd algo_repo
-  #         git sparse-checkout init --no-cone
-  #         git sparse-checkout set ${{ inputs.region }}
-  #         git checkout
-  #         cp -r ${{ inputs.region }} ../src/main/algo
-  #         cd ../ && rm algo_repo -r -fo
+      - name: Checkout Algorithm Repo
+        run: |
+          git clone --filter=blob:none --no-checkout --depth 1 https://${{ secrets.REPO_PAT }}@github.com/wfp/common-identifier-algorithms algo_repo
+          cd algo_repo
+          git sparse-checkout init --no-cone
+          git sparse-checkout set ${{ inputs.region }}
+          git checkout
+          cp -r ${{ inputs.region }} ../src/main/algo
+          cd ../ && rm algo_repo -r -fo
 
-  #     - name: Install NodeJS
-  #       uses: actions/setup-node@v4
-  #       with:
-  #         node-version: 20
+      - name: Install NodeJS
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
       
-  #     - run: git config --global url."https://${{ secrets.REPO_PAT }}@github.com/".insteadOf ssh://git@github.com/
+      - run: git config --global url."https://${{ secrets.REPO_PAT }}@github.com/".insteadOf ssh://git@github.com/
 
-  #     - name: Install node packages
-  #       run: npm install
+      - name: Install node packages
+        run: npm install
 
-  #     - name: Run tests
-  #       run: npm run test:ci
-  #       env:
-  #         NODE_OPTIONS: '--experimental-vm-modules'
+      - name: Run tests
+        run: npm run test:ci
+        env:
+          NODE_OPTIONS: '--experimental-vm-modules'
 
-  #     - name: Publish Test Results
-  #       uses: EnricoMi/publish-unit-test-result-action/windows@v2
-  #       if: always()
-  #       with:
-  #         files: ./coverage/test-report/test-report.xml
+      - name: Publish Test Results
+        uses: EnricoMi/publish-unit-test-result-action/windows@v2
+        if: always()
+        with:
+          files: ./coverage/test-report/test-report.xml
 
   BuildApplication:
     name: Build Application

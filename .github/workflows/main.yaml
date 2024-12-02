@@ -8,26 +8,7 @@ on:
     types: [opened, reopened, edited]
 
 jobs:
-  SetVariables:
-    runs-on: ubuntu-latest
-    outputs:
-      BUILD_POSTFIX: ${{ steps.setVars.outputs.BUILD_POSTFIX }}
-    steps:
-      - name: Set postfix to develop
-        id: setVars
-        shell: bash
-        run: |
-          if [[ "${{ github.ref_name }}" = "main"]]; then
-            echo BUILD_POSTFIX="" >> $ENV:GITHUB_OUTPUT
-          elif [[ "${{ github.ref_name }}" = "develop"]]; then
-            echo BUILD_POSTFIX="dev" >> $ENV:GITHUB_OUTPUT
-          else
-            echo BUILD_POSTFIX="${{ github.ref_name }}" >> $ENV:GITHUB_OUTPUT
-          fi
-     
-  
   AlgorithmMatrix:
-    needs: SetVariables
     strategy:
       fail-fast: false
       matrix:
@@ -36,12 +17,12 @@ jobs:
           - region: syria_north_west
             regionName: NWS
             regionCode: nws
-          # - region: syria
-          #   regionName: GOS
-          #   regionCode: gos
+          - region: syria
+            regionName: GOS
+            regionCode: gos
     uses: "./.github/workflows/test.yaml"
     with:
-      buildPostfix: ${{ needs.SetVariables.outputs.BUILD_POSTFIX }}
+      buildPostfix: ${{ github.ref_name }}
       region: ${{ matrix.region }}
       regionName: ${{ matrix.regionName }}
       regionCode: ${{ matrix.regionCode }}
