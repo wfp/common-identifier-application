@@ -1,24 +1,25 @@
 // COMMAND-LINE WRAPPER TO GENERATE SIGNATURES FOR CONFIG FILES
-import { program } from 'commander';
-import { generateConfigHash } from '../src/main/algo-shared/config/generateConfigHash.js';
-import { attemptToReadTOMLData } from '../src/main/algo-shared/config/utils.js';
-import { CONFIG_FILE_ENCODING } from '../src/main/algo-shared/config/loadConfig.js';
+import { program as programme } from 'commander';
+import { generateConfigHash, attemptToReadTOMLData, validateConfig  } from 'common-identifier-algorithm-shared';
 
-program
-    .argument('<path>', 'Config file to generate signatures for')
+programme.argument('<path>', 'Config file to generate signatures for');
+programme.argument('<region>', 'Region for this algorithm deployment');
 
-program.parse();
-
-const options = program.opts();
+programme.parse();
 
 // APP STARTS HERE
 // ---------------
 
+const configFile = programme.args[0];
+const region = programme.args[1]
 
-const configFile = program.args[0];
+console.log('Opening file: ', configFile);
+const config = attemptToReadTOMLData(configFile, "utf-8");
+const validationResult = validateConfig(config, region);
 
-console.log("Opening file: ", configFile)
-const config = attemptToReadTOMLData(configFile, CONFIG_FILE_ENCODING);
-const hash = generateConfigHash(config);
-
-console.log("HASH:", hash);
+if (!!validationResult) {
+    console.error("ERROR: " + validationResult);
+} else {
+    const hash = generateConfigHash(config);
+    console.log('HASH:', hash);
+}

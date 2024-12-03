@@ -18,10 +18,8 @@ export default {
     // algo repo symlinks should be followed
     derefSymlinks: true,
 
-
     // CODE SIGNING THINGS GO HERE
     // ---------------------------
-
 
     // enable this to create signed executables on macOS
     // XCode and the developer account must be set up to sign executables --
@@ -30,7 +28,6 @@ export default {
 
     // object must exist even if empty
     // osxSign: {}
-
 
     // END OF CODE SIGNING THINGS
     // --------------------------

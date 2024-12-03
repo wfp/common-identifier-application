@@ -1,0 +1,30 @@
+name: Main Workflow
+
+on:
+  push:
+    branches: ['main', 'develop']
+  pull_request:
+    branches: ['main']
+    types: [opened, reopened, edited]
+
+jobs:
+  AlgorithmMatrix:
+    strategy:
+      fail-fast: false
+      matrix:
+        region: [ syria_north_west, syria ]
+        include:
+          - region: syria_north_west
+            regionName: NWS
+            regionCode: nws
+          - region: syria
+            regionName: GOS
+            regionCode: gos
+    uses: "./.github/workflows/test.yaml"
+    with:
+      buildPostfix: ${{ github.ref_name }}
+      region: ${{ matrix.region }}
+      regionName: ${{ matrix.regionName }}
+      regionCode: ${{ matrix.regionCode }}
+    secrets: inherit
+

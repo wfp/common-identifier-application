@@ -18,78 +18,98 @@
 import path from 'node:path';
 import { BrowserWindow, dialog } from 'electron';
 import { baseFileName } from '../util.js';
-import { ConfigStore } from '../algo-shared/config/configStore.js';
-import { processFile as backendProcessFile } from '../algo-shared/processing/index.js';
-import { SUPPORTED_FILE_TYPES } from '../algo-shared/document.js';
+import {
+  ConfigStore,
+  processFile as backendProcessFile,
+  SUPPORTED_FILE_TYPES,
+} from 'common-identifier-algorithm-shared';
+
 import { makeHasher } from '../active_algorithm.js';
 
 const MAX_ROWS_TO_PREVIEW = 500;
 
 interface IPCProcessFileInput {
-    mainWindow: BrowserWindow;
-    configStore: ConfigStore;
-    filePath: string;
+  mainWindow: BrowserWindow;
+  configStore: ConfigStore;
+  filePath: string;
 }
 
 // The actual processing function called after the output path is selected
 async function doProcessFile(
-    mainWindow: BrowserWindow,
-    configStore: ConfigStore,
-    inputFilePath: string,
-    outputPath: string,
-)  {
-    const config = configStore.getConfig();
-    let outputFormat = undefined;
-    let outputBasePath = outputPath;
-    // figure out the output path
-    const extension = path.extname(outputPath);
-    // we may need to use the extension-less output path (if we replace the extension)
-    const basePath = path.join(path.dirname(outputPath), path.basename(outputPath, path.extname(outputPath)));
+  mainWindow: BrowserWindow,
+  configStore: ConfigStore,
+  inputFilePath: string,
+  outputPath: string,
+) {
+  const config = configStore.getConfig();
+  let outputFormat = undefined;
+  let outputBasePath = outputPath;
+  // figure out the output path
+  const extension = path.extname(outputPath);
+  // we may need to use the extension-less output path (if we replace the extension)
+  const basePath = path.join(
+    path.dirname(outputPath),
+    path.basename(outputPath, path.extname(outputPath)),
+  );
 
-    switch (extension.toLowerCase()) {
-        case ".xlsx":
-            outputFormat = SUPPORTED_FILE_TYPES.XLSX;
-            outputBasePath = basePath;
-            break;
-        case ".csv":
-            outputFormat = SUPPORTED_FILE_TYPES.CSV;
-            outputBasePath = basePath;
-            break;
-        default:
-            outputFormat = undefined;
-            outputBasePath = basePath;
-            break;
-    }
+  switch (extension.toLowerCase()) {
+    case '.xlsx':
+      outputFormat = SUPPORTED_FILE_TYPES.XLSX;
+      outputBasePath = basePath;
+      break;
+    case '.csv':
+      outputFormat = SUPPORTED_FILE_TYPES.CSV;
+      outputBasePath = basePath;
+      break;
+    default:
+      outputFormat = undefined;
+      outputBasePath = basePath;
+      break;
+  }
 
-    const { isMappingDocument, document, outputFilePath, mappingFilePath } = await backendProcessFile({config, outputPath: outputBasePath, inputFilePath, hasherFactory: makeHasher, format: outputFormat});
+  const { isMappingDocument, document, outputFilePath, mappingFilePath } =
+    await backendProcessFile({
+      config,
+      outputPath: outputBasePath,
+      inputFilePath,
+      hasherFactory: makeHasher,
+      format: outputFormat,
+    });
 
-    console.log("[IPC::processFile] PROCESSING DONE");
+  console.log('[IPC::processFile] PROCESSING DONE');
 
-    if (document.data.length > MAX_ROWS_TO_PREVIEW) {
-        console.log(`[IPC::preProcessFile] dataset has ${document.data.length} rows, trimming for frontend preview`);
-        document.data = document.data.slice(0, MAX_ROWS_TO_PREVIEW);
-    }
-    mainWindow.webContents.send('processingDone', { isMappingDocument, document, outputFilePath, mappingFilePath });
+  if (document.data.length > MAX_ROWS_TO_PREVIEW) {
+    console.log(
+      `[IPC::preProcessFile] dataset has ${document.data.length} rows, trimming for frontend preview`,
+    );
+    document.data = document.data.slice(0, MAX_ROWS_TO_PREVIEW);
+  }
+  mainWindow.webContents.send('processingDone', {
+    isMappingDocument,
+    document,
+    outputFilePath,
+    mappingFilePath,
+  });
 }
 
-
-
-
 // Process a file
-export async function processFile({mainWindow, configStore, filePath}: IPCProcessFileInput) {
+export async function processFile({
+  mainWindow,
+  configStore,
+  filePath,
+}: IPCProcessFileInput) {
+  console.log('=========== Processing File:', filePath);
 
-    console.log('=========== Processing File:', filePath);
-
-    const response = await dialog.showSaveDialog({
-        defaultPath: baseFileName(filePath),
-    });
-    if (response.canceled || response.filePath === '') {
-        console.log("[IPC::processFile] no file selected");
-        // send the canceled message
-        mainWindow.webContents.send('processingCanceled', {});
-        return;
-    }
-    const outputPath = response.filePath;
-    console.log("[IPC::processFile] STARTING TO PROCESS AS", outputPath);
-    return doProcessFile(mainWindow, configStore, filePath, outputPath);
+  const response = await dialog.showSaveDialog({
+    defaultPath: baseFileName(filePath),
+  });
+  if (response.canceled || response.filePath === '') {
+    console.log('[IPC::processFile] no file selected');
+    // send the canceled message
+    mainWindow.webContents.send('processingCanceled', {});
+    return;
+  }
+  const outputPath = response.filePath;
+  console.log('[IPC::processFile] STARTING TO PROCESS AS', outputPath);
+  return doProcessFile(mainWindow, configStore, filePath, outputPath);
 }

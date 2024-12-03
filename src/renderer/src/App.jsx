@@ -15,28 +15,25 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import { useState } from 'react';
 
-import { useState } from 'react'
-
-import Boot from './screens/Boot'
-import MainScreen from './screens/MainScreen'
-import ValidationSuccess from './screens/ValidationSuccess'
-import ValidationFailed from './screens/ValidationFailed'
-import FileLoading from './screens/FileLoading'
-import ProcessingInProgress from './screens/ProcessingInProgress'
-import ProcessingFinished from './screens/ProcessingFinished'
-import ConfigChange from './screens/ConfigChange'
-import LoadNewConfig from './screens/LoadNewConfig'
-import ErrorScreen from './screens/Error'
-import ConfigUpdated from './screens/ConfigUpdated'
-import ProcessingCanceled from './screens/ProcessingCanceled'
-import InvalidConfig from './screens/InvalidConfig'
-import WelcomeScreen from './screens/WelcomeScreen'
-
+import Boot from './screens/Boot';
+import MainScreen from './screens/MainScreen';
+import ValidationSuccess from './screens/ValidationSuccess';
+import ValidationFailed from './screens/ValidationFailed';
+import FileLoading from './screens/FileLoading';
+import ProcessingInProgress from './screens/ProcessingInProgress';
+import ProcessingFinished from './screens/ProcessingFinished';
+import ConfigChange from './screens/ConfigChange';
+import LoadNewConfig from './screens/LoadNewConfig';
+import ErrorScreen from './screens/Error';
+import ConfigUpdated from './screens/ConfigUpdated';
+import ProcessingCanceled from './screens/ProcessingCanceled';
+import InvalidConfig from './screens/InvalidConfig';
+import WelcomeScreen from './screens/WelcomeScreen';
 
 import {
   useAppStore,
-
   SCREEN_BOOT,
   SCREEN_WELCOME,
   SCREEN_ERROR,
@@ -51,109 +48,135 @@ import {
   SCREEN_PROCESSING_CANCELED,
   SCREEN_INVALID_CONFIG,
   SCREEN_CONFIG_CHANGE,
-} from "./store"
+} from './store';
 
-import Navbar  from './components/Navbar'
-
+import Navbar from './components/Navbar';
 
 function App() {
-
   let screen;
 
-  const screenType = useAppStore(store => store.screen);
-  const config = useAppStore(store => store.config);
+  const screenType = useAppStore((store) => store.screen);
+  const config = useAppStore((store) => store.config);
 
-  const inputFilePath = useAppStore(store => store.inputFilePath);
-  const document = useAppStore(store => store.document); // could be errors or input data
-  const errorFilePath = useAppStore(store => store.errorFilePath);
+  const inputFilePath = useAppStore((store) => store.inputFilePath);
+  const document = useAppStore((store) => store.document); // could be errors or input data
+  const errorFilePath = useAppStore((store) => store.errorFilePath);
 
-  const isMappingDocument = useAppStore(store => store.isMappingDocument);
+  const isMappingDocument = useAppStore((store) => store.isMappingDocument);
 
-  const outputFilePath = useAppStore(store => store.outputFilePath);
-  const mappingFilePath = useAppStore(store => store.mappingFilePath);
+  const outputFilePath = useAppStore((store) => store.outputFilePath);
+  const mappingFilePath = useAppStore((store) => store.mappingFilePath);
 
-  const errorMessage = useAppStore(store => store.errorMessage);
-  const isRuntimeError = useAppStore(store => store.isRuntimeError);
+  const errorMessage = useAppStore((store) => store.errorMessage);
+  const isRuntimeError = useAppStore((store) => store.isRuntimeError);
 
   switch (screenType) {
     case SCREEN_ERROR: {
-      screen = (<ErrorScreen error={errorMessage} isRuntimeError={isRuntimeError} config={config}/>);
+      screen = (
+        <ErrorScreen
+          error={errorMessage}
+          isRuntimeError={isRuntimeError}
+          config={config}
+        />
+      );
       break;
     }
 
     case SCREEN_BOOT: {
-      return (<Boot />);
+      return <Boot />;
     }
 
     case SCREEN_WELCOME: {
-      return (<WelcomeScreen config={config} />)
+      return <WelcomeScreen config={config} />;
     }
 
     case SCREEN_INVALID_CONFIG: {
-      return (<InvalidConfig error={errorMessage} config={config} />)
+      return <InvalidConfig error={errorMessage} config={config} />;
     }
 
     case SCREEN_LOAD_NEW_CONFIG: {
-      screen = (<LoadNewConfig />)
+      screen = <LoadNewConfig />;
       break;
     }
 
     case SCREEN_CONFIG_CHANGE: {
-      screen = (<ConfigChange />)
+      screen = <ConfigChange />;
       break;
     }
 
     case SCREEN_CONFIG_UPDATED: {
-      screen = (<ConfigUpdated config={config}/>)
+      screen = <ConfigUpdated config={config} />;
       break;
     }
 
     case SCREEN_MAIN: {
       // TODO: if no config present don't show anything
-      screen = (<MainScreen config={config}/>);
+      screen = <MainScreen config={config} />;
       break;
     }
 
     case SCREEN_FILE_LOADING: {
-      screen = (<FileLoading config={config} inputFilePath={inputFilePath}/>)
+      screen = <FileLoading config={config} inputFilePath={inputFilePath} />;
       break;
-
     }
 
     case SCREEN_VALIDATION_SUCCESS: {
-      screen = (<ValidationSuccess config={config} document={document} inputFilePath={inputFilePath} isMappingDocument={isMappingDocument}/>)
+      screen = (
+        <ValidationSuccess
+          config={config}
+          document={document}
+          inputFilePath={inputFilePath}
+          isMappingDocument={isMappingDocument}
+        />
+      );
       break;
     }
 
     case SCREEN_VALIDATION_FAILED: {
-      screen = (<ValidationFailed config={config} document={document} inputFilePath={inputFilePath} errorFilePath={errorFilePath} isMappingDocument={isMappingDocument}/>)
+      screen = (
+        <ValidationFailed
+          config={config}
+          document={document}
+          inputFilePath={inputFilePath}
+          errorFilePath={errorFilePath}
+          isMappingDocument={isMappingDocument}
+        />
+      );
       break;
     }
 
     case SCREEN_PROCESSING_IN_PROGRESS: {
-      screen = (<ProcessingInProgress config={config} inputFilePath={inputFilePath} />)
+      screen = (
+        <ProcessingInProgress config={config} inputFilePath={inputFilePath} />
+      );
       break;
     }
 
     case SCREEN_PROCESSING_FINISHED: {
-      screen = (<ProcessingFinished config={config} isMappingDocument={isMappingDocument} document={document} outputFilePath={outputFilePath} mappingFilePath={mappingFilePath} />)
+      screen = (
+        <ProcessingFinished
+          config={config}
+          isMappingDocument={isMappingDocument}
+          document={document}
+          outputFilePath={outputFilePath}
+          mappingFilePath={mappingFilePath}
+        />
+      );
       break;
     }
 
     case SCREEN_PROCESSING_CANCELED: {
-      screen = (<ProcessingCanceled/>);
+      screen = <ProcessingCanceled />;
       break;
     }
   }
 
-
-
   return (
     <>
-      <Navbar config={config} screenType={screenType}/>
+      <Navbar config={config} screenType={screenType} />
       {screen}
     </>
-  )
+  );
 }
 
-export default App
+export default App;

@@ -27,15 +27,14 @@ This is a fully typescript backend application with an optional ElectronJS front
   </tbody>
 </table>
 
-
 ### Key Features
 
-* Generation of pseudonymous identifiers from tabular data
-* Supports CSV, XLSX, or programmatic use
-* Supports pluggable algorithms to meet wide use-cases
-* Entirely configurable via external configuration files
-* Customisable, performant, and robust data validation
-* Shiny Microsoft Windows frontend
+- Generation of pseudonymous identifiers from tabular data
+- Supports CSV, XLSX, or programmatic use
+- Supports pluggable algorithms to meet wide use-cases
+- Entirely configurable via external configuration files
+- Customisable, performant, and robust data validation
+- Shiny Microsoft Windows frontend
 
 ### Feature Roadmap
 
@@ -50,24 +49,10 @@ This is a fully typescript backend application with an optional ElectronJS front
   - [ ] Encryption of output files using PGP
   - [ ] Direct upload of files to target system
 
-
-### Project Repo Structure
-
-Here is a list of all repositories included as part of this project:
-
- * [SYR-BB-PREPROCESSING-APP](https://dev.azure.com/worldfoodprogramme/_git/SYR-BB-PREPROCESSING-APP) - This is the primary project repo containing the UI implementation and linked algorithms
- * [SYR-BB-PREPROCESSING-STANDALONE](https://dev.azure.com/worldfoodprogramme/SYR-BB-PREPROCESSING-APP/_git/SYR-BB-PREPROCESSING-STANDALONE) - This repository contains an example implementation of the common identifier application without the UI.
- * [ALGO-SHARED](https://dev.azure.com/worldfoodprogramme/SYR-BB-PREPROCESSING-APP/_git/ALGO-SHARED) - This is the main functional component of the application. This repository contains all code relating to file handling, configuration management, and data processing, but importantly is algorithm-agnostic.
- * [ALGO-GOS](https://dev.azure.com/worldfoodprogramme/SYR-BB-PREPROCESSING-APP/_git/ALGO-GOS) - This repo contains the algorithm implementation for the GOS region.
- * [ALGO-NWS](https://dev.azure.com/worldfoodprogramme/SYR-BB-PREPROCESSING-APP/_git/ALGO-NWS) - This repo contains the algorithm implementation for the NWS region.
- * [ALGO-*] - any future algorithm implementations would follow this naming convention.
-
 ### Getting Started
 
 ```bash
 git clone https://github.com/wfp/common-identifier-application.git
-git submodule init
-git submodule update
 
 # clone the relevant algorithm subdirectory into src/main
 # unfortunately this is a little complex with the current git tooling
@@ -76,8 +61,8 @@ cd algo_repo
 git sparse-checkout init --no-cone
 git sparse-checkout set <algo_name> # this is the name of the subdirectory containing the algorithm code
 git checkout
-mv <algo_name> ../src/main/algo
-cd ../ && rm -r algo_repo
+cp -r <algo_name> ../src/main/algo
+cd ../ && rm -r algo_repo # or "rm algo_repo -r -fo" on Windows
 
 # renderer
 cd ./src/renderer
@@ -89,7 +74,7 @@ npm run build # build the rendered components
 cd ../../
 npm install
 node tools/activate-algo.js <algo_name> <region_name>
-npm run tsc
+npm run build
 npm run start # to use the pre-built rendered components
 # OR, npm run start:web to link with live server
 ```
@@ -120,10 +105,10 @@ All logging lines are prefixed with `CID:` (for CommonID), and should look like 
   CID:ConfigStore Backup config validation success - using it as config +34ms
 ```
 
-
 ## 🚀 Usage
 
 There are three ways to "use" this application:
+
 1. [INTENDED USAGE] Desktop UI
    - Users can install the ElectronJS application on Windows and submit their intended assistance files for processing.
    - The application will validate the input data against validation rules defined within a separate configuration file.
@@ -229,7 +214,7 @@ The frontend of element of this application is an entirely independent element w
  ┃ ┗ 📜util.js              # data processing related utils
  ┣ 📂tests                  # FE tests (store-only)
  ┣ 📜index.html             # HTML for development (npm run dev)
- ┣ 📜package.json           
+ ┣ 📜package.json
  ┣ 📜renderer.html          # HTML for build (npm run build)
  ┗ 📜vite.config.js
 ```
@@ -259,7 +244,6 @@ The frontend of element of this application is an entirely independent element w
 - The data returned by the algorithm is merged into the source rows so the encoders can package multiple different outputs
 - The `src/main/algo-shared/encoding` Encoders (CSV and XLSX) write the output based on the relevant `[destination]` / `[destination_map]` section of the active configuration.
 
-
 ### Activating an Algorithm
 
 To activate an algorithm for development / building with that algorithm use the `tools/activate-algo.js` scripts -- it copies the backup config file to the application's location and points the `src/main/active_algorithm.js` file to the right algorithm.
@@ -274,7 +258,6 @@ node tools/activate-algo.js "GOS"
 
 Each algorithm repository contains `config` subdirectory which houses a `config.backup.toml` which serves as the backup (and baseline) configuration for the application built.
 
-
 ### Generating a config signature hash
 
 To generate the config signature for the config file the tool `tools/config-signature.js` can be used:
@@ -287,3 +270,109 @@ HASH: 9000d0f670be5287bc86bc1b74b48d34
 ```
 
 This returns the signature hash that can be embedded in the config file. The signature can be copy-pasted into the `signature.config_signature` value in the config file (the signature is generated by ignoring the `signature` key)
+
+---
+
+# Application Packaging
+
+## Signing and building the installer
+
+Azure Trusted Signing and `electron-winstaller` do not play well together.
+
+`Electron-Winstaller` ships with (and always seem to use) an outdated version of
+`signtool.exe` which does not support Trusted Signing nor the `/debug` switch.
+This causes a number of issues when the Squirrel installer build wants to sign
+the executables to be packaged.
+
+We can avoid some of the issues by building the app, signing all the executables and building the installer from the signed executables.
+
+Triggering an `electron-forge make` always re-packages the application files (and removes any signing), so the Azure pipeline first does an `electron-forge package` , signs the binaries and runs `build-windows-installer.js` to build the output installer.
+
+The main problem with this approach is that Squirrel adds two extra executables (`StubExecutable` which'll be renamed to the app executable name, and act as a launcher + `Updater.exe` which will handle updates), but also modifies them, so we cannot previously sign them, and will be added to the installer unsigned.
+
+## Installation and shortcuts
+
+The current implementation uses the code in `src/main/squirell-callbacks.js` to
+handle Squirrel Application Lifecycle events and create / update application
+(desktop) shortcuts.
+
+On install (or update) the `--squirrel-install` (or `--squirrel-updated`) command
+line switch is passed to the application, and are the desktop shortcuts are added.
+
+The `--squirrel-uninstall` switch is passed on uninstall, when we delete the desktop shortcut.
+
+If the code signing of the application allows signing the `StubExecutable.exe`
+(launcher) and the `Updater.exe` executables as part of the Squirrel build process,
+the event handling block:
+
+```
+const handleSquirrelEvent = require('./squirell-callbacks');
+
+// INITIAL SQUIRELL EVENT HANDLING
+// -------------------------------
+
+
+
+// this should be placed at top of main.js to handle setup events quickly
+if (handleSquirrelEvent()) {
+    // squirrel event handled and app will exit in 1000ms, so don't do anything else
+    return;
+}
+```
+
+can be replaced with a simple call to `electron-squirell-startup` that uses the
+`Updater.exe` executable to create, remove and update the shortcuts.
+
+```
+
+if(require('electron-squirrel-startup')) return;
+```
+
+## Self-extracting installers
+
+The self-extracting installers built by the pipeline use the [7zsfxmm](https://github.com/chrislake/7zsfxmm) SFX module.
+
+You can change the configuration by changing the generated configuration in `azure-pipelines.yml`:
+
+```
+;!@Install@!UTF-8!
+Title="CommonID Tool $(regionName)"
+BeginPrompt="Do you want to install this application?"
+HelpText="This will install the application"
+RunProgram="commonid-tool.exe"
+GUIFlags="64"
+InstallPath="%LOCALAPPDATA%\Common ID Tool $(regionName)"
+;!@InstallEnd@!
+```
+
+Source and published package of the `7zsd.sfx` used (and some example configurations):
+https://github.com/chrislake/7zsfxmm
+
+Documentation of the configuration parameters is available at:
+https://github.com/OlegScherbakov/7zSFX/blob/master/docs/parameters.html
+
+NOTE: 7zsfxmm cannot handle LZMA2 archives, only LZMA -- use `-m0=lzma` when compressing the archive with 7zip.
+
+### Building a signed app for MacOS
+
+The `forge.config.js` file contains the following (commented out) snippet:
+
+```js
+// ....
+packagerConfig: {
+  // CODE SIGNING THINGS GO HERE
+  // ---------------------------
+  // enable this to create signed executables on macOS
+  // XCode and the developer account must be set up to sign executables --
+  // more on setting this up:
+  // https://github.com/electron/osx-sign
+  // object must exist even if empty
+  // osxSign: {}
+  // END OF CODE SIGNING THINGS
+  // --------------------------
+  // ....
+}
+```
+
+By uncommenting the `osxSign: {}` line, the MacOS build will use XCode (and the developer account associated with it) to sign the executable. For more information, check [the electron `osx-sign` documentation](https://github.com/electron/osx-sign)
+
