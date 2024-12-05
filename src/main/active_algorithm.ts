@@ -1,1 +1,4 @@
-throw new Error("ERROR: No activated algorithm! Run 'node tools/activate-algo.js <algo-name> <region-name>' first.");
+
+    // THIS FILE IS AUTO-GENERATED, YOUR EDITS MAY BE OVERWRITTEN DURING BUILD
+    export { REGION, makeHasher } from './algo/index.js';
+    

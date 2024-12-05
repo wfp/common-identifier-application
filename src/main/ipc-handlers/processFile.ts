@@ -106,7 +106,7 @@ export async function processFile({
   if (response.canceled || response.filePath === '') {
     console.log('[IPC::processFile] no file selected');
     // send the canceled message
-    mainWindow.webContents.send('processingCanceled', {});
+    mainWindow.webContents.send('processingCancelled', {});
     return;
   }
   const outputPath = response.filePath;

@@ -37,6 +37,7 @@ import { preProcessFileOpenDialog } from './ipc-handlers/preProcessFileOpenDialo
 import { removeUserConfig } from './ipc-handlers/removeUserConfig.js';
 
 import { REGION } from './active_algorithm.js';
+import { EVENT } from './types.js';
 
 import {
   handleSquirrelEvent,
@@ -119,7 +120,7 @@ function createWindow() {
   }
 
   // Open the DevTools.
-  // mainWindow.webContents.openDevTools()
+  mainWindow.webContents.openDevTools()
 
   return { mainWindow, configStore };
 }
@@ -130,18 +131,12 @@ interface IPCRegisterHandlersInput {
 }
 
 // Registers all handlers for the window
-function registerIpcHandlers({
-  mainWindow,
-  configStore,
-}: IPCRegisterHandlersInput) {
+async function registerIpcHandlers({ mainWindow, configStore }: IPCRegisterHandlersInput) {
+  console.log("INDEX::registerIpcHandlers");
   function withErrorReporting(delegate: CallableFunction) {
     // catch errors that bubble up es exceptions and convert them to rejections
     return new Promise(function (resolve, reject) {
-      try {
-        resolve(delegate());
-      } catch (e) {
-        reject(e);
-      }
+      try { resolve(delegate()); } catch (e) { reject(e); }
     }).catch((e) => {
       // catch errors that bubble up as rejections
       console.error('INTERNAL ERROR:', e);
@@ -156,21 +151,22 @@ function registerIpcHandlers({
   // ------------------
 
   // Handle dropping of files
-  ipcMain.on('fileDropped', (_: any, filePath: any) => {
-    return withErrorReporting(() => {
-      return preProcessFile({ mainWindow, configStore, filePath });
-    });
+  ipcMain.on(EVENT.FILE_DROPPED, (_, filePath: string) => {
+    console.log(`INDEX::${EVENT.FILE_DROPPED}`);
+    return withErrorReporting(() => preProcessFile({ mainWindow, configStore, filePath }))
   });
 
   // Start processing the file
-  ipcMain.on('processFile', (event: any, filePath: any) => {
+  ipcMain.on(EVENT.PROCESS_FILE, (_, filePath: string) => {
+    console.log(`INDEX::${EVENT.PROCESS_FILE}`);
     return withErrorReporting(() => {
       return processFile({ mainWindow, configStore, filePath });
     });
   });
 
   // open and process a file using an open file dialog
-  ipcMain.on('preProcessFileOpenDialog', (event: any, _: any) => {
+  ipcMain.on(EVENT.PREPROCESS_FILE_OPEN_DIALOG, (_) => {
+    console.log(`INDEX::${EVENT.PREPROCESS_FILE_OPEN_DIALOG}`);
     return withErrorReporting(() => {
       return preProcessFileOpenDialog({ mainWindow, configStore });
     });
@@ -178,35 +174,39 @@ function registerIpcHandlers({
 
   // MISC
   // ----
-
   // open a file with the OS default app
-  ipcMain.on('openOutputFile', (event: any, filePath: any) => {
+  ipcMain.on(EVENT.OPEN_OUTPUT_FILE, (_, filePath: any) => {
+    console.log(`INDEX::${EVENT.OPEN_OUTPUT_FILE}`);
     shell.openPath(filePath);
   });
 
   // quit when receiving the 'quit' signal
-  ipcMain.on('quit', () => {
-    app.quit();
+  ipcMain.on(EVENT.QUIT, (_) => {
+    console.log(`INDEX::${EVENT.QUIT}`);
+    app.quit()
   });
 
   // mark the terms and conditions accepted
-  ipcMain.on('acceptTermsAndConditions', () => {
+  ipcMain.on(EVENT.ACCEPT_TERMS_AND_CONDITIONS, (_) => {
+    console.log(`INDEX::${EVENT.ACCEPT_TERMS_AND_CONDITIONS}`);
     configStore.acceptTermsAndConditions();
   });
 
   // CONFIG-RELATED
   // --------------
 
-  // Handle dropping of files
-  ipcMain.handle('requestConfigUpdate', (_: any) => {
+  ipcMain.handle(EVENT.REQUEST_CONFIG_UPDATE, () => {
+    console.log(`INDEX::${EVENT.REQUEST_CONFIG_UPDATE}`);
     return requestConfigUpdate({ configStore });
   });
 
-  ipcMain.handle('loadNewConfig', (_: any) => {
+  ipcMain.handle(EVENT.LOAD_NEW_CONFIG, () => {
+    console.log(`INDEX::${EVENT.LOAD_NEW_CONFIG}`);
     return loadNewConfig({ configStore });
   });
 
-  ipcMain.handle('removeUserConfig', (_: any) => {
+  ipcMain.handle(EVENT.REMOVE_USER_CONFIG, () => {
+    console.log(`INDEX::${EVENT.REMOVE_USER_CONFIG}`);
     return removeUserConfig({ configStore });
   });
 }
@@ -216,20 +216,29 @@ function registerIpcHandlers({
 function unregisterIpcHandlers() {
   // Event handlers
   // --------------
-
   [
-    'fileDropped',
-    'processFile',
-    'preProcessFileOpenDialog',
-    'openOutputFile',
-    'quit',
-    'acceptTermsAndConditions',
-  ].forEach((channel) => ipcMain.removeAllListeners(channel));
+    EVENT.FILE_DROPPED,
+    EVENT.PROCESS_FILE,
+    EVENT.PREPROCESS_FILE_OPEN_DIALOG,
+    EVENT.OPEN_OUTPUT_FILE,
+    EVENT.QUIT,
+    EVENT.ACCEPT_TERMS_AND_CONDITIONS,
+  ].forEach((channel) => {
+    console.log(`INDEX: Deregistering ${channel}`)
+    ipcMain.removeAllListeners(channel)
+  });
 
   // IPC functions
   // -------------
-  ['requestConfigUpdate', 'loadNewConfig', 'removeUserConfig'].forEach(
-    (channel) => ipcMain.removeHandler(channel),
+  [
+    EVENT.REQUEST_CONFIG_UPDATE,
+    EVENT.LOAD_NEW_CONFIG,
+    EVENT.REMOVE_USER_CONFIG,
+  ].forEach(
+    (channel) => {
+      console.log(`INDEX: Deregistering ${channel}`)
+      ipcMain.removeHandler(channel)
+    },
   );
 }
 
@@ -238,6 +247,7 @@ function unregisterIpcHandlers() {
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
   function createAndRegisterWindow() {
+    console.log("INDEX: createAndRegisterWindow")
     const { mainWindow, configStore } = createWindow();
 
     registerIpcHandlers({ mainWindow, configStore });

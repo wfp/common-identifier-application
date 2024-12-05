@@ -20,6 +20,7 @@ import {
   ConfigStore,
   preprocessFile as backendPreProcessFile,
 } from 'common-identifier-algorithm-shared';
+import { EVENT } from '../types.js';
 
 const MAX_ROWS_TO_PREVIEW = 500;
 
@@ -59,7 +60,7 @@ export async function preProcessFile({
     document.data = document.data.slice(0, MAX_ROWS_TO_PREVIEW);
   }
 
-  mainWindow.webContents.send('preprocessingDone', {
+  mainWindow.webContents.send(EVENT.PREPROCESSING_DONE, {
     isValid,
     isMappingDocument,
     document,

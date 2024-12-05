@@ -10,6 +10,7 @@
     "start:web": "set NODE_ENV=development& electron-forge start",
     "start": "electron-forge start",
     "start:debug": "set DEBUG=CID:*& npm start",
+    "start:web:debug": "set DEBUG=CID:*& set NODE_ENV=development& electron-forge start",
     "package": "electron-forge package",
     "make": "electron-forge make",
     "build": "tsc",
@@ -29,8 +30,11 @@
     "@electron/fuses": "^1.8.0",
     "@types/debug": "^4.1.12",
     "@types/jest": "^29.5.14",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
     "commander": "^12.1.0",
     "electron": "^31.3.0",
+    "electron-typescript-ipc": "^3.0.0",
     "jest": "^29.7.0",
     "jest-junit": "^16.0.0",
     "jest-junit-reporter": "^1.1.0",
@@ -40,6 +44,7 @@
     "typescript": "^5.6.3"
   },
   "dependencies": {
-    "common-identifier-algorithm-shared": "github:wfp/common-identifier-algorithm-shared"
+    "common-identifier-algorithm-shared": "github:wfp/common-identifier-algorithm-shared",
+    "debug": "^4.3.7"
   }
 }

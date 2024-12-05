@@ -44,6 +44,6 @@ export async function preProcessFileOpenDialog({
   } else {
     console.log('[IPC] [preProcessFileOpenDialog] no file selected');
     // send the cancelec message
-    mainWindow.webContents.send('processingCanceled', {});
+    mainWindow.webContents.send('processingCancelled', {});
   }
 }

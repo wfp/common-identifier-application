@@ -9,8 +9,13 @@ __build
 
 coverage
 
+src/*.js
+
 src/main/**/*.js
 src/main/**/*.mjs
 
 src/main/config.backup.toml
 src/main/algo/*
+
+src/renderer/src/**/*.jsx
+src/renderer/src/**/*.js
