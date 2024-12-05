@@ -21,7 +21,6 @@ import { fileURLToPath } from 'node:url';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 export function resolveHtmlPath(htmlFileName: string) {
-  console.log(`ENV: ${process.env.NODE_ENV}`);
   if (process.env.NODE_ENV === 'development') {
     const port = process.env.PORT || 5173;
     const url = new URL(`http://localhost:${port}`);

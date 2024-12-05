@@ -21,6 +21,9 @@ import { REGION } from './active_algorithm.js';
 import { app } from 'electron/main';
 import { shell } from 'electron';
 
+import Debug from 'debug';
+const log = Debug('CID:main:squirrell');
+
 // The name of the shortcut as created on the Desktop
 const SHORTCUT_FILE_NAME = `Common ID Tool ${REGION}`;
 
@@ -40,7 +43,7 @@ export function createDesktopShortcut() {
   const exePath = process.execPath;
   const appFolder = path.resolve(process.execPath, '..');
 
-  console.log('Attempting to create shortcut:', shortcutFullPath);
+  log('Attempting to create shortcut:', shortcutFullPath);
 
   const success = shell.writeShortcutLink(
     shortcutFullPath,
@@ -53,7 +56,7 @@ export function createDesktopShortcut() {
     },
   );
 
-  console.log('Shortcut creation success: ', success ? 'YES' : 'NO');
+  log('Shortcut creation success: ', success ? 'YES' : 'NO');
 
   return success;
 }
@@ -71,14 +74,14 @@ export function handleSquirrelEvent() {
   switch (squirrelEvent) {
     case '--squirrel-install':
     case '--squirrel-updated':
-      console.log('App update event triggered -- updating shortcut');
+      log('App update event triggered -- updating shortcut');
 
       createDesktopShortcut();
       setTimeout(app.quit, 1000);
       return true;
 
     case '--squirrel-uninstall':
-      console.log('App uninstall event triggered -- removing shortcut');
+      log('App uninstall event triggered -- removing shortcut');
       // Undo anything you did in the --squirrel-install and
       // --squirrel-updated handlers
 
@@ -87,7 +90,7 @@ export function handleSquirrelEvent() {
         fs.unlinkSync(shortcutFullPath);
       } catch (err) {
         // this delete operation should never fail (file presence or access problems)
-        console.log('Unable to delete shortcut -- shortcut not present', err);
+        log('Unable to delete shortcut -- shortcut not present', err);
       }
 
       setTimeout(app.quit, 1000);

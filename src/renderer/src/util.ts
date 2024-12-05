@@ -25,7 +25,7 @@
 
 import Debug from 'debug';
 import type { Config, CidDocument } from './types.js';
-const log = Debug('CID:Processing::mapping');
+const log = Debug('CID:renderer:util');
 
 // Returns a list of columns containing both algorithm-required and "always-include" columns
 // (effectively merging data from the two config sections of algorithm and columns).
