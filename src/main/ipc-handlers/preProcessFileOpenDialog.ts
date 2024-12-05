@@ -19,6 +19,9 @@ import { BrowserWindow, dialog } from 'electron';
 import { preProcessFile } from './preProcessFile.js';
 import { ConfigStore } from 'common-identifier-algorithm-shared';
 
+import Debug from 'debug';
+const log = Debug('CID:main:ipc::preProcessFileOpenDialog');
+
 interface IPCPreProcessFileOpenDialogInput {
   mainWindow: BrowserWindow;
   configStore: ConfigStore;
@@ -36,13 +39,10 @@ export async function preProcessFileOpenDialog({
   if (!response.canceled) {
     // handle fully qualified file name
     const filePath = response.filePaths[0];
-    console.log(
-      '[IPC] [preProcessFileOpenDialog] Starting to process file from open dialog:',
-      filePath,
-    );
+    log('Starting to process file from open dialog: ',filePath);
     return preProcessFile({ mainWindow, configStore, filePath });
   } else {
-    console.log('[IPC] [preProcessFileOpenDialog] no file selected');
+    log('no file selected');
     // send the cancelec message
     mainWindow.webContents.send('processingCancelled', {});
   }

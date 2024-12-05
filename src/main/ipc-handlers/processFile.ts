@@ -24,6 +24,9 @@ import {
   SUPPORTED_FILE_TYPES,
 } from 'common-identifier-algorithm-shared';
 
+import Debug from 'debug';
+const log = Debug('CID:main:ipc::processFile');
+
 import { makeHasher } from '../active_algorithm.js';
 
 const MAX_ROWS_TO_PREVIEW = 500;
@@ -76,12 +79,10 @@ async function doProcessFile(
       format: outputFormat,
     });
 
-  console.log('[IPC::processFile] PROCESSING DONE');
+  log('PROCESSING DONE');
 
   if (document.data.length > MAX_ROWS_TO_PREVIEW) {
-    console.log(
-      `[IPC::preProcessFile] dataset has ${document.data.length} rows, trimming for frontend preview`,
-    );
+    log(`dataset has ${document.data.length} rows, trimming for frontend preview`);
     document.data = document.data.slice(0, MAX_ROWS_TO_PREVIEW);
   }
   mainWindow.webContents.send('processingDone', {
@@ -98,18 +99,18 @@ export async function processFile({
   configStore,
   filePath,
 }: IPCProcessFileInput) {
-  console.log('=========== Processing File:', filePath);
+  log('Processing File:', filePath);
 
   const response = await dialog.showSaveDialog({
     defaultPath: baseFileName(filePath),
   });
   if (response.canceled || response.filePath === '') {
-    console.log('[IPC::processFile] no file selected');
+    log('no file selected');
     // send the canceled message
     mainWindow.webContents.send('processingCancelled', {});
     return;
   }
   const outputPath = response.filePath;
-  console.log('[IPC::processFile] STARTING TO PROCESS AS', outputPath);
+  log('STARTING TO PROCESS AS', outputPath);
   return doProcessFile(mainWindow, configStore, filePath, outputPath);
 }

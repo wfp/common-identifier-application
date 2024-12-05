@@ -17,12 +17,15 @@
 
 import { ConfigStore } from 'common-identifier-algorithm-shared';
 
+import Debug from 'debug';
+const log = Debug('CID:main:ipc::requestConfigUpdate');
+
 export function requestConfigUpdate({
   configStore,
 }: {
   configStore: ConfigStore;
 }) {
-  console.log('[IPC] [requestConfigUpdate] App requesting config udpate');
+  log('App requesting config udpate');
 
   const config = configStore.getConfig();
   // return the data

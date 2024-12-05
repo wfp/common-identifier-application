@@ -18,12 +18,15 @@
 import { dialog } from 'electron';
 import { ConfigStore } from 'common-identifier-algorithm-shared';
 
+import Debug from 'debug';
+const log = Debug('CID:main:ipc::loadNewConfig');
+
 export async function loadNewConfig({
   configStore,
 }: {
   configStore: ConfigStore;
 }) {
-  console.log('[IPC] [loadNewConfig] App requested loading a new config');
+  log('App requested loading a new config');
 
   const response = await dialog.showOpenDialog({
     properties: ['openFile'],
@@ -36,10 +39,7 @@ export async function loadNewConfig({
   if (!response.canceled) {
     // handle fully qualified file name
     const filePath = response.filePaths[0];
-    console.log(
-      '[IPC] [loadNewConfig] Starting to load config file from open dialog:',
-      filePath,
-    );
+    log('Starting to load config file from open dialog: ', filePath);
 
     // attempt to load into the store
     const loadError = configStore.updateUserConfig(filePath);
@@ -52,7 +52,7 @@ export async function loadNewConfig({
       };
     }
 
-    console.log('[IPC] [loadNewConfig] CONFIG LOAD ERROR:', loadError);
+    log('CONFIG LOAD ERROR: ', loadError);
     return {
       success: false,
       canceled: false,

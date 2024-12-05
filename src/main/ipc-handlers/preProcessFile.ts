@@ -22,6 +22,9 @@ import {
 } from 'common-identifier-algorithm-shared';
 import { EVENT } from '../types.js';
 
+import Debug from 'debug';
+const log = Debug('CID:main:ipc::preProcessFile');
+
 const MAX_ROWS_TO_PREVIEW = 500;
 
 interface IPCFileDroppedInput {
@@ -35,28 +38,24 @@ export async function preProcessFile({
   configStore,
   filePath,
 }: IPCFileDroppedInput) {
-  console.log('[IPC::preProcessFile] Dropped File:', filePath);
+  log('Dropped File:', filePath);
 
   const config = configStore.getConfig();
 
   const { isValid, isMappingDocument, document, errorFilePath, inputFilePath } =
     await backendPreProcessFile({ config, inputFilePath: filePath });
-  console.log('[IPC::preProcessFile] PREPROCESSING DONE');
+  log('PREPROCESSING DONE');
 
   // if this is error data, filter to only errors first.
   if (!isValid) {
     const errors = document.data.filter((r) => r.errors);
-    console.log(
-      `[IPC::preProcessFile] ${errors.length} validation errors found`,
-    );
+    log(`${errors.length} validation errors found`);
     document.data = errors;
   }
 
   // don't return large datasets back to the frontend, instead splice and send n rows
   if (document.data.length > MAX_ROWS_TO_PREVIEW) {
-    console.log(
-      `[IPC::preProcessFile] input data array has ${document.data.length} rows, trimming for frontend preview`,
-    );
+    log(`input data array has ${document.data.length} rows, trimming for frontend preview`);
     document.data = document.data.slice(0, MAX_ROWS_TO_PREVIEW);
   }
 

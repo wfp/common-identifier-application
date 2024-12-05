@@ -16,6 +16,8 @@
  */
 
 import { ConfigStore } from 'common-identifier-algorithm-shared';
+import Debug from 'debug';
+const log = Debug('CID:main:ipc::removeUserConfig');
 
 // Removes the user configuration and falls back to the built-in default
 export function removeUserConfig({
@@ -23,11 +25,11 @@ export function removeUserConfig({
 }: {
   configStore: ConfigStore;
 }) {
-  console.log('[IPC] [removeUserConfig] start');
+  log('start');
 
   const loadError = configStore.removeUserConfig();
 
-  console.log('[IPC] [removeUserConfig] result:', loadError);
+  log('result:', loadError);
 
   //
   if (!loadError) {
