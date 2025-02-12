@@ -55,14 +55,14 @@ export async function loadNewConfig({
     log('CONFIG LOAD ERROR: ', loadError);
     return {
       success: false,
-      canceled: false,
+      cancelled: false,
       error: loadError,
       config: configStore.getConfig(),
     };
   } else {
     return {
       success: false,
-      canceled: true,
+      cancelled: true,
       config: configStore.getConfig(),
     };
   }

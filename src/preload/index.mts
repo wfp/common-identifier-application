@@ -16,8 +16,8 @@
  */
 
 import { contextBridge, createIpcRenderer } from 'electron-typescript-ipc';
-import type { Api } from '../api.js';
-import { EVENT } from './types.js';
+import { EVENT } from '../common/events.js';
+import type { Api } from '../common/api.js';
 
 const ipcRenderer = createIpcRenderer<Api>();
 

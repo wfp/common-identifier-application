@@ -37,7 +37,7 @@ import { preProcessFileOpenDialog } from './ipc-handlers/preProcessFileOpenDialo
 import { removeUserConfig } from './ipc-handlers/removeUserConfig.js';
 
 import { REGION } from './active_algorithm.js';
-import { EVENT } from './types.js';
+import { EVENT } from '../common/events.js';
 
 import {
   handleSquirrelEvent,
@@ -88,7 +88,7 @@ function createMainWindow(configStore: ConfigStore) {
     minHeight: 640,
 
     webPreferences: {
-      preload: join(__dirname, 'preload.mjs'),
+      preload: join(__dirname, '..', 'preload', 'index.mjs'),
       contextIsolation: true,
       nodeIntegration: true,
     },

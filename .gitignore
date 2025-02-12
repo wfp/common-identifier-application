@@ -11,6 +11,9 @@ coverage
 
 src/*.js
 
+src/common/**/*.js
+src/preload/**/*.*js
+
 src/main/**/*.js
 src/main/**/*.mjs
 

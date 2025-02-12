@@ -15,7 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { useAppStore } from './store.js';
-import type { Api } from '../../api.js';
+import type { Api } from '../../common/api.js';
 
 import Debug from 'debug';
 const log = Debug('CID:Renderer::intercom');

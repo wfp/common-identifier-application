@@ -20,7 +20,7 @@ import {
   ConfigStore,
   preprocessFile as backendPreProcessFile,
 } from 'common-identifier-algorithm-shared';
-import { EVENT } from '../types.js';
+import { EVENT } from '../../common/events.js';
 
 import Debug from 'debug';
 const log = Debug('CID:main:ipc::preProcessFile');
