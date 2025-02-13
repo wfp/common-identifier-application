@@ -21,7 +21,6 @@ import { shell } from 'electron';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { resolveHtmlPath } from './util';
 import {
   makeConfigStore,
   appDataLocation,
@@ -45,20 +44,19 @@ const log = Debug('CID:main');
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
+const RENDERER_DIST = join(__dirname, '../dist');
+const PRELOAD_PATH = join(__dirname, 'preload.mjs');
+const INDEX_HTML = join(RENDERER_DIST, 'index.html');
+
 // CONSTANTS FOR FILE PATHS, INSTALLATION DIRECTORIES ETC.
 const APP_DIR_NAME = `commonid-tool-${REGION.toLowerCase()}`;
 const CONFIG_FILE_NAME = `config.${REGION}.json`;
 const APP_CONFIG_FILE_NAME = `appconfig.${REGION}.json`;
-const BACKUP_CONFIG_FILE_PATH = join(__dirname, 'config.backup.toml');
+const BACKUP_CONFIG_FILE_PATH = join(RENDERER_DIST, 'config.backup.toml');
 
 const APP_DIR_PATH = join(appDataLocation(), APP_DIR_NAME); // the path of the application's data files
 const CONFIG_FILE_PATH = join(APP_DIR_PATH, CONFIG_FILE_NAME); // the path of the store configuration file
 const APP_CONFIG_FILE_PATH = join(APP_DIR_PATH, APP_CONFIG_FILE_NAME); // the path of the application config file (containing config-independent settings)
-
-const RENDERER_DIST = join(__dirname, '../../dist');
-const PRELOAD_PATH = join(__dirname, '../preload/index.mjs');
-const INDEX_HTML = join(RENDERER_DIST, 'index.html');
-const VITE_DEV_SERVER_URL = 'http://localhost:3000/';
 
 function createMainWindow(configStore: ConfigStore) {
   // figure out the existing window configuration
@@ -100,23 +98,21 @@ function createWindow() {
 
   const mainWindow = createMainWindow(configStore);
 
-  if (process.env.NODE_ENV === 'development') {
-    mainWindow.loadURL(VITE_DEV_SERVER_URL);
+  if (process.env.VITE_DEV_SERVER_URL) {
+    mainWindow.loadURL(process.env.VITE_DEV_SERVER_URL);
+    mainWindow.webContents.openDevTools()
   } else {
     mainWindow.loadFile(INDEX_HTML);
   }
 
   // set the icon on windows (setting the icon to a .ico file on Mac results in a throw)
   if (process.platform === 'win32') {
-    mainWindow.setIcon(`${resolve(__dirname, '../../assets/logo.ico')}`);
+    mainWindow.setIcon(`${resolve(__dirname, '../public/logo.ico')}`);
   } else if (process.platform === 'darwin') {
     // MacOS requires a PNG (it does not seem to like ICNS here, but only accepts ICNS
     // for the packaging) + changing this line does not seem to change the
-    mainWindow.setIcon(`${resolve(__dirname, '../../assets/logo.png')}`);
-  }
-
-  // Open the DevTools.
-  mainWindow.webContents.openDevTools()
+    mainWindow.setIcon(`${resolve(__dirname, '../public/logo.png')}`);
+  } 
 
   return { mainWindow, configStore };
 }

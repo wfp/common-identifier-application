@@ -1,0 +1,35 @@
+{
+  "$schema": "https://raw.githubusercontent.com/electron-userland/electron-builder/refs/heads/master/packages/app-builder-lib/scheme.json",
+  "productName": "simpleElectronApp",
+  "appId": "com.electron.simpleElectronApp",
+  "asar": true,
+  "directories": {
+    "output": "release/${version}"
+  },
+  "files": [
+    "dist-electron",
+    "dist"
+  ],
+  "win": {
+    "target": [
+      {
+        "target": "nsis",
+        "arch": [
+          "x64"
+        ]
+      }
+    ],
+    "artifactName": "${productName}-setup.${ext}",
+    "icon": "public/logo.ico",
+    // "signtoolOptions": {
+    //   "publisherName": "WFP"
+    // },
+    // "azureSignOptions": {
+    //   "certificateProfileName": "buildingblocks",
+    //   "codeSigningAccountName": "buildingblocks",
+    //   "endpoint": "https://weu.codesigning.azure.net",
+    //   "timestampDigest": "SHA256",
+    //   "timestampRfc3161": "http://timestamp.acs.microsoft.com"
+    // }
+  }
+}

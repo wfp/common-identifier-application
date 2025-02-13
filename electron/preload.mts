@@ -16,8 +16,8 @@
  */
 
 import { contextBridge, createIpcRenderer } from 'electron-typescript-ipc';
-import { EVENT } from '../../common/events';
-import type { Api } from '../../common/api';
+import { EVENT } from '../common/events';
+import type { Api } from '../common/api';
 
 const ipcRenderer = createIpcRenderer<Api>();
 
@@ -46,8 +46,3 @@ const api: Api = {
 }
 
 contextBridge.exposeInMainWorld('electronAPI', api);
-declare global {
-  interface Window {
-    electronAPI: Api
-  }
-}

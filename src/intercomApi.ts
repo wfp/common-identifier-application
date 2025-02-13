@@ -15,16 +15,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { useAppStore } from './store';
-import type { Api } from '../common/api'
 
 import Debug from 'debug';
 const log = Debug('CID:Renderer::intercom');
-
-declare global {
-  interface Window {
-    electronAPI: Api;
-  }
-}
 
 function withElectronAPI(label: string, fn: CallableFunction, elseFn = () => {}) {
   if (typeof window.electronAPI === 'object') {

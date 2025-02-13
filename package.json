@@ -3,11 +3,11 @@
   "version": "1.0.0",
   "author": "dean.ford@wfp.org",
   "description": "Common Identifier generation tool for Assistance and Mapping documents.",
-  "main": "./dist-electron/main/index.js",
+  "main": "./dist-electron/index.js",
   "type": "module",
   "scripts": {
     "format": "prettier --write .",
-    "dev": "set NODE_ENV=development& vite",
+    "dev": "vite",
     "dev:debug": "set DEBUG=CID:*& vite",
     "build": "tsc && vite build",
     "preview": "vite preview",

@@ -19,6 +19,8 @@ program.argument(
 
 program.parse();
 
+// TODO: Fix this programme - also, config.backup.toml needs to move to the public folder
+
 const ALGO_REGION = program.args[1];
 
 const SRC_MAIN_DIR = join(__dirname, '..', 'src', 'main');
