@@ -9,16 +9,9 @@ __build
 
 coverage
 
-src/*.js
+dist
+dist-electron
+release
 
-src/common/**/*.js
-src/preload/**/*.*js
-
-src/main/**/*.js
-src/main/**/*.mjs
-
-src/main/config.backup.toml
-src/main/algo/*
-
-src/renderer/src/**/*.jsx
-src/renderer/src/**/*.js
+algo_repo
+electron/main/algo

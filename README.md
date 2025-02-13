@@ -61,14 +61,8 @@ cd algo_repo
 git sparse-checkout init --no-cone
 git sparse-checkout set <algo_name> # this is the name of the subdirectory containing the algorithm code
 git checkout
-cp -r <algo_name> ../src/main/algo
+cp -r <algo_name> ../electron/main/algo
 cd ../ && rm -r algo_repo # or "rm algo_repo -r -fo" on Windows
-
-# renderer
-cd ./src/renderer
-npm install
-npm run build # build the rendered components
-# OR, npm run dev for live hot-reloading server
 
 # main application
 cd ../../
