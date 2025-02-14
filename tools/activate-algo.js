@@ -83,12 +83,10 @@ function updateRenderedComponents() {
   const assetPath = join(RENDERER_DIR, 'assets');
   const cssFile = readdirSync(assetPath).find(a => a.endsWith('.css'));
   const cssPath = join(assetPath, cssFile);
-  console.log(cssPath)
 
   const overrideCss = readFileSync(overrideCSSPath, 'utf-8');
   // trim out file comment header
   const cssDeclarations = overrideCss.split('*/')[1].trim();
-  console.log(cssDeclarations.length)
   if (cssDeclarations.length === 0) {
     console.warn("WARNING: No css overrides specified in config/overrides.css, keeping index.css unchanged.")
     return;
