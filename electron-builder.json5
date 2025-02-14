@@ -21,15 +21,15 @@
     ],
     "artifactName": "${productName}-setup.${ext}",
     "icon": "public/logo.ico",
-    // "signtoolOptions": {
-    //   "publisherName": "WFP"
-    // },
-    // "azureSignOptions": {
-    //   "certificateProfileName": "buildingblocks",
-    //   "codeSigningAccountName": "buildingblocks",
-    //   "endpoint": "https://weu.codesigning.azure.net",
-    //   "timestampDigest": "SHA256",
-    //   "timestampRfc3161": "http://timestamp.acs.microsoft.com"
-    // }
+    "signtoolOptions": {
+      "publisherName": "WFP"
+    },
+    "azureSignOptions": {
+      "certificateProfileName": "buildingblocks",
+      "codeSigningAccountName": "buildingblocks",
+      "endpoint": "https://weu.codesigning.azure.net",
+      "timestampDigest": "SHA256",
+      "timestampRfc3161": "http://timestamp.acs.microsoft.com"
+    }
   }
 }
