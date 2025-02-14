@@ -15,3 +15,5 @@ release
 
 algo_repo
 electron/main/algo
+
+public/config.backup.toml
