@@ -21,7 +21,7 @@ import {
   processFile as backendProcessFile,
   SUPPORTED_FILE_TYPES,
 } from 'common-identifier-algorithm-shared';
-import type { ConfigStore } from 'common-identifier-algorithm-shared';
+import type { Config, ConfigStore } from 'common-identifier-algorithm-shared';
 
 import Debug from 'debug';
 const log = Debug('CID:main:ipc::processFile');
@@ -43,7 +43,7 @@ async function doProcessFile(
   inputFilePath: string,
   outputPath: string,
 ) {
-  const config = configStore.getConfig();
+  const config = configStore.getConfig() as Config.Options;
   let outputFormat = undefined;
   let outputBasePath = outputPath;
   // figure out the output path

@@ -16,7 +16,7 @@
 
 import { BrowserWindow } from 'electron';
 import { preprocessFile as backendPreProcessFile } from 'common-identifier-algorithm-shared';
-import type { ConfigStore } from 'common-identifier-algorithm-shared';
+import type { Config, ConfigStore } from 'common-identifier-algorithm-shared';
 import { EVENT } from '../../../common/events';
 
 import Debug from 'debug';
@@ -37,7 +37,7 @@ export async function preProcessFile({
 }: IPCFileDroppedInput) {
   log('Dropped File:', filePath);
 
-  const config = configStore.getConfig();
+  const config = configStore.getConfig() as Config.Options;
 
   const { isValid, isMappingDocument, document, errorFilePath, inputFilePath } =
     await backendPreProcessFile({ config, inputFilePath: filePath });
