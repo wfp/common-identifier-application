@@ -1,7 +1,7 @@
 {
   "$schema": "https://raw.githubusercontent.com/electron-userland/electron-builder/refs/heads/master/packages/app-builder-lib/scheme.json",
-  "productName": "simpleElectronApp",
-  "appId": "com.electron.simpleElectronApp",
+  "productName": "Common Identifier Application",
+  "appId": "com.wfp.commonidapplication",
   "asar": true,
   "directories": {
     "output": "release/${version}"

@@ -26,8 +26,8 @@ export default defineConfig(({ command }) => {
           entry: 'electron/main/index.ts',
           vite: {
             build: {
-              sourcemap: isServe ? 'inline' : undefined,
-              minify: isBuild,
+              sourcemap: isServe ? 'inline' : false,
+              minify: true,
               rollupOptions: {
                 external: Object.keys(
                   'dependencies' in pkg ? pkg.dependencies : {},

@@ -144,7 +144,6 @@ function App() {
       break;
     }
   }
-  console.log(screen);
 
   return (
     <>

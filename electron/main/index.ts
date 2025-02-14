@@ -16,7 +16,7 @@
  */
 
 // Modules to control application life and create native browser window
-import { app, BrowserWindow, ipcMain } from 'electron';
+import { app, BrowserWindow, ipcMain, screen } from 'electron';
 import { shell } from 'electron';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -60,15 +60,25 @@ const APP_CONFIG_FILE_PATH = join(APP_DIR_PATH, APP_CONFIG_FILE_NAME); // the pa
 
 function createMainWindow(configStore: ConfigStore) {
   // figure out the existing window configuration
-  const appConfig = configStore.appConfig;
-  const { width, height } = appConfig.window;
+  const defaultWindow = configStore.appConfig.window;
+
+  const targetDisplay = screen.getDisplayMatching({
+    x: defaultWindow.x, y: defaultWindow.y,
+    width: defaultWindow.width, height: defaultWindow.height
+  }).bounds
+
+  // if window width/height are larger than the display width/height, clamp
+  if (defaultWindow.height > targetDisplay.height || defaultWindow.width > targetDisplay.width) {
+    defaultWindow.x      = targetDisplay.x;
+    defaultWindow.y      = targetDisplay.y;
+    defaultWindow.width  = targetDisplay.width;
+    defaultWindow.height = targetDisplay.height;
+  }
 
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width,
-    height,
+    ...defaultWindow, // { x, y, width, height, fullscreen }
 
-    // constrain the layout
     minWidth: 880,
     minHeight: 640,
 
@@ -93,9 +103,6 @@ function createWindow() {
   // start loading the config here
   configStore.boot();
 
-  console.log("createWindow")
-
-
   const mainWindow = createMainWindow(configStore);
 
   if (process.env.VITE_DEV_SERVER_URL) {
@@ -112,7 +119,12 @@ function createWindow() {
     // MacOS requires a PNG (it does not seem to like ICNS here, but only accepts ICNS
     // for the packaging) + changing this line does not seem to change the
     mainWindow.setIcon(`${resolve(__dirname, '../public/logo.png')}`);
-  } 
+  }
+
+  mainWindow.on('close', () => {
+    const windowBounds = { ...mainWindow.getBounds(), fullscreen: mainWindow.isFullScreen() }
+    configStore.updateDisplayConfig(windowBounds);
+  });
 
   return { mainWindow, configStore };
 }
@@ -238,14 +250,10 @@ function unregisterIpcHandlers() {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
-  function createAndRegisterWindow() {
-    log("createAndRegisterWindow")
-    const { mainWindow, configStore } = createWindow();
-
-    registerIpcHandlers({ mainWindow, configStore });
-  }
-
-  createAndRegisterWindow();
+  log("createAndRegisterWindow")
+  
+  const { mainWindow, configStore } = createWindow();
+  registerIpcHandlers({ mainWindow, configStore });
 
   app.on('activate', () => {
     // On macOS it's common to re-create a window in the app when the
@@ -254,7 +262,8 @@ app.whenReady().then(() => {
       // don't want any stuck handlers on macOS
       unregisterIpcHandlers();
       // re-create the window and the config store
-      createAndRegisterWindow();
+      const { mainWindow, configStore } = createWindow();
+      registerIpcHandlers({ mainWindow, configStore });
     }
   });
 });
