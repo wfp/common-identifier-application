@@ -16,10 +16,6 @@
 import {
   writeFileSync,
   copyFileSync,
-  existsSync,
-  readFileSync,
-  appendFileSync,
-  readdirSync,
 } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -40,10 +36,6 @@ const ALGO_REGION = program.args[0];
 const MAIN_DIR = join(__dirname, '..', 'electron', 'main');
 const ACTIVE_ALGORITHM_FILE = join(MAIN_DIR, 'active_algorithm.ts');
 const BACKUP_CONFIG_TARGET_PATH = join(__dirname, '..', 'public', 'config.backup.toml'); // public since vite looks here for static assets
-
-const ALGO_DIR = join(MAIN_DIR, "algo");
-
-const RENDERER_DIR = join(__dirname, '..', 'dist');
 
 console.log('Activating algorithm:', ALGO_REGION);
 
@@ -70,41 +62,5 @@ function copyBackupConfig() {
   copyFileSync(backupConfigSource, BACKUP_CONFIG_TARGET_PATH);
 }
 
-// TODO: actually parse the CSS AST to make sure overrides make sense
-function updateRenderedComponents() {
-  const overrideCSSPath = join(ALGO_DIR, 'config', 'override.css');
-  
-  if (!existsSync(overrideCSSPath)) {
-    console.warn('WARNING: No css overrides present for selected algorithm, keeping index.css unchanged');
-    return;
-  }
-
-  // vite adds a random suffix onto the index.css filename, need to search for the bundled css file
-  const assetPath = join(RENDERER_DIR, 'assets');
-  const cssFile = readdirSync(assetPath).find(a => a.endsWith('.css'));
-  const cssPath = join(assetPath, cssFile);
-
-  const overrideCss = readFileSync(overrideCSSPath, 'utf-8');
-  // trim out file comment header
-  const cssDeclarations = overrideCss.split('*/')[1].trim();
-  if (cssDeclarations.length === 0) {
-    console.warn("WARNING: No css overrides specified in config/overrides.css, keeping index.css unchanged.")
-    return;
-  }
-  const sep = '\n/* ==== OVERRIDES ==== */\n';
-  appendFileSync(cssPath, sep + cssDeclarations);
-}
-
-function updateRenderedTitle() {
-  const renderHTMLPath = join(RENDERER_DIR, 'index.html');
-  const indexHtml = readFileSync(renderHTMLPath, 'utf-8');
-  const root = htmlParse(indexHtml);
-  const title = root.querySelector('title');
-  title.set_content(`Common Identifier Application - ${ALGO_REGION}`);
-  writeFileSync(renderHTMLPath, root.toString());
-}
-
 writeActiveAlgorithm();
 copyBackupConfig();
-updateRenderedComponents();
-updateRenderedTitle();
