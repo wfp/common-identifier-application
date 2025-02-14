@@ -1,6 +1,6 @@
 {
   "$schema": "https://raw.githubusercontent.com/electron-userland/electron-builder/refs/heads/master/packages/app-builder-lib/scheme.json",
-  "productName": "Common Identifier Application",
+  "productName": "common-identifier-application",
   "appId": "com.wfp.commonidapplication",
   "asar": true,
   "directories": {
@@ -19,7 +19,7 @@
         ]
       }
     ],
-    "artifactName": "common-identifier-application-setup.${ext}",
+    "artifactName": "${productName}-setup.${ext}",
     "icon": "public/logo.ico",
     "signtoolOptions": {
       "publisherName": "WFP"
