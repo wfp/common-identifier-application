@@ -12,7 +12,7 @@
     "build": "tsc && vite build",
     "preview": "vite preview",
     "clean": "git clean -xdf dist-electron dist release",
-    "clean:all": "git clean -xdf dist-electron dist release node_modules",
+    "clean:all": "git clean -xdf dist-electron dist release coverage node_modules electron/main/algo",
     "package": "electron-builder -p never"
   },
   "license": "ISC",

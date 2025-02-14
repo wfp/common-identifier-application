@@ -19,6 +19,13 @@ jobs:
         uses: actions/checkout@v4
         with:
           persist-credentials: false
+      
+      - name: Setup node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+        
+      - run: git config --global url."https://${{ secrets.REPO_PAT }}@github.com/".insteadOf ssh://git@github.com/  
 
       - name: Checkout Algorithm Repo
         run: |
@@ -27,21 +34,23 @@ jobs:
           git sparse-checkout init --no-cone
           git sparse-checkout set syria_north_west
           git checkout
-          cp -r syria_north_west ../src/main/algo
+          cp -r syria_north_west ../electron/main/algo
           cd ../ && rm algo_repo -r -fo
-      
-      - name: Setup node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-        
-      - run: git config --global url."https://${{ secrets.REPO_PAT }}@github.com/".insteadOf ssh://git@github.com/  
-      
+    
       - name: Install dependencies
         run: npm install
       
+      - name: Activate algorithm
+        run: node tools/activate-algo.js NWS
+      
       - name: Build the application
-        run: npm run build && npm run package
+        run: npm run build
+
+      - name: Update rendered components
+        run: node tools/update-rendered-components.js NWS
+      
+      - name: Package the application
+        run: npm run package
         env:
           AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
           AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
