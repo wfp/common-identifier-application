@@ -13,8 +13,7 @@
     "preview": "vite preview",
     "clean": "git clean -xdf dist-electron dist release",
     "clean:all": "git clean -xdf dist-electron dist release node_modules",
-    "package": "electron-builder -p never",
-    "test:ci": "node --experimental-vm-modules node_modules/jest/bin/jest.js --ci --coverage --config=jest.ci.config.js"
+    "package": "electron-builder -p never"
   },
   "license": "ISC",
   "devDependencies": {
