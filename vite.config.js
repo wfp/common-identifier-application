@@ -28,11 +28,11 @@ export default defineConfig(({ command }) => {
             build: {
               sourcemap: isServe ? 'inline' : false,
               minify: true,
-              rollupOptions: {
-                external: Object.keys(
-                  'dependencies' in pkg ? pkg.dependencies : {},
-                ),
-              },
+              // rollupOptions: {
+              //   external: Object.keys(
+              //     'dependencies' in pkg ? pkg.dependencies : {},
+              //   ),
+              // },
             }
           }
         },
