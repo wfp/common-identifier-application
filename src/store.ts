@@ -111,15 +111,18 @@ export const useAppStore = createStore<AppState>()((set) => ({
     isBackup: false,
     lastUpdated: new Date(),
     // @ts-ignore
-    data: { meta: { region: "UNKNOWN", version: "0.0.0", signature: ""}},
+    data: { meta: { region: "UNKNOWN", version: "0.0.0", signature: "" }},
   },
   boot: ({ config, lastUpdated, isBackup, error, hasAcceptedTermsAndConditions }) => set((): IBoot => {
     log("BOOT");
     // TODO: if the backup config is also invalid show the "invalid config screen"
-    if (error) return {
-      config: { data: config, isInitial: true, isBackup: false, lastUpdated: lastUpdated },
-      screen: SCREENS.INVALID_CONFIG,
-      errorMessage: error
+    if (error) {
+      console.log(`ERROR: ${error}`);
+      return {
+        config: { data: config, isInitial: true, isBackup: false, lastUpdated: lastUpdated },
+        screen: SCREENS.INVALID_CONFIG,
+        errorMessage: error
+      }
     }
     return {
       screen: hasAcceptedTermsAndConditions ? SCREENS.MAIN : SCREENS.WELCOME,
@@ -274,8 +277,7 @@ export const useAppStore = createStore<AppState>()((set) => ({
     
   reportError: (errorMessage: string) => set((state) => {
     log("REPORT_ERROR");
-    return { config: state.config, screen: SCREENS.ERROR, errorMessage, isRuntimeError: true,
-    };
+    return { config: state.config, screen: SCREENS.ERROR, errorMessage, isRuntimeError: true };
   }),
 
   quit: () => {
