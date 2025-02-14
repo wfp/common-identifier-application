@@ -19,13 +19,23 @@ jobs:
         uses: actions/checkout@v4
         with:
           persist-credentials: false
+
+      - name: Checkout Algorithm Repo
+        run: |
+          git clone --filter=blob:none --no-checkout --depth 1 https://${{ secrets.REPO_PAT }}@github.com/wfp/common-identifier-algorithms algo_repo
+          cd algo_repo
+          git sparse-checkout init --no-cone
+          git sparse-checkout set syria_north_west
+          git checkout
+          cp -r syria_north_west ../src/main/algo
+          cd ../ && rm algo_repo -r -fo
       
       - name: Setup node.js
         uses: actions/setup-node@v4
         with:
           node-version: '22'
-      
-      - run: git config --global url."https://${{ secrets.REPO_PAT }}@github.com/".insteadOf ssh://git@github.com/
+        
+      - run: git config --global url."https://${{ secrets.REPO_PAT }}@github.com/".insteadOf ssh://git@github.com/  
       
       - name: Install dependencies
         run: npm install
