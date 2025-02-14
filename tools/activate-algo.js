@@ -19,6 +19,7 @@ import {
   existsSync,
   readFileSync,
   appendFileSync,
+  readdirSync,
 } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -34,29 +35,24 @@ program.argument(
 
 program.parse();
 
-// TODO: Fix this programme - also, config.backup.toml needs to move to the public folder
+const ALGO_REGION = program.args[0];
 
-const ALGO_REGION = program.args[1];
+const MAIN_DIR = join(__dirname, '..', 'electron', 'main');
+const ACTIVE_ALGORITHM_FILE = join(MAIN_DIR, 'active_algorithm.ts');
+const BACKUP_CONFIG_TARGET_PATH = join(__dirname, '..', 'public', 'config.backup.toml'); // public since vite looks here for static assets
 
-const SRC_MAIN_DIR = join(__dirname, '..', 'src', 'main');
-const ACTIVE_ALGORITHM_FILE = join(SRC_MAIN_DIR, 'active_algorithm.ts');
-const BACKUP_CONFIG_TARGET_PATH = join(SRC_MAIN_DIR, 'config.backup.toml');
+const ALGO_DIR = join(MAIN_DIR, "algo");
 
-const ALGO_DIR = join(SRC_MAIN_DIR, "algo");
+const RENDERER_DIR = join(__dirname, '..', 'dist');
 
-const RENDERER_DIR = join(__dirname, '..', 'src', 'renderer');
-const RENDERER_CSS_PATH = join(RENDERER_DIR, 'dist', 'assets', 'index.css');
-const OVERRIDE_CSS_PATH = join(ALGO_DIR, 'config', 'override.css');
-const RENDERER_HTML_PATH = join(RENDERER_DIR, 'renderer.html');
-
-console.log('Activating algorithm:', "algo");
+console.log('Activating algorithm:', ALGO_REGION);
 
 function writeActiveAlgorithm() {
   console.log('Generating', ACTIVE_ALGORITHM_FILE);
 
   const ACTIVE_ALGO_CONTENTS = `
     // THIS FILE IS AUTO-GENERATED, YOUR EDITS MAY BE OVERWRITTEN DURING BUILD
-    export { REGION, makeHasher } from './${"algo"}/index.js';
+    export { REGION, makeHasher } from './${"algo"}/index';
     `;
 
   writeFileSync(ACTIVE_ALGORITHM_FILE, ACTIVE_ALGO_CONTENTS, 'utf-8');
@@ -64,7 +60,7 @@ function writeActiveAlgorithm() {
 
 function copyBackupConfig() {
   // the algorithm directory
-  const algoDir = join(SRC_MAIN_DIR, "algo");
+  const algoDir = join(MAIN_DIR, "algo");
 
   const backupConfigSource = join(algoDir, 'config', 'config.backup.toml');
 
@@ -76,26 +72,38 @@ function copyBackupConfig() {
 
 // TODO: actually parse the CSS AST to make sure overrides make sense
 function updateRenderedComponents() {
-  if (!existsSync(OVERRIDE_CSS_PATH)) {
-    console.warn(
-      'WARNING: No css overrides present for selected algorithm, keeping index.css unchanged',
-    );
+  const overrideCSSPath = join(ALGO_DIR, 'config', 'override.css');
+  
+  if (!existsSync(overrideCSSPath)) {
+    console.warn('WARNING: No css overrides present for selected algorithm, keeping index.css unchanged');
     return;
   }
-  const overrideCss = readFileSync(OVERRIDE_CSS_PATH, 'utf-8');
+
+  // vite adds a random suffix onto the index.css filename, need to search for the bundled css file
+  const assetPath = join(RENDERER_DIR, 'assets');
+  const cssFile = readdirSync(assetPath).find(a => a.endsWith('.css'));
+  const cssPath = join(assetPath, cssFile);
+  console.log(cssPath)
+
+  const overrideCss = readFileSync(overrideCSSPath, 'utf-8');
   // trim out file comment header
   const cssDeclarations = overrideCss.split('*/')[1].trim();
-  if (cssDeclarations.length === 0) return;
+  console.log(cssDeclarations.length)
+  if (cssDeclarations.length === 0) {
+    console.warn("WARNING: No css overrides specified in config/overrides.css, keeping index.css unchanged.")
+    return;
+  }
   const sep = '\n/* ==== OVERRIDES ==== */\n';
-  appendFileSync(RENDERER_CSS_PATH, sep + cssDeclarations);
+  appendFileSync(cssPath, sep + cssDeclarations);
 }
 
 function updateRenderedTitle() {
-  const indexHtml = readFileSync(RENDERER_HTML_PATH, 'utf-8');
+  const renderHTMLPath = join(RENDERER_DIR, 'index.html');
+  const indexHtml = readFileSync(renderHTMLPath, 'utf-8');
   const root = htmlParse(indexHtml);
   const title = root.querySelector('title');
   title.set_content(`Common Identifier Application - ${ALGO_REGION}`);
-  writeFileSync(RENDERER_HTML_PATH, root.toString());
+  writeFileSync(renderHTMLPath, root.toString());
 }
 
 writeActiveAlgorithm();
