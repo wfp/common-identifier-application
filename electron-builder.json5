@@ -19,7 +19,7 @@
         ]
       }
     ],
-    "artifactName": "${productName}-setup.${ext}",
+    "artifactName": "common-identifier-application-setup.${ext}",
     "icon": "public/logo.ico",
     "signtoolOptions": {
       "publisherName": "WFP"
