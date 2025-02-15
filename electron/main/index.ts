@@ -134,21 +134,20 @@ function registerIPCEvents(mainWindow: BrowserWindow, configStore: ConfigStore) 
   // Handle dropping of files
   ipcMain.on(EVENT.FILE_DROPPED, (_, filePath: string) => {
     log(`Received event on channel: ${EVENT.FILE_DROPPED}`);
-    return withErrorReporting(() => preProcessFile({ mainWindow, configStore, filePath }))
+    // return withErrorReporting(() => preProcessFile({ mainWindow, configStore, filePath }));
+    return preProcessFile({ mainWindow, configStore, filePath });
   });
   // Start processing the file
   ipcMain.on(EVENT.PROCESS_FILE, (_, filePath: string) => {
     log(`Received event on channel: ${EVENT.PROCESS_FILE}`);
-    return withErrorReporting(() => {
-      return processFile({ mainWindow, configStore, filePath });
-    });
+    // return withErrorReporting(() => processFile({ mainWindow, configStore, filePath }));
+    return processFile({ mainWindow, configStore, filePath });
   });
   // open and process a file using an open file dialog
   ipcMain.on(EVENT.PREPROCESS_FILE_OPEN_DIALOG, (_) => {
     log(`Received event on channel: ${EVENT.PREPROCESS_FILE_OPEN_DIALOG}`);
-    return withErrorReporting(() => {
-      return preProcessFileOpenDialog({ mainWindow, configStore });
-    });
+    // return withErrorReporting(() => preProcessFileOpenDialog({ mainWindow, configStore }));
+    return preProcessFileOpenDialog({ mainWindow, configStore });
   });
   // open a file with the OS default app
   ipcMain.on(EVENT.OPEN_OUTPUT_FILE, (_, filePath: any) => {

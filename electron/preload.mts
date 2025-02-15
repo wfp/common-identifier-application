@@ -22,24 +22,23 @@ const ipcRenderer = createIpcRenderer<Api>();
 
 const api: Api = {
   invoke: {
-    requestConfigUpdate: () => ipcRenderer.invoke(EVENT.REQUEST_CONFIG_UPDATE),
-    loadNewConfig: () => ipcRenderer.invoke(EVENT.LOAD_NEW_CONFIG),
-    removeUserConfig: () => ipcRenderer.invoke(EVENT.REMOVE_USER_CONFIG),
-    
+    requestConfigUpdate:      () => ipcRenderer.invoke(EVENT.REQUEST_CONFIG_UPDATE),
+    loadNewConfig:            () => ipcRenderer.invoke(EVENT.LOAD_NEW_CONFIG),
+    removeUserConfig:         () => ipcRenderer.invoke(EVENT.REMOVE_USER_CONFIG),
     acceptTermsAndConditions: () => ipcRenderer.send(EVENT.ACCEPT_TERMS_AND_CONDITIONS),
-    fileDropped: async (fileName: string) => ipcRenderer.send(EVENT.FILE_DROPPED, fileName),
-    processFile: async (fileName: string) => ipcRenderer.send(EVENT.PROCESS_FILE, fileName),
-    preProcessFileOpenDialog:  async () => ipcRenderer.send(EVENT.PREPROCESS_FILE_OPEN_DIALOG, {}),
-    openOutputFile: async (fileName: string) => ipcRenderer.send(EVENT.OPEN_OUTPUT_FILE, fileName),
+    preProcessFileOpenDialog: async () => ipcRenderer.send(EVENT.PREPROCESS_FILE_OPEN_DIALOG, {}),
+    fileDropped:              async (fileName: string) => ipcRenderer.send(EVENT.FILE_DROPPED, fileName),
+    processFile:              async (fileName: string) => ipcRenderer.send(EVENT.PROCESS_FILE, fileName),
+    openOutputFile:           async (fileName: string) => ipcRenderer.send(EVENT.OPEN_OUTPUT_FILE, fileName),
 
     quit: () => ipcRenderer.send(EVENT.QUIT)
   },
   on: {
     // if unexpected errors occur this gets triggered
-    error: (listener) =>               ipcRenderer.on(EVENT.ERROR, listener),
-    configChanged: (listener) =>       ipcRenderer.on(EVENT.CONFIG_CHANGED, listener),
-    processingDone: (listener) =>      ipcRenderer.on(EVENT.PROCESSING_DONE, listener),
-    preprocessingDone: (listener) =>   ipcRenderer.on(EVENT.PREPROCESSING_DONE, listener),
+    error:               (listener) => ipcRenderer.on(EVENT.ERROR, listener),
+    configChanged:       (listener) => ipcRenderer.on(EVENT.CONFIG_CHANGED, listener),
+    processingDone:      (listener) => ipcRenderer.on(EVENT.PROCESSING_DONE, listener),
+    preprocessingDone:   (listener) => ipcRenderer.on(EVENT.PREPROCESSING_DONE, listener),
     processingCancelled: (listener) => ipcRenderer.on(EVENT.PROCESSING_CANCELLED, listener),
   }
 }

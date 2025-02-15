@@ -62,5 +62,9 @@ function copyBackupConfig() {
   copyFileSync(backupConfigSource, BACKUP_CONFIG_TARGET_PATH);
 }
 
+
+// TODO: this script should also update the electron-builder configuration to add the correct application
+// and shortcut names to the application when built.
+
 writeActiveAlgorithm();
 copyBackupConfig();
