@@ -27,6 +27,7 @@ import Debug from 'debug';
 const log = Debug('CID:main:ipc::processFile');
 
 import { makeHasher } from '../active_algorithm';
+import { EVENT } from '../../../common/events';
 
 const MAX_ROWS_TO_PREVIEW = 500;
 
@@ -84,7 +85,7 @@ async function doProcessFile(
     log(`dataset has ${document.data.length} rows, trimming for frontend preview`);
     document.data = document.data.slice(0, MAX_ROWS_TO_PREVIEW);
   }
-  mainWindow.webContents.send('processingDone', {
+  mainWindow.webContents.send(EVENT.PROCESSING_DONE, {
     isMappingDocument,
     document,
     outputFilePath,
@@ -106,7 +107,7 @@ export async function processFile({
   if (response.canceled || response.filePath === '') {
     log('no file selected');
     // send the canceled message
-    mainWindow.webContents.send('processingCancelled', {});
+    mainWindow.webContents.send(EVENT.PROCESSING_CANCELLED, {});
     return;
   }
   const outputPath = response.filePath;

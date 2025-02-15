@@ -19,6 +19,7 @@ import { preProcessFile } from './preProcessFile';
 import type { ConfigStore } from 'common-identifier-algorithm-shared';
 
 import Debug from 'debug';
+import { EVENT } from '../../../common/events';
 const log = Debug('CID:main:ipc::preProcessFileOpenDialog');
 
 interface IPCPreProcessFileOpenDialogInput {
@@ -43,6 +44,6 @@ export async function preProcessFileOpenDialog({
   } else {
     log('no file selected');
     // send the cancelec message
-    mainWindow.webContents.send('processingCancelled', {});
+    mainWindow.webContents.send(EVENT.PROCESSING_CANCELLED, {});
   }
 }
