@@ -92,16 +92,7 @@ function createMainWindow(configStore: ConfigStore) {
   return mainWindow;
 }
 
-function createWindow() {
-  const configStore = makeConfigStore({
-    configFilePath: CONFIG_FILE_PATH,
-    appConfigFilePath: APP_CONFIG_FILE_PATH,
-    backupConfigFilePath: BACKUP_CONFIG_FILE_PATH,
-    region: REGION
-  });
-  // start loading the config here
-  configStore.boot();
-
+function createWindow(configStore: ConfigStore) {
   const mainWindow = createMainWindow(configStore);
 
   if (process.env.VITE_DEV_SERVER_URL) {
@@ -125,16 +116,10 @@ function createWindow() {
     configStore.updateDisplayConfig(windowBounds);
   });
 
-  return { mainWindow, configStore };
+  return mainWindow;
 }
 
-interface IPCRegisterHandlersInput {
-  mainWindow: BrowserWindow;
-  configStore: ConfigStore;
-}
-
-// Registers all handlers for the window
-async function registerIpcHandlers({ mainWindow, configStore }: IPCRegisterHandlersInput) {
+function registerIPCEvents(mainWindow: BrowserWindow, configStore: ConfigStore) {
   log("registerIpcHandlers");
   function withErrorReporting(delegate: CallableFunction) {
     // catch errors that bubble up es exceptions and convert them to rejections
@@ -143,22 +128,14 @@ async function registerIpcHandlers({ mainWindow, configStore }: IPCRegisterHandl
     }).catch((e) => {
       // catch errors that bubble up as rejections
       log('INTERNAL ERROR: ', e);
-      mainWindow.webContents.send('error', e.toString());
+      mainWindow.webContents.send(EVENT.ERROR, e.toString());
     });
   }
-
-  // Event handlers
-  // --------------
-
-  // PROCESSING-RELATED
-  // ------------------
-
   // Handle dropping of files
   ipcMain.on(EVENT.FILE_DROPPED, (_, filePath: string) => {
     log(`Received event on channel: ${EVENT.FILE_DROPPED}`);
     return withErrorReporting(() => preProcessFile({ mainWindow, configStore, filePath }))
   });
-
   // Start processing the file
   ipcMain.on(EVENT.PROCESS_FILE, (_, filePath: string) => {
     log(`Received event on channel: ${EVENT.PROCESS_FILE}`);
@@ -166,7 +143,6 @@ async function registerIpcHandlers({ mainWindow, configStore }: IPCRegisterHandl
       return processFile({ mainWindow, configStore, filePath });
     });
   });
-
   // open and process a file using an open file dialog
   ipcMain.on(EVENT.PREPROCESS_FILE_OPEN_DIALOG, (_) => {
     log(`Received event on channel: ${EVENT.PREPROCESS_FILE_OPEN_DIALOG}`);
@@ -174,40 +150,34 @@ async function registerIpcHandlers({ mainWindow, configStore }: IPCRegisterHandl
       return preProcessFileOpenDialog({ mainWindow, configStore });
     });
   });
-
-  // MISC
-  // ----
   // open a file with the OS default app
   ipcMain.on(EVENT.OPEN_OUTPUT_FILE, (_, filePath: any) => {
     log(`Received event on channel: ${EVENT.OPEN_OUTPUT_FILE}`);
     shell.openPath(filePath);
   });
-
   // quit when receiving the 'quit' signal
   ipcMain.on(EVENT.QUIT, (_) => {
     log(`Received event on channel: ${EVENT.QUIT}`);
     app.quit()
   });
-
   // mark the terms and conditions accepted
   ipcMain.on(EVENT.ACCEPT_TERMS_AND_CONDITIONS, (_) => {
     log(`Received event on channel: ${EVENT.ACCEPT_TERMS_AND_CONDITIONS}`);
     configStore.acceptTermsAndConditions();
   });
+}
 
-  // CONFIG-RELATED
-  // --------------
-
+function registerIPCHandlers(configStore: ConfigStore) {
+  // config related events need to be initialised before the renderer since
+  // the app makes a requestConfigUpdate call on boot.
   ipcMain.handle(EVENT.REQUEST_CONFIG_UPDATE, () => {
     log(`Received event on channel: ${EVENT.REQUEST_CONFIG_UPDATE}`);
     return requestConfigUpdate({ configStore });
   });
-
   ipcMain.handle(EVENT.LOAD_NEW_CONFIG, () => {
     log(`Received event on channel: ${EVENT.LOAD_NEW_CONFIG}`);
     return loadNewConfig({ configStore });
   });
-
   ipcMain.handle(EVENT.REMOVE_USER_CONFIG, () => {
     log(`Received event on channel: ${EVENT.REMOVE_USER_CONFIG}`);
     return removeUserConfig({ configStore });
@@ -249,10 +219,18 @@ function unregisterIpcHandlers() {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
-  log("createAndRegisterWindow")
+  log("createAndRegisterWindow");
+  const configStore = makeConfigStore({
+    configFilePath: CONFIG_FILE_PATH,
+    appConfigFilePath: APP_CONFIG_FILE_PATH,
+    backupConfigFilePath: BACKUP_CONFIG_FILE_PATH,
+    region: REGION
+  });
+  configStore.boot();
   
-  const { mainWindow, configStore } = createWindow();
-  registerIpcHandlers({ mainWindow, configStore });
+  registerIPCHandlers(configStore);
+  const mainWindow = createWindow(configStore);
+  registerIPCEvents(mainWindow, configStore);
 
   app.on('activate', () => {
     // On macOS it's common to re-create a window in the app when the
@@ -261,8 +239,9 @@ app.whenReady().then(() => {
       // don't want any stuck handlers on macOS
       unregisterIpcHandlers();
       // re-create the window and the config store
-      const { mainWindow, configStore } = createWindow();
-      registerIpcHandlers({ mainWindow, configStore });
+      registerIPCHandlers(configStore);
+      const mainWindow = createWindow(configStore);
+      registerIPCEvents(mainWindow, configStore);
     }
   });
 });
@@ -271,5 +250,6 @@ app.whenReady().then(() => {
 // for applications and their menu bar to stay active until the user quits
 // explicitly with Cmd + Q.
 app.on('window-all-closed', () => {
+  unregisterIpcHandlers();
   if (process.platform !== 'darwin') app.quit();
 });

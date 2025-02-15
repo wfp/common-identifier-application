@@ -7,8 +7,8 @@
     "output": "release/${version}"
   },
   "files": [
-    "dist-electron",
-    "dist"
+    "dist",
+    "dist-electron"
   ],
   "win": {
     "target": [
@@ -19,7 +19,7 @@
         ]
       }
     ],
-    "artifactName": "${productName}-setup.${ext}",
+    "artifactName": "${productName}-windows-${version}-setup.${ext}",
     "icon": "public/logo.ico",
     "signtoolOptions": {
       "publisherName": "WFP"
