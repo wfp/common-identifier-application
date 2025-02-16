@@ -17,11 +17,14 @@
 import { contextBridge, createIpcRenderer } from 'electron-typescript-ipc';
 import { EVENT } from '../common/events';
 import type { Api } from '../common/api';
+import { webUtils } from 'electron';
 
 const ipcRenderer = createIpcRenderer<Api>();
 
 const api: Api = {
   invoke: {
+    getFilePath:              (file: File) => webUtils.getPathForFile(file),
+    getPosixFilePath:         (file: File) => webUtils.getPathForFile(file),
     requestConfigUpdate:      () => ipcRenderer.invoke(EVENT.REQUEST_CONFIG_UPDATE),
     loadNewConfig:            () => ipcRenderer.invoke(EVENT.LOAD_NEW_CONFIG),
     removeUserConfig:         () => ipcRenderer.invoke(EVENT.REMOVE_USER_CONFIG),

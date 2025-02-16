@@ -25,7 +25,7 @@ function ValidationSuccess({ config, document, inputFilePath, isMappingDocument 
       (store) => store.preProcessFileOpenDialog,
     );
     const startProcessingFile = useAppStore((store) => store.startProcessingFile);
-    const processTheFile = (e: React.UIEvent) => startProcessingFile(inputFilePath, '/tmp');
+    const processTheFile = (_: React.UIEvent) => startProcessingFile(inputFilePath, '/tmp');
 
     // The schema for displaying the table
     let columnsConfig = config.data.source.columns;

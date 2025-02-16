@@ -95,6 +95,8 @@ function createMainWindow(configStore: ConfigStore) {
 function createWindow(configStore: ConfigStore) {
   const mainWindow = createMainWindow(configStore);
 
+  registerIPCHandlers(mainWindow, configStore);
+
   if (process.env.VITE_DEV_SERVER_URL) {
     mainWindow.loadURL(process.env.VITE_DEV_SERVER_URL);
     mainWindow.webContents.openDevTools();
@@ -119,7 +121,7 @@ function createWindow(configStore: ConfigStore) {
   return mainWindow;
 }
 
-function registerIPCEvents(mainWindow: BrowserWindow, configStore: ConfigStore) {
+function registerIPCHandlers(mainWindow: BrowserWindow, configStore: ConfigStore) {
   log("registerIpcHandlers");
   function withErrorReporting(delegate: CallableFunction) {
     // catch errors that bubble up es exceptions and convert them to rejections
@@ -127,7 +129,7 @@ function registerIPCEvents(mainWindow: BrowserWindow, configStore: ConfigStore) 
       try { resolve(delegate()); } catch (e) { reject(e); }
     }).catch((e) => {
       // catch errors that bubble up as rejections
-      log('INTERNAL ERROR: ', e);
+      log(`INTERNAL ERROR: ${e}`);
       mainWindow.webContents.send(EVENT.ERROR, e.toString());
     });
   }
@@ -149,24 +151,6 @@ function registerIPCEvents(mainWindow: BrowserWindow, configStore: ConfigStore) 
     // return withErrorReporting(() => preProcessFileOpenDialog({ mainWindow, configStore }));
     return preProcessFileOpenDialog({ mainWindow, configStore });
   });
-  // open a file with the OS default app
-  ipcMain.on(EVENT.OPEN_OUTPUT_FILE, (_, filePath: any) => {
-    log(`Received event on channel: ${EVENT.OPEN_OUTPUT_FILE}`);
-    shell.openPath(filePath);
-  });
-  // quit when receiving the 'quit' signal
-  ipcMain.on(EVENT.QUIT, (_) => {
-    log(`Received event on channel: ${EVENT.QUIT}`);
-    app.quit()
-  });
-  // mark the terms and conditions accepted
-  ipcMain.on(EVENT.ACCEPT_TERMS_AND_CONDITIONS, (_) => {
-    log(`Received event on channel: ${EVENT.ACCEPT_TERMS_AND_CONDITIONS}`);
-    configStore.acceptTermsAndConditions();
-  });
-}
-
-function registerIPCHandlers(configStore: ConfigStore) {
   // config related events need to be initialised before the renderer since
   // the app makes a requestConfigUpdate call on boot.
   ipcMain.handle(EVENT.REQUEST_CONFIG_UPDATE, () => {
@@ -180,6 +164,21 @@ function registerIPCHandlers(configStore: ConfigStore) {
   ipcMain.handle(EVENT.REMOVE_USER_CONFIG, () => {
     log(`Received event on channel: ${EVENT.REMOVE_USER_CONFIG}`);
     return removeUserConfig({ configStore });
+  });
+  // mark the terms and conditions accepted
+  ipcMain.on(EVENT.ACCEPT_TERMS_AND_CONDITIONS, (_) => {
+    log(`Received event on channel: ${EVENT.ACCEPT_TERMS_AND_CONDITIONS}`);
+    configStore.acceptTermsAndConditions();
+  });
+  // open a file with the OS default app
+  ipcMain.on(EVENT.OPEN_OUTPUT_FILE, (_, filePath: any) => {
+    log(`Received event on channel: ${EVENT.OPEN_OUTPUT_FILE}`);
+    shell.openPath(filePath);
+  });
+  // quit when receiving the 'quit' signal
+  ipcMain.on(EVENT.QUIT, (_) => {
+    log(`Received event on channel: ${EVENT.QUIT}`);
+    app.quit()
   });
 }
 
@@ -227,22 +226,7 @@ app.whenReady().then(() => {
   });
   configStore.boot();
   
-  registerIPCHandlers(configStore);
   const mainWindow = createWindow(configStore);
-  registerIPCEvents(mainWindow, configStore);
-
-  app.on('activate', () => {
-    // On macOS it's common to re-create a window in the app when the
-    // dock icon is clicked and there are no other windows open.
-    if (BrowserWindow.getAllWindows().length === 0) {
-      // don't want any stuck handlers on macOS
-      unregisterIpcHandlers();
-      // re-create the window and the config store
-      registerIPCHandlers(configStore);
-      const mainWindow = createWindow(configStore);
-      registerIPCEvents(mainWindow, configStore);
-    }
-  });
 });
 
 // Quit when all windows are closed, except on macOS. There, it's common

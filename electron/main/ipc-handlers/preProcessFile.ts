@@ -35,7 +35,7 @@ export async function preProcessFile({
   configStore,
   filePath,
 }: IPCFileDroppedInput) {
-  log('Dropped File:', filePath);
+  log(`Dropped File: ${filePath}`);
 
   const config = configStore.getConfig() as Config.Options;
 

@@ -114,7 +114,7 @@ export const useAppStore = createStore<AppState>()((set) => ({
     data: { meta: { region: "UNKNOWN", version: "0.0.0", signature: "" }},
   },
   boot: ({ config, lastUpdated, isBackup, error, hasAcceptedTermsAndConditions }) => set((): IBoot => {
-    log("BOOT");
+    console.log("BOOT");
     // TODO: if the backup config is also invalid show the "invalid config screen"
     if (error) {
       console.log(`ERROR: ${error}`);
@@ -134,7 +134,7 @@ export const useAppStore = createStore<AppState>()((set) => ({
   //   config: { isInitial: false, isBackup: isBackup, data: newConfig, lastUpdated: new Date() }
   // })),
   updateConfig: (newConfig, isBackup) => set((state): BaseState => {
-    log("UPDATE_CONFIG");
+    console.log("UPDATE_CONFIG");
     log(state);
     return {
       screen: state.screen,
@@ -142,12 +142,12 @@ export const useAppStore = createStore<AppState>()((set) => ({
     }
   }),
   loadNewConfig: () => set(() => {
-    log("LOAD_NEW_CONFIG");
+    console.log("LOAD_NEW_CONFIG");
     intercomApi.loadNewConfig();
     return { screen: SCREENS.LOAD_NEW_CONFIG }
   }),
   loadNewConfigDone: ({ success, cancelled, error, config, lastUpdated }) => set((state): ILoadConfigFinished | ILoadConfigFailed => {
-    log("LOAD_NEW_CONFIG_DONE");
+    console.log("LOAD_NEW_CONFIG_DONE");
     // if the load was OK update the config and go to the main screen
     if (success) return {
       screen: SCREENS.CONFIG_UPDATED,
@@ -181,12 +181,12 @@ export const useAppStore = createStore<AppState>()((set) => ({
     };
   }),
   removeUserConfig: () => set(state => {
-    log("REMOVE_USER_CONFIG");
+    console.log("REMOVE_USER_CONFIG");
     intercomApi.removeUserConfig();
     return { config: state.config, screen: SCREENS.LOAD_NEW_CONFIG }
   }),
   userConfigRemoved: ({ success, error, config, lastUpdated}) => set((state): ILoadConfigFinished | ILoadConfigFailed => {
-    log("USER_CONFIG_REMOVED");
+    console.log("USER_CONFIG_REMOVED");
     if (!success) return {
       config: state.config, screen: SCREENS.ERROR, isRuntimeError: false,
       errorMessage: 'Error in the backup configuration file: ' + error,
@@ -202,29 +202,29 @@ export const useAppStore = createStore<AppState>()((set) => ({
     }
   }),
   startConfigChange: () => set((state): BaseState => {
-    log("START_CONFIG_CHANGE");
+    console.log("START_CONFIG_CHANGE");
     return { config: state.config, screen: SCREENS.CONFIG_CHANGE }
   }),
   backToMainScreen: () => set((state): BaseState => {
-    log("BACK_TO_MAIN_SCREEN");
+    console.log("BACK_TO_MAIN_SCREEN");
     return { config: state.config, screen: SCREENS.MAIN }
   }),
   showTermsAndConditions: () => set((state): BaseState => {
-    log("SHOW_TERMS_AND_CONDITIONS");
+    console.log("SHOW_TERMS_AND_CONDITIONS");
     return { config: state.config, screen: SCREENS.WELCOME }
   }),
   acceptTermsAndConditions: () => set((state): BaseState => {
-    log("ACCEPT_TERMS_AND_CONDITIONS");
+    console.log("ACCEPT_TERMS_AND_CONDITIONS");
     intercomApi.acceptTermsAndConditions()
     return { config: state.config, screen: SCREENS.MAIN }
   }),
   processingCancelled: () => set((state): BaseState => {
-    log("PROCESSING_CANCELLED");
+    console.log("PROCESSING_CANCELLED");
     return { config: state.config, screen: SCREENS.PROCESSING_CANCELLED }
   }),
   
   preProcessFileOpenDialog: () => set((state): BaseState => {
-    log("PRE_PROCESS_FILE_OPEN_DIALOG");
+    console.log("PRE_PROCESS_FILE_OPEN_DIALOG");
     intercomApi.preProcessFileOpenDialog();
     return {
       config: state.config,
@@ -232,7 +232,7 @@ export const useAppStore = createStore<AppState>()((set) => ({
     }
   }),
   startPreProcessingFile: (filePath) => set((state): IValidationBegin => {
-    log("START_PRE_PROCESSING_FILE");
+    console.log("START_PRE_PROCESSING_FILE");
     intercomApi.startPreProcessingFile(filePath);
     return {
       config: state.config,
@@ -241,7 +241,7 @@ export const useAppStore = createStore<AppState>()((set) => ({
     }
   }),
   preProcessingDone: ({ isValid, isMappingDocument, document, inputFilePath, errorFilePath }) => set((state): IValidationSuccess | IValidationFailed => {
-    log("PRE_PROCESSING_DONE");
+    console.log("PRE_PROCESSING_DONE");
       if (isValid) return {
         screen: SCREENS.VALIDATION_SUCCESS, config: state.config,
         inputFilePath,
@@ -255,13 +255,13 @@ export const useAppStore = createStore<AppState>()((set) => ({
   }),
 
   startProcessingFile: (inputFilePath) => set((state): IProcessingBegin => {
-    log("START_PROCESSING_FILE");
+    console.log("START_PROCESSING_FILE");
     intercomApi.startProcessingFile(inputFilePath);
     return { screen: SCREENS.PROCESSING_IN_PROGRESS, config: state.config, inputFilePath };
   }),
 
   processingDone: ({ isMappingDocument, document, outputFilePath, mappingFilePath }) => set((state): IProcessingFinished => {
-    log("PROCESSING_DONE");
+    console.log("PROCESSING_DONE");
     return {
       screen: SCREENS.PROCESSING_FINISHED, config: state.config,
       isMappingDocument, document,
@@ -270,18 +270,18 @@ export const useAppStore = createStore<AppState>()((set) => ({
   }),
 
   openOutputFile: (outputFilePath) => set((state) => {
-    log("OPEN_OUTPUT_FILE");
+    console.log("OPEN_OUTPUT_FILE");
       intercomApi.openOutputFile(outputFilePath);
       return state;
     }),
     
   reportError: (errorMessage: string) => set((state) => {
-    log("REPORT_ERROR");
+    console.log("REPORT_ERROR");
     return { config: state.config, screen: SCREENS.ERROR, errorMessage, isRuntimeError: true };
   }),
 
   quit: () => {
-    log("QUIT");
+    console.log("QUIT");
     intercomApi.quit()
   }
 }));

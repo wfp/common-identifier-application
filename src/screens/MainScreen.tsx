@@ -59,19 +59,19 @@ function MainScreen() {
     e.preventDefault();
     e.stopPropagation();
 
-    let droppedPaths = [];
+    let droppedFiles: File[] = [];
     for (const f of e.dataTransfer.files) {
-      // Using the path attribute to get absolute file path
-      // @ts-ignore File.path is only supported in electron environments
-      droppedPaths.push(f.path);
+      droppedFiles.push(f);
     }
 
     // if there are zero entries clear the dropzone
-    if (droppedPaths.length === 0) {
+    if (droppedFiles.length === 0) {
       setIsDraggedOver(false);
     } else {
       // when at least one file is dropped use the first one
-      startPreProcessingFile(droppedPaths[0]);
+      const filePath = window.electronAPI.invoke.getFilePath(droppedFiles[0]);
+      console.log(filePath);
+      startPreProcessingFile(filePath);
     }
   }
 

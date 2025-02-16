@@ -39,7 +39,7 @@ export async function preProcessFileOpenDialog({
   if (!response.canceled) {
     // handle fully qualified file name
     const filePath = response.filePaths[0];
-    log('Starting to process file from open dialog: ',filePath);
+    log(`Starting to process file from open dialog: ${filePath}`);
     return preProcessFile({ mainWindow, configStore, filePath });
   } else {
     log('no file selected');
