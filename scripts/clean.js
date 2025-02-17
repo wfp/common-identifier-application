@@ -12,7 +12,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import { copyFileSync, unlinkSync } from "node:fs";
+import { copyFileSync, existsSync, unlinkSync } from "node:fs";
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -25,9 +25,20 @@ const BUILDER_PATH = join(__dirname, '..', 'electron-builder.json');
 const BUILDER_OLD_PATH = join(__dirname, '..', 'electron-builder.old.json');
 
 function revertChangesToConfigs() {
-    copyFileSync(PACKAGE_OLD_PATH, PACKAGE_PATH);
-    unlinkSync(PACKAGE_OLD_PATH);
-    copyFileSync(BUILDER_OLD_PATH, BUILDER_PATH);
-    unlinkSync(BUILDER_OLD_PATH);
+    if (!existsSync(PACKAGE_OLD_PATH)) {
+        console.warn("WARN: package.old.json does not exists, not overwriting file. ");
+    } else {
+        console.log(`Overwriting ${PACKAGE_PATH} with ${PACKAGE_OLD_PATH}`);
+        copyFileSync(PACKAGE_OLD_PATH, PACKAGE_PATH);
+        unlinkSync(PACKAGE_OLD_PATH);
+    }
+
+    if (!existsSync(BUILDER_OLD_PATH)) {
+        console.warn("WARN: electron-builder.old.json does not exists, not overwriting file. ");
+    } else {
+        console.log(`Overwriting ${BUILDER_PATH} with ${BUILDER_OLD_PATH}`);
+        copyFileSync(BUILDER_OLD_PATH, BUILDER_PATH);
+        unlinkSync(BUILDER_OLD_PATH);
+    }
 }
 revertChangesToConfigs()
