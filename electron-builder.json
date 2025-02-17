@@ -19,7 +19,7 @@
         ]
       }
     ],
-    "artifactName": "${productName}-windows-${version}-setup.${ext}",
+    "artifactName": "${productName}-${os}-${version}-setup.${ext}",
     "icon": "public/logo.ico",
     "signtoolOptions": {
       "publisherName": "WFP"
