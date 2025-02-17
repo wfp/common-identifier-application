@@ -41,13 +41,15 @@ jobs:
         run: npm install
       
       - name: Activate algorithm
-        run: node tools/activate-algo.js NWS
+        run: node scripts/activate-algo.js NWS
       
       - name: Build the application
         run: npm run build
 
       - name: Update rendered components
-        run: node tools/update-rendered-components.js NWS
+        run: |
+          node scripts/update-rendered-components.js NWS
+          node scripts/prepackage.js NWS
       
       - name: Package the application
         run: npm run package
