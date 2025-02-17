@@ -17,6 +17,10 @@ jobs:
     name: 1. Run Test Suite
     runs-on: windows-latest
 
+    steps:
+      - name: TEMP
+        run: echo "This is a temporary step until the e2e tests are brought back"
+
   BuildApplication:
     name: 2. Build Application
     needs:
