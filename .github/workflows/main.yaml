@@ -27,7 +27,7 @@ jobs:
           - region: syria
             regionName: SYR
             regionCode: syr
-    uses: "./.github/workflows/test.yaml"
+    uses: "./.github/workflows/build.yml"
     with:
       # TODO: reintroduce the postfix
       # buildPostfix: ${{ github.ref_name }}
