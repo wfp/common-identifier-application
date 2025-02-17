@@ -1,12 +1,18 @@
 name: Main Workflow
-
-
 on:
-  # push:
-  #   branches: ['main', 'develop']
+  push:
+    branches:
+      - main
+      - develop
+    paths-ignore:
+      - '**.md'
+      - '**.spec.js'
+      - '.gitignore'
   pull_request:
     branches: ['main']
     types: [opened, reopened, edited]
+  release:
+    types: [created]
 
 jobs:
   AlgorithmMatrix:
@@ -19,11 +25,12 @@ jobs:
             regionName: NWS
             regionCode: nws
           - region: syria
-            regionName: GOS
-            regionCode: gos
+            regionName: SYR
+            regionCode: syr
     uses: "./.github/workflows/test.yaml"
     with:
-      buildPostfix: ${{ github.ref_name }}
+      # TODO: reintroduce the postfix
+      # buildPostfix: ${{ github.ref_name }}
       region: ${{ matrix.region }}
       regionName: ${{ matrix.regionName }}
       regionCode: ${{ matrix.regionCode }}

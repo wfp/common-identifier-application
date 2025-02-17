@@ -1,19 +1,29 @@
-name: Build Electron App
+name: Build CommonID App
 on:
-  push:
-    branches:
-      - main
-      - develop
-    paths-ignore:
-      - '**.md'
-      - '**.spec.js'
-      - '.gitignore'
-  release:
-    types: [created]
+  workflow_call:
+    inputs:
+      region:
+        required: true
+        type: string
+      regionCode:
+        required: true
+        type: string
+      regionName:
+        required: true
+        type: string
 
 jobs:
-  build:
+  RunTestSuite:
+    name: 1. Run Test Suite
     runs-on: windows-latest
+
+  BuildApplication:
+    name: 2. Build Application
+    needs:
+     - RunTestSuite
+    if: needs.RunTestSuite.result == 'success'
+    runs-on: windows-latest
+  
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -24,32 +34,34 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '22'
-        
+      
+      # TODO: once project is publicly available, this step will not be needed
       - run: git config --global url."https://${{ secrets.REPO_PAT }}@github.com/".insteadOf ssh://git@github.com/  
 
+      # TODO: same as above, once publicly availabe can remove REPO_PAT etc.
       - name: Checkout Algorithm Repo
         run: |
           git clone --filter=blob:none --no-checkout --depth 1 https://${{ secrets.REPO_PAT }}@github.com/wfp/common-identifier-algorithms algo_repo
           cd algo_repo
           git sparse-checkout init --no-cone
-          git sparse-checkout set syria_north_west
+          git sparse-checkout set ${{ inputs.region }}
           git checkout
-          cp -r syria_north_west ../electron/main/algo
+          cp -r ${{ inputs.region }} ../electron/main/algo
           cd ../ && rm algo_repo -r -fo
     
       - name: Install dependencies
         run: npm install
       
       - name: Activate algorithm
-        run: node scripts/activate-algo.js NWS
+        run: node scripts/activate-algo.js
       
       - name: Build the application
         run: npm run build
 
       - name: Update rendered components
         run: |
-          node scripts/update-rendered-components.js NWS
-          node scripts/prepackage.js NWS
+          node scripts/update-rendered-components.js ${{ inputs.regionName }}
+          node scripts/prepackage.js ${{ inputs.regionCode }}
       
       - name: Package the application
         run: npm run package

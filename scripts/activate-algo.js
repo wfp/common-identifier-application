@@ -13,31 +13,15 @@
 
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-import {
-  writeFileSync,
-  copyFileSync,
-} from 'node:fs';
+import { writeFileSync, copyFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { parse as htmlParse } from 'node-html-parser';
-import { program } from 'commander';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-
-program.argument(
-  '<region>',
-  'The region suffix to append to rendered title components.',
-);
-
-program.parse();
-
-const ALGO_REGION = program.args[0];
 
 const MAIN_DIR = join(__dirname, '..', 'electron', 'main');
 const ACTIVE_ALGORITHM_FILE = join(MAIN_DIR, 'active_algorithm.ts');
 const BACKUP_CONFIG_TARGET_PATH = join(__dirname, '..', 'public', 'config.backup.toml'); // public since vite looks here for static assets
-
-console.log('Activating algorithm:', ALGO_REGION);
 
 function writeActiveAlgorithm() {
   console.log('Generating', ACTIVE_ALGORITHM_FILE);
@@ -61,10 +45,6 @@ function copyBackupConfig() {
 
   copyFileSync(backupConfigSource, BACKUP_CONFIG_TARGET_PATH);
 }
-
-
-// TODO: this script should also update the electron-builder configuration to add the correct application
-// and shortcut names to the application when built.
 
 writeActiveAlgorithm();
 copyBackupConfig();
