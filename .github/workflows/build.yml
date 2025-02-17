@@ -77,5 +77,5 @@ jobs:
       - name: Upload build artefacts
         uses: actions/upload-artifact@v4
         with:
-          name: electron-app
+          name: common-identifier-application-${{ inputs.regionCode }}
           path: release/*/*-setup.exe
