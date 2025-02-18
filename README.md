@@ -67,6 +67,7 @@ cd ../ && rm -r algo_repo # or "rm algo_repo -r -fo" on Windows
 # main application
 cd ../../
 npm install
+# npm install -g tsx (if not already installed)
 tsx scripts/activate-algo.ts <algo_name>
 npm run build
 npm run start
