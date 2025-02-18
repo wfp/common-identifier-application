@@ -35,6 +35,7 @@ function writeActiveAlgorithm() {
 }
 
 function copyBackupConfig() {
+  // TODO: check that the meta.signature in the downloaded config file is correct.
   // the algorithm directory
   const algoDir = join(MAIN_DIR, "algo");
 

@@ -12,7 +12,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import { copyFileSync, readFileSync, writeFileSync } from "node:fs";
+import { copyFileSync, existsSync, readFileSync, writeFileSync } from "node:fs";
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { program } from 'commander';
@@ -33,11 +33,16 @@ const BUILDER_OLD_PATH = join(__dirname, '..', 'electron-builder.old.json');
 //   - append region shortcode to productName
 //   - append region shortcode to nsis.shortcutName
 function updateBuildConfiguration() {
-    copyFileSync(BUILDER_PATH, BUILDER_OLD_PATH);
+    // only backup the file if this script hasn't been run before
+    if (!existsSync(BUILDER_OLD_PATH)) {
+        copyFileSync(BUILDER_PATH, BUILDER_OLD_PATH);
+    }
     const ebRaw = readFileSync(BUILDER_PATH);
     const ebJSON = JSON.parse(ebRaw);
     
     ebJSON.productName = ebJSON.productName + '-' + ALGO_REGION.toLowerCase();
+    ebJSON.appId = ebJSON.appId + ALGO_REGION.toLowerCase();
+    ebJSON.directories.output = "release/" + ALGO_REGION + "-${version}";
     ebJSON.nsis.shortcutName = ebJSON.nsis.shortcutName + ' - ' + ALGO_REGION.toUpperCase();
 
     writeFileSync(BUILDER_PATH, JSON.stringify(ebJSON, null, 2));
@@ -47,7 +52,10 @@ function updateBuildConfiguration() {
 // update the package.json
 //   - append region shortcode to name (to alter the installation directory since it can't be overriden)
 function updatePackageJson() {
-    copyFileSync(PACKAGE_PATH, PACKAGE_OLD_PATH);
+    // only backup the file if this script hasn't been run before
+    if (!existsSync(PACKAGE_OLD_PATH)) {
+        copyFileSync(PACKAGE_PATH, PACKAGE_OLD_PATH);
+    }
     // update the package.name field to append the region shortcode
     // this name is used as the installation directory name, and it cannot be overridden in
     // the electron-builder configuration without custom NSIS macros.
@@ -61,4 +69,4 @@ function updatePackageJson() {
 }
 
 updateBuildConfiguration();
-updatePackageJson();
+updatePackageJson()
