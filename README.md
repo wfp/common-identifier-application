@@ -67,10 +67,9 @@ cd ../ && rm -r algo_repo # or "rm algo_repo -r -fo" on Windows
 # main application
 cd ../../
 npm install
-node tools/activate-algo.js <algo_name> <region_name>
+tsx scripts/activate-algo.ts <algo_name>
 npm run build
-npm run start # to use the pre-built rendered components
-# OR, npm run start:web to link with live server
+npm run start
 ```
 
 Unit tests for the algorithm (shared and algorithm-specific) are written using the JEST test framework. Run the test suite:
@@ -84,7 +83,7 @@ export NODE_OPTIONS="$NODE_OPTIONS --experimental-vm-modules"
 npx jest
 ```
 
-The application uses the `debug` package to do logging. To log every CommonID-related message to set the environment variable `DEBUG` to `CID:*` - to see only specific log lines refine the `CID:*` pattern. For example to run the application for development with every CommonID component logging to the console:
+The application uses the `debug` package for logging. To log every CommonID-related message to set the environment variable `DEBUG` to `CID:*` - to see only specific log lines refine the `CID:*` pattern. For example to run the application for development with every CommonID component logging to the console:
 
 ```
 DEBUG=CID:* npm start
@@ -109,7 +108,7 @@ There are three ways to "use" this application:
    - Once validated, relevant fields in the dataset are processed according to the specific algorithm implementation.
 2. Programmatically, with file-based data
    - It is possible to use purely the backend of this application (without the UI), while maintaining all of the built-in features, by calling the `preprocessFile` and `processFile` functions with file-based data respectively.
-   - Currently only CSV and XLSX data formats are supported; an example of this approach is provided in the [Standalone Repo](https://dev.azure.com/worldfoodprogramme/SYR-BB-PREPROCESSING-APP/_git/SYR-BB-PREPROCESSING-STANDALONE).
+   - Currently only CSV and XLSX data formats are supported; an example of this approach is provided in the [Standalone Repo](https://github.com/wfp/common-identifier-algorithm-shared).
 3. Programmatically, with array-based data
    - Implement solely the algorithm class and provide it with data directly.
    - If using this approach, it is recommended to also implement the data validation checks and error handling.
