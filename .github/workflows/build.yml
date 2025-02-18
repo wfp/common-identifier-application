@@ -18,8 +18,48 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - name: TEMP
-        run: echo "This is a temporary step until the e2e tests are brought back"
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      
+      - name: Setup node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      
+      # TODO: once project is publicly available, this step will not be needed
+      - run: git config --global url."https://${{ secrets.REPO_PAT }}@github.com/".insteadOf ssh://git@github.com/  
+
+      # TODO: same as above, once publicly availabe can remove REPO_PAT etc.
+      - name: Checkout Algorithm Repo
+        run: |
+          git clone --filter=blob:none --no-checkout --depth 1 https://${{ secrets.REPO_PAT }}@github.com/wfp/common-identifier-algorithms algo_repo
+          cd algo_repo
+          git sparse-checkout init --no-cone
+          git sparse-checkout set ${{ inputs.region }}
+          git checkout
+          cp -r ${{ inputs.region }} ../electron/main/algo
+          cd ../ && rm algo_repo -r -fo
+    
+      - name: Install dependencies
+        run: |
+          npm install
+          npm install -g tsx
+      
+      - name: Activate algorithm
+        run: tsx scripts/activate-algo.ts ${{ inputs.regionCode }}
+      
+      - name: Run tests
+        run: npm run test
+        env:
+          NODE_OPTIONS: '--experimental-vm-modules'
+      
+      - name: Publish Test Results
+        uses: EnricoMi/publish-unit-test-result-action/windows@v2
+        if: always()
+        with:
+          files: ./coverage/test-report/test-report.xml
 
   BuildApplication:
     name: 2. Build Application
