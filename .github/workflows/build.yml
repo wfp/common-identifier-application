@@ -54,18 +54,20 @@ jobs:
           cd ../ && rm algo_repo -r -fo
     
       - name: Install dependencies
-        run: npm install
+        run: |
+          npm install
+          npm install -g tsx
       
       - name: Activate algorithm
-        run: node scripts/activate-algo.js
+        run: tsx scripts/activate-algo.ts ${{ inputs.regionCode }}
       
       - name: Build the application
         run: npm run build
 
       - name: Update rendered components
         run: |
-          node scripts/update-rendered-components.js ${{ inputs.regionName }}
-          node scripts/prepackage.js ${{ inputs.regionCode }}
+          tsx scripts/update-rendered-components.ts ${{ inputs.regionName }}
+          tsx scripts/prepackage.ts ${{ inputs.regionCode }}
       
       - name: Package the application
         run: npm run package

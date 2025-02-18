@@ -33,6 +33,7 @@
     }
   },
   "nsis": {
-    "shortcutName": "Common Identifier Application"
+    "shortcutName": "Common Identifier Application",
+    "uninstallDisplayName": "Common Identifier Application - ${version}"
   }
 }

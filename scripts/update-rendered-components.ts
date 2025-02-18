@@ -54,6 +54,10 @@ function updateCSS() {
   // vite adds a random suffix onto the index.css filename, need to search for the bundled css file
   const assetPath = join(RENDERER_DIR, 'assets');
   const cssFile = readdirSync(assetPath).find(a => a.endsWith('.css'));
+  if (!cssFile) {
+    console.error(`ERROR: Unable to find css file in directory: ${assetPath}`);
+    return;
+  }
   const cssPath = join(assetPath, cssFile);
 
   const overrideCss = readFileSync(overrideCSSPath, 'utf-8');
@@ -72,6 +76,10 @@ function updateHTML() {
   const indexHtml = readFileSync(renderHTMLPath, 'utf-8');
   const root = htmlParse(indexHtml);
   const title = root.querySelector('title');
+  if (!title) {
+    console.error(`ERROR: Unable to find title element in html file: ${renderHTMLPath}`);
+    return;
+  }
   title.set_content(`Common Identifier Application - ${ALGO_REGION}`);
   writeFileSync(renderHTMLPath, root.toString());
 }
