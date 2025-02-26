@@ -24,7 +24,7 @@
  */
 
 import Debug from 'debug';
-import type { Config, CidDocument } from './types';
+import type { Config, CidDocument } from '../common/types';
 const log = Debug('CID:renderer:util');
 
 // Returns a list of columns containing both algorithm-required and "always-include" columns
