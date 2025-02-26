@@ -10,15 +10,15 @@ rm algo_repo -r -fo
 
 npm install
 
-node scripts/activate-algo.ts SYR
+tsx scripts/activate-algo.ts SYR
 npm run build
 
-node scripts/update-rendered-components.ts SYR
-node scripts/prepackage.ts SYR
+tsx scripts/update-rendered-components.ts SYR
+tsx scripts/prepackage.ts SYR
 
 npm run package
 
-node scripts/clean.ts
+tsx scripts/clean.ts
 echo DONE
 
 
@@ -34,12 +34,12 @@ echo DONE
 
 # npm install
 
-# node scripts/activate-algo.ts NWS
+# tsx scripts/activate-algo.ts NWS
 # npm run build
 
-# node scripts/update-rendered-components.ts NWS
-# node scripts/prepackage.ts NWS
+# tsx scripts/update-rendered-components.ts NWS
+# tsx scripts/prepackage.ts NWS
 
 # npm run package
 
-# node scripts/clean.ts
+# tsx scripts/clean.ts
