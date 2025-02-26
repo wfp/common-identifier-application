@@ -16,33 +16,33 @@
 
 import type { ConfigStore } from 'common-identifier-algorithm-shared';
 import Debug from 'debug';
+import type { IRemoveUserConfig } from '../../../common/types';
 const log = Debug('CID:main:ipc::removeUserConfig');
 
 // Removes the user configuration and falls back to the built-in default
-export function removeUserConfig({
-  configStore,
-}: {
-  configStore: ConfigStore;
-}) {
+export function removeUserConfig(configStore: ConfigStore): IRemoveUserConfig {
   log('start');
 
   const loadError = configStore.removeUserConfig();
 
   log('result:', loadError);
 
-  //
+  const config = configStore.getConfig();
+  if (config === undefined) {
+    throw new Error(`Unable to read configuration file: ${configStore.getConfigFilePath()} || ${configStore.getBackupConfigFilePath()}`);
+  }
   if (!loadError) {
     return {
       success: true,
-      config: configStore.getConfig(),
+      config,
       lastUpdated: configStore.lastUpdated,
     };
   }
 
   return {
     success: false,
-    // canceled: false,
+    config,
+    lastUpdated: configStore.lastUpdated,
     error: loadError,
-    // config: configStore.getConfig(),
   };
 }

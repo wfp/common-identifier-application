@@ -31,12 +31,6 @@ import { EVENT } from '../../../common/events';
 
 const MAX_ROWS_TO_PREVIEW = 500;
 
-interface IPCProcessFileInput {
-  mainWindow: BrowserWindow;
-  configStore: ConfigStore;
-  filePath: string;
-}
-
 // The actual processing function called after the output path is selected
 async function doProcessFile(
   mainWindow: BrowserWindow,
@@ -94,11 +88,7 @@ async function doProcessFile(
 }
 
 // Process a file
-export async function processFile({
-  mainWindow,
-  configStore,
-  filePath,
-}: IPCProcessFileInput) {
+export async function processFile(mainWindow: BrowserWindow, configStore: ConfigStore, filePath: string) {
   log('Processing File:', filePath);
 
   const response = await dialog.showSaveDialog({

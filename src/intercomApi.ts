@@ -130,7 +130,7 @@ export function loadNewConfig() {
       console.log('Calling Electron to open a new config');
 
       const v = await window.electronAPI.invoke.loadNewConfig();
-    useAppStore.getState().loadNewConfigDone(v);
+      useAppStore.getState().loadNewConfigDone(v);
     },
     () => {
       console.log('NO FALLBACK FOR ELECTRON-LESS OPEN CONFIG');
@@ -139,12 +139,10 @@ export function loadNewConfig() {
 }
 
 export function removeUserConfig() {
-  withElectronAPI('removeUserConfig',() => {
+  withElectronAPI('removeUserConfig', async () => {
       console.log('Calling Electron to fall back to the backup configuration');
-
-      return window.electronAPI.invoke.removeUserConfig().then((v) => {
-        useAppStore.getState().userConfigRemoved(v);
-      });
+      const v = await window.electronAPI.invoke.removeUserConfig();
+      useAppStore.getState().userConfigRemoved(v);
     },
     () => {
       console.log('NO FALLBACK FOR ELECTRON-LESS OPEN CONFIG');

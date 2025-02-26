@@ -22,16 +22,8 @@ import Debug from 'debug';
 import { EVENT } from '../../../common/events';
 const log = Debug('CID:main:ipc::preProcessFileOpenDialog');
 
-interface IPCPreProcessFileOpenDialogInput {
-  mainWindow: BrowserWindow;
-  configStore: ConfigStore;
-}
-
 // Shows a file open dialog and starts preprocessing the selected file
-export async function preProcessFileOpenDialog({
-  mainWindow,
-  configStore,
-}: IPCPreProcessFileOpenDialogInput) {
+export async function preProcessFileOpenDialog(mainWindow: BrowserWindow, configStore: ConfigStore,) {
   const response = await dialog.showOpenDialog({
     properties: ['openFile'],
     filters: [{ name: 'CSV or XLSX files', extensions: ['csv', 'xlsx'] }],
@@ -40,7 +32,7 @@ export async function preProcessFileOpenDialog({
     // handle fully qualified file name
     const filePath = response.filePaths[0];
     log(`Starting to process file from open dialog: ${filePath}`);
-    return preProcessFile({ mainWindow, configStore, filePath });
+    return preProcessFile(mainWindow, configStore, filePath);
   } else {
     log('no file selected');
     // send the cancelec message

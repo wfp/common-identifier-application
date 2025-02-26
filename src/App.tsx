@@ -13,6 +13,8 @@
 
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
+import { SCREENS } from '../common/screens';
+
 import Boot from './screens/Boot';
 import MainScreen from './screens/MainScreen';
 import ValidationSuccess from './screens/ValidationSuccess';
@@ -27,10 +29,9 @@ import ConfigUpdated from './screens/ConfigUpdated';
 import ProcessingCancelled from './screens/ProcessingCancelled';
 import InvalidConfig from './screens/InvalidConfig';
 import WelcomeScreen from './screens/WelcomeScreen';
-
-import { useAppStore, SCREENS } from './store';
-
 import Navbar from './components/Navbar';
+
+import { useAppStore } from './store';
 
 function App() {
   let screen;

@@ -16,31 +16,26 @@
 
 import { create as createStore } from 'zustand';
 import * as intercomApi from './intercomApi';
-import type { CidDocument, Config } from './types';
-import type { BaseState, IBoot, ILoadConfigFailed, ILoadConfigFinished, IProcessingBegin, IProcessingFinished, IValidationBegin, IValidationFailed, IValidationSuccess } from './types';
+import { SCREENS } from '../common/screens';
+import type {
+  CidDocument,
+  Config,
+  BaseState,
+  IBoot,
+  ILoadConfigFailed,
+  ILoadConfigFinished,
+  IProcessingBegin,
+  IProcessingFinished,
+  IValidationBegin,
+  IValidationFailed,
+  IValidationSuccess,
+  ILoadNewConfig,
+  IRemoveUserConfig,
+  IRequestConfigUpdate
+} from '../common/types';
 
 import Debug from 'debug';
 const log = Debug('CID:Renderer::store');
-
-export enum SCREENS {
-  BOOT = 'Boot',
-  WELCOME = 'Welcome',
-  MAIN = 'Main',
-  FILE_LOADING = 'FileLoading',
-
-  VALIDATION_SUCCESS = 'ValidationSuccess',
-  VALIDATION_FAILED = 'ValidationFailed',
-
-  PROCESSING_IN_PROGRESS = 'ProcessingInProgress',
-  PROCESSING_FINISHED = 'ProcessingFinished',
-  PROCESSING_CANCELLED = 'ProcessingCancelled',
-
-  LOAD_NEW_CONFIG = 'LoadNewConfig',
-  CONFIG_UPDATED = 'ConfigUpdated',
-  ERROR = 'Error',
-  INVALID_CONFIG = 'InvalidConfig',
-  CONFIG_CHANGE = 'ConfigChange',
-}
 
 export interface BaseAppState {
   screen: SCREENS;
@@ -62,22 +57,12 @@ export interface BaseAppState {
 }
 
 interface AppState extends BaseAppState {
-  boot: ({ config, lastUpdated, isBackup, error, hasAcceptedTermsAndConditions } : {
-    config: Config.Options,
-    lastUpdated: Date,
-    isBackup: boolean,
-    error: string,
-    hasAcceptedTermsAndConditions: boolean
-  }) => void;
+  boot: ({ config, lastUpdated, isBackup, error, hasAcceptedTermsAndConditions } : IRequestConfigUpdate) => void;
   updateConfig: (newConfig: Config.Options, isBackup: boolean) => void;
   loadNewConfig: () => void;
-  loadNewConfigDone: ({ success, cancelled, error, config, lastUpdated }: {
-    success: boolean, cancelled: boolean, error: string, config: Config.Options, lastUpdated: Date
-  }) => void;
+  loadNewConfigDone: ({ success, cancelled, error, config, lastUpdated }: ILoadNewConfig) => void;
   removeUserConfig: () => void;
-  userConfigRemoved: ({ success, error, config, lastUpdated} : {
-    success: boolean, error: string, config: Config.Options, lastUpdated: Date
-  }) => void;
+  userConfigRemoved: ({ success, error, config, lastUpdated} : IRemoveUserConfig) => void;
   startConfigChange: () => void;
   backToMainScreen: () => void;
   showTermsAndConditions: () => void;

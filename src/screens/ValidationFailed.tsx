@@ -19,7 +19,7 @@ import BottomButtons from '../components/BottomButtons';
 import FileInfo from '../components/FileInfo';
 import PreviewTable from '../components/PreviewTable';
 import { useAppStore } from '../store';
-import type { IValidationFailed } from '../types';
+import type { IValidationFailed } from '../../common/types';
 
 function OpenErrorListButton({ errorFilePath }: { errorFilePath: string}) {
   const openOutputPath = useAppStore((store) => store.openOutputFile);

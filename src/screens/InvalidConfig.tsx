@@ -16,7 +16,7 @@
 
 import { useAppStore } from '../store';
 import ErrorWrapper from '../components/ErrorWrapper';
-import type { ILoadConfigFailed } from '../types';
+import type { ILoadConfigFailed } from '../../common/types';
 
 function InvalidConfig({ config, errorMessage }: Omit<ILoadConfigFailed, "screen"|"isRuntimeError">) {
   const loadNewConfig = useAppStore((store) => store.loadNewConfig);

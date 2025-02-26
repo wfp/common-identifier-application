@@ -18,13 +18,10 @@ import { dialog } from 'electron';
 import type { ConfigStore } from 'common-identifier-algorithm-shared';
 
 import Debug from 'debug';
+import type { ILoadNewConfig } from '../../../common/types';
 const log = Debug('CID:main:ipc::loadNewConfig');
 
-export async function loadNewConfig({
-  configStore,
-}: {
-  configStore: ConfigStore;
-}) {
+export async function loadNewConfig(configStore: ConfigStore): Promise<ILoadNewConfig> {
   log('App requested loading a new config');
 
   const response = await dialog.showOpenDialog({
@@ -35,6 +32,14 @@ export async function loadNewConfig({
       { name: 'JSON files', extensions: ['json'] },
     ],
   });
+  const config = configStore.getConfig();
+  if (config === undefined) {
+    throw new Error(`Unable to read configuration file:
+      ${configStore.getConfigFilePath()} || 
+      ${configStore.getBackupConfigFilePath()}`
+    );
+  }
+
   if (!response.canceled) {
     // handle fully qualified file name
     const filePath = response.filePaths[0];
@@ -43,26 +48,18 @@ export async function loadNewConfig({
     // attempt to load into the store
     const loadError = configStore.updateUserConfig(filePath);
 
-    if (!loadError) {
+    if (loadError) {
+      log('CONFIG LOAD ERROR: ', loadError);
       return {
-        success: true,
-        config: configStore.getConfig(),
-        lastUpdated: configStore.lastUpdated,
+        success: false, cancelled: false,
+        config, lastUpdated: configStore.lastUpdated,
+        error: loadError,
       };
     }
-
-    log('CONFIG LOAD ERROR: ', loadError);
-    return {
-      success: false,
-      cancelled: false,
-      error: loadError,
-      config: configStore.getConfig(),
-    };
-  } else {
-    return {
-      success: false,
-      cancelled: true,
-      config: configStore.getConfig(),
-    };
   }
+
+  return {
+    success: true, cancelled: response.canceled,
+    config, lastUpdated: configStore.lastUpdated
+  };
 }

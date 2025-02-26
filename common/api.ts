@@ -15,6 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import type { GetApiType } from "electron-typescript-ipc";
+import type { ILoadNewConfig, IRemoveUserConfig, IRequestConfigUpdate } from "./types";
 
 // TODO: actual return types for these functions
 export type Api = GetApiType<
@@ -22,9 +23,9 @@ export type Api = GetApiType<
     getFilePath: (file: File) => string;
     getPosixFilePath: (file: File) => string;
     acceptTermsAndConditions: () => void;
-    requestConfigUpdate: () => Promise<any>;
-    loadNewConfig: () => Promise<any>;
-    removeUserConfig: () => Promise<any>;
+    requestConfigUpdate: () => Promise<IRequestConfigUpdate>;
+    loadNewConfig: () => Promise<ILoadNewConfig>;
+    removeUserConfig: () => Promise<IRemoveUserConfig>;
     fileDropped: (filePath: string) => Promise<void>;
     processFile: (filePath: string) => Promise<void>,
     preProcessFileOpenDialog: () => Promise<void>,

@@ -16,7 +16,7 @@
 
 import { useAppStore } from '../store';
 import ErrorWrapper from '../components/ErrorWrapper';
-import type { ILoadConfigFailed } from '../types';
+import type { ILoadConfigFailed } from '../../common/types';
 
 function Error({ config, isRuntimeError, errorMessage }: Omit<ILoadConfigFailed, "screen">) {
   const backToMainScreen = useAppStore((store) => store.backToMainScreen);

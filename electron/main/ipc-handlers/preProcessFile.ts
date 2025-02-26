@@ -24,17 +24,7 @@ const log = Debug('CID:main:ipc::preProcessFile');
 
 const MAX_ROWS_TO_PREVIEW = 500;
 
-interface IPCFileDroppedInput {
-  mainWindow: BrowserWindow;
-  configStore: ConfigStore;
-  filePath: string;
-}
-
-export async function preProcessFile({
-  mainWindow,
-  configStore,
-  filePath,
-}: IPCFileDroppedInput) {
+export async function preProcessFile(mainWindow: BrowserWindow, configStore: ConfigStore, filePath: string) {
   log(`Dropped File: ${filePath}`);
 
   const config = configStore.getConfig() as Config.Options;

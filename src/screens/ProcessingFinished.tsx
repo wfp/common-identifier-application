@@ -18,7 +18,7 @@ import BottomButtons from '../components/BottomButtons';
 import FileInfo from '../components/FileInfo';
 import PreviewTable from '../components/PreviewTable';
 import { useAppStore } from '../store';
-import type { IProcessingFinished } from '../types';
+import type { IProcessingFinished } from '../../common/types';
 
 function ProcessingFinished({
   config, isMappingDocument, document, outputFilePath, mappingFilePath,

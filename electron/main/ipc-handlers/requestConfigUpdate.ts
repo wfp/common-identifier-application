@@ -15,19 +15,21 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import type { ConfigStore } from 'common-identifier-algorithm-shared';
+import type { IRequestConfigUpdate } from '../../../common/types';
 
 import Debug from 'debug';
 const log = Debug('CID:main:ipc::requestConfigUpdate');
 
-export function requestConfigUpdate({
-  configStore,
-}: {
-  configStore: ConfigStore;
-}) {
+export function requestConfigUpdate(configStore: ConfigStore): IRequestConfigUpdate {
   log('App requesting config udpate');
 
   const config = configStore.getConfig();
-  // return the data
+  if (config === undefined) {
+    throw new Error(`Unable to read configuration file:
+      ${configStore.getConfigFilePath()} || 
+      ${configStore.getBackupConfigFilePath()}`
+    );
+  }
   return {
     config,
     isBackup: configStore.isUsingBackupConfig,

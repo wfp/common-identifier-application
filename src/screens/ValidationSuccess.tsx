@@ -18,7 +18,7 @@ import FileInfo from '../components/FileInfo';
 import PreviewTable from '../components/PreviewTable';
 import { useAppStore } from '../store';
 import { keepOutputColumns } from '../util';
-import type { IValidationSuccess } from '../types';
+import type { IValidationSuccess } from '../../common/types';
 
 function ValidationSuccess({ config, document, inputFilePath, isMappingDocument }: Omit<IValidationSuccess, "screen">) {
     const preProcessFileOpenDialog = useAppStore(
