@@ -27,14 +27,11 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '22'
-      
-      # TODO: once project is publicly available, this step will not be needed
-      - run: git config --global url."https://${{ secrets.REPO_PAT }}@github.com/".insteadOf ssh://git@github.com/  
 
       # TODO: same as above, once publicly availabe can remove REPO_PAT etc.
       - name: Checkout Algorithm Repo
         run: |
-          git clone --filter=blob:none --no-checkout --depth 1 https://${{ secrets.REPO_PAT }}@github.com/wfp/common-identifier-algorithms algo_repo
+          git clone --filter=blob:none --no-checkout --depth 1 https://github.com/wfp/common-identifier-algorithms algo_repo
           cd algo_repo
           git sparse-checkout init --no-cone
           git sparse-checkout set algorithms/${{ inputs.region }}
@@ -79,14 +76,11 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '22'
-      
-      # TODO: once project is publicly available, this step will not be needed
-      - run: git config --global url."https://${{ secrets.REPO_PAT }}@github.com/".insteadOf ssh://git@github.com/  
 
       # TODO: same as above, once publicly availabe can remove REPO_PAT etc.
       - name: Checkout Algorithm Repo
         run: |
-          git clone --filter=blob:none --no-checkout --depth 1 https://${{ secrets.REPO_PAT }}@github.com/wfp/common-identifier-algorithms algo_repo
+          git clone --filter=blob:none --no-checkout --depth 1 https://github.com/wfp/common-identifier-algorithms algo_repo
           cd algo_repo
           git sparse-checkout init --no-cone
           git sparse-checkout set algorithms/${{ inputs.region }}
