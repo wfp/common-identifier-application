@@ -59,9 +59,9 @@ git clone https://github.com/wfp/common-identifier-application.git
 git clone --filter=blob:none --no-checkout --depth 1 https://github.com/wfp/common-identifier-algorithms algo_repo
 cd algo_repo
 git sparse-checkout init --no-cone
-git sparse-checkout set <algo_name> # this is the name of the subdirectory containing the algorithm code
+git sparse-checkout set algorithms/<algo_name> # this is the name of the subdirectory containing the algorithm code
 git checkout
-cp -r <algo_name> ../electron/main/algo
+cp -r algorithms/<algo_name> ../electron/main/algo
 cd ../ && rm -r algo_repo # or "rm algo_repo -r -fo" on Windows
 
 # main application

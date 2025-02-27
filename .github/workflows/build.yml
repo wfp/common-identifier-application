@@ -37,9 +37,9 @@ jobs:
           git clone --filter=blob:none --no-checkout --depth 1 https://${{ secrets.REPO_PAT }}@github.com/wfp/common-identifier-algorithms algo_repo
           cd algo_repo
           git sparse-checkout init --no-cone
-          git sparse-checkout set ${{ inputs.region }}
+          git sparse-checkout set algorithms/${{ inputs.region }}
           git checkout
-          cp -r ${{ inputs.region }} ../electron/main/algo
+          cp -r algorithms/${{ inputs.region }} ../electron/main/algo
           cd ../ && rm algo_repo -r -fo
     
       - name: Install dependencies
@@ -89,9 +89,9 @@ jobs:
           git clone --filter=blob:none --no-checkout --depth 1 https://${{ secrets.REPO_PAT }}@github.com/wfp/common-identifier-algorithms algo_repo
           cd algo_repo
           git sparse-checkout init --no-cone
-          git sparse-checkout set ${{ inputs.region }}
+          git sparse-checkout set algorithms/${{ inputs.region }}
           git checkout
-          cp -r ${{ inputs.region }} ../electron/main/algo
+          cp -r algorithms/${{ inputs.region }} ../electron/main/algo
           cd ../ && rm algo_repo -r -fo
     
       - name: Install dependencies

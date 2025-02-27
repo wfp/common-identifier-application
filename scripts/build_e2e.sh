@@ -2,9 +2,9 @@ npm run clean:all
 git clone --filter=blob:none --no-checkout --depth 1 https://github.com/wfp/common-identifier-algorithms algo_repo
 cd algo_repo
 git sparse-checkout init --no-cone
-git sparse-checkout set syria
+git sparse-checkout set algorithms/syria
 git checkout
-cp -r syria ../electron/main/algo
+cp -r algorithms/syria ../electron/main/algo
 cd ../
 rm algo_repo -r -fo
 
