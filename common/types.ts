@@ -25,6 +25,21 @@ export type IRemoveUserConfig = {
   error?: string;
 }
 
+export type IPreProcessingDone = {
+  isValid: boolean;
+  isMappingDocument: boolean;
+  document: CidDocument;
+  inputFilePath: string;
+  errorFilePath: string;
+}
+
+export type IProcessingDone = {
+  isMappingDocument: boolean;
+  document: CidDocument;
+  outputFilePath: string;
+  mappingFilePath: string;
+}
+
 export type MappedData = { [key: string]: any };
 export interface BaseConfig {
   isBackup: boolean;

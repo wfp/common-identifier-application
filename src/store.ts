@@ -31,7 +31,9 @@ import type {
   IValidationSuccess,
   ILoadNewConfig,
   IRemoveUserConfig,
-  IRequestConfigUpdate
+  IRequestConfigUpdate,
+  IPreProcessingDone,
+  IProcessingDone
 } from '../common/types';
 
 import Debug from 'debug';
@@ -56,7 +58,7 @@ export interface BaseAppState {
   isMappingDocument?: boolean;
 }
 
-interface AppState extends BaseAppState {
+export interface AppState extends BaseAppState {
   boot: ({ config, lastUpdated, isBackup, error, hasAcceptedTermsAndConditions } : IRequestConfigUpdate) => void;
   updateConfig: (newConfig: Config.Options, isBackup: boolean) => void;
   loadNewConfig: () => void;
@@ -70,20 +72,9 @@ interface AppState extends BaseAppState {
   processingCancelled: () => void;
   preProcessFileOpenDialog: () => void;
   startPreProcessingFile: (filePath: string) => void;
-  preProcessingDone: ({ isValid, isMappingDocument, document, inputFilePath, errorFilePath } : {
-    isValid: boolean,
-    isMappingDocument: boolean,
-    document: CidDocument,
-    inputFilePath: string,
-    errorFilePath: string
-  }) => void;
+  preProcessingDone: ({ isValid, isMappingDocument, document, inputFilePath, errorFilePath } : IPreProcessingDone) => void;
   startProcessingFile: (inputFilePath: string, outputLocation: string) => void;
-  processingDone: ({ isMappingDocument, document, outputFilePath, mappingFilePath }: {
-    isMappingDocument: boolean,
-    document: CidDocument,
-    outputFilePath: string,
-    mappingFilePath: string,
-  }) => void;
+  processingDone: ({ isMappingDocument, document, outputFilePath, mappingFilePath }: IProcessingDone) => void;
   openOutputFile: (outputFilePath: string) => void;
   quit: () => void;
   reportError: (errorMessage: string) => void;
@@ -114,10 +105,6 @@ export const useAppStore = createStore<AppState>()((set) => ({
       config: { data: config, lastUpdated, isBackup, isInitial: false },
     };
   }),
-  // updateConfig: (newConfig, isBackup) => set((state): BaseState => ({
-  //   screen: state.screen,
-  //   config: { isInitial: false, isBackup: isBackup, data: newConfig, lastUpdated: new Date() }
-  // })),
   updateConfig: (newConfig, isBackup) => set((state): BaseState => {
     console.log("UPDATE_CONFIG");
     log(state);
