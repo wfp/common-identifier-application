@@ -13,7 +13,8 @@
     "build": "tsc && vite build",
     "preview": "vite preview",
     "clean": "git clean -xdf dist-electron dist release",
-    "clean:all": "git clean -xdf dist-electron dist release coverage node_modules electron/main/algo",
+    "clean:app": "git clean -xdf dist-electron dist release algo_repo electron/main/algo",
+    "clean:all": "git clean -xdf dist-electron dist release algo_repo electron/main/algo coverage node_modules",
     "package": "electron-builder -p never",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --config=jest.config.js"
   },
