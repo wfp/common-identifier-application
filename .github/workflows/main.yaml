@@ -20,18 +20,15 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        region: [ syria_north_west, syria ]
+        algorithm: [ syria_north_west, syria ]
         include:
-          - region: syria_north_west
-            regionName: NWS
-            regionCode: nws
-          - region: syria
-            regionName: SYR
-            regionCode: syr
+          - algorithm: syria_north_west
+            algorithmShortCode: nws
+          - algorithm: syria
+            algorithmShortCode: syr
     uses: "./.github/workflows/build.yml"
     with:
-      region: ${{ matrix.region }}
-      regionName: ${{ matrix.regionName }}
-      regionCode: ${{ matrix.regionCode }}
+      algorithm: ${{ matrix.algorithm }}
+      algorithmShortCode: ${{ matrix.algorithmShortCode }}
     secrets: inherit
 

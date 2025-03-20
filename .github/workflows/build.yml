@@ -2,13 +2,10 @@ name: Build CommonID App
 on:
   workflow_call:
     inputs:
-      region:
+      algorithm:
         required: true
         type: string
-      regionCode:
-        required: true
-        type: string
-      regionName:
+      algorithmShortCode:
         required: true
         type: string
 
@@ -27,36 +24,20 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '22'
-
-      # TODO: same as above, once publicly availabe can remove REPO_PAT etc.
-      - name: Checkout Algorithm Repo
-        run: |
-          git clone --filter=blob:none --no-checkout --depth 1 https://github.com/wfp/common-identifier-algorithms algo_repo
-          cd algo_repo
-          git sparse-checkout init --no-cone
-          git sparse-checkout set algorithms/${{ inputs.region }}
-          git checkout
-          cp -r algorithms/${{ inputs.region }} ../electron/main/algo
-          cd ../ && rm algo_repo -r -fo
-    
+      
       - name: Install dependencies
         run: |
           npm install
           npm install -g tsx
-      
-      - name: Activate algorithm
-        run: tsx scripts/activate-algo.ts ${{ inputs.regionCode }}
-      
-      - name: Run tests
-        run: npm run test
-        env:
-          NODE_OPTIONS: '--experimental-vm-modules'
+
+      - name: Install and run tests
+        run: tsx scripts/build.ts --directory ${{ inputs.algorithm }} --shortCode ${{ inputs.algorithmShortCode }} --no-build --run-tests
       
       - name: Publish Test Results
         uses: EnricoMi/publish-unit-test-result-action/windows@v2
         if: always()
         with:
-          check_name: Test Results ${{ inputs.region }}
+          check_name: Test Results ${{ inputs.algorithm }}
           files: ./coverage/test-report/test-report.xml
 
   BuildApplication:
@@ -77,35 +58,13 @@ jobs:
         with:
           node-version: '22'
 
-      # TODO: same as above, once publicly availabe can remove REPO_PAT etc.
-      - name: Checkout Algorithm Repo
-        run: |
-          git clone --filter=blob:none --no-checkout --depth 1 https://github.com/wfp/common-identifier-algorithms algo_repo
-          cd algo_repo
-          git sparse-checkout init --no-cone
-          git sparse-checkout set algorithms/${{ inputs.region }}
-          git checkout
-          cp -r algorithms/${{ inputs.region }} ../electron/main/algo
-          cd ../ && rm algo_repo -r -fo
-    
       - name: Install dependencies
         run: |
           npm install
           npm install -g tsx
-      
-      - name: Activate algorithm
-        run: tsx scripts/activate-algo.ts ${{ inputs.regionCode }}
-      
-      - name: Build the application
-        run: npm run build
 
-      - name: Update rendered components
-        run: |
-          tsx scripts/update-rendered-components.ts ${{ inputs.regionName }}
-          tsx scripts/prepackage.ts ${{ inputs.regionCode }}
-      
-      - name: Package the application
-        run: npm run package
+      - name: Build and package application
+        run: tsx scripts/build.ts --directory ${{ inputs.algorithm }} --shortCode ${{ inputs.algorithmShortCode }} --package
         env:
           AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
           AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
@@ -114,5 +73,5 @@ jobs:
       - name: Upload build artefacts
         uses: actions/upload-artifact@v4
         with:
-          name: common-identifier-application-${{ inputs.regionCode }}
+          name: common-identifier-application-${{ inputs.algorithmShortCode }}
           path: release/*/*-setup.exe
