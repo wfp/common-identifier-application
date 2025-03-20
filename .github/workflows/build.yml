@@ -31,7 +31,7 @@ jobs:
           npm install -g tsx
 
       - name: Install and run tests
-        run: tsx scripts/build.ts --directory ${{ inputs.algorithm }} --short-code ${{ inputs.algorithmShortCode }} --no-build --run-tests
+        run: tsx scripts/build.ts --algorithm-directory ${{ inputs.algorithm }} --algorithm-short-code ${{ inputs.algorithmShortCode }} --no-build --run-tests
       
       - name: Publish Test Results
         uses: EnricoMi/publish-unit-test-result-action/windows@v2
@@ -64,7 +64,7 @@ jobs:
           npm install -g tsx
 
       - name: Build and package application
-        run: tsx scripts/build.ts --directory ${{ inputs.algorithm }} --short-code ${{ inputs.algorithmShortCode }} --package
+        run: tsx scripts/build.ts --algorithm-directory ${{ inputs.algorithm }} --algorithm-short-code ${{ inputs.algorithmShortCode }} --package
         env:
           AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
           AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}

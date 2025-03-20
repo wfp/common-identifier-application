@@ -20,24 +20,24 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const PACKAGE_PATH = join(__dirname, '..', 'package.json');
 const PACKAGE_OLD_PATH = join(__dirname, '..', 'package.old.json');
+const PACKAGE_LOCK_PATH = join(__dirname, '..', 'package-lock.json');
+const PACKAGE_LOCK_OLD_PATH = join(__dirname, '..', 'package-lock.old.json');
 const BUILDER_PATH = join(__dirname, '..', 'electron-builder.json');
 const BUILDER_OLD_PATH = join(__dirname, '..', 'electron-builder.old.json');
 
-function revertChangesToConfigs() {
-    if (!existsSync(PACKAGE_OLD_PATH)) {
-        console.warn("WARN: package.old.json does not exists, not overwriting file. ");
+function revertFileIfExists(fileName: string, oldPath: string, newPath: string) {
+    if (!existsSync(oldPath)) {
+        console.warn(`WARN: ${fileName} does not exists, not overwriting file.`);
     } else {
-        console.log(`Overwriting ${PACKAGE_PATH} with ${PACKAGE_OLD_PATH}`);
-        copyFileSync(PACKAGE_OLD_PATH, PACKAGE_PATH);
-        unlinkSync(PACKAGE_OLD_PATH);
+        console.log(`Overwriting ${PACKAGE_PATH} with ${oldPath}`);
+        copyFileSync(oldPath, PACKAGE_PATH);
+        unlinkSync(oldPath);
     }
+}
 
-    if (!existsSync(BUILDER_OLD_PATH)) {
-        console.warn("WARN: electron-builder.old.json does not exists, not overwriting file. ");
-    } else {
-        console.log(`Overwriting ${BUILDER_PATH} with ${BUILDER_OLD_PATH}`);
-        copyFileSync(BUILDER_OLD_PATH, BUILDER_PATH);
-        unlinkSync(BUILDER_OLD_PATH);
-    }
+function revertChangesToConfigs() {
+    revertFileIfExists("package.old.json", PACKAGE_OLD_PATH, PACKAGE_PATH);
+    revertFileIfExists("package-lock.old.json", PACKAGE_LOCK_OLD_PATH, PACKAGE_LOCK_PATH);
+    revertFileIfExists("electron-builder.old.json", BUILDER_OLD_PATH, BUILDER_PATH);
 }
 revertChangesToConfigs()

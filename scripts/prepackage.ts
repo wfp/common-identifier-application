@@ -26,8 +26,19 @@ const ALGO_REGION = program.args[0];
 
 const PACKAGE_PATH = join(__dirname, '..', 'package.json');
 const PACKAGE_OLD_PATH = join(__dirname, '..', 'package.old.json');
+const PACKAGE_LOCK_PATH = join(__dirname, '..', 'package-lock.json');
+const PACKAGE_LOCK_OLD_PATH = join(__dirname, '..', 'package-lock.old.json');
 const BUILDER_PATH = join(__dirname, '..', 'electron-builder.json');
 const BUILDER_OLD_PATH = join(__dirname, '..', 'electron-builder.old.json');
+
+const backupFileIfExists = (filePath: string, backupPath: string) => !existsSync(backupPath) ? copyFileSync(filePath, backupPath) : undefined;
+
+function validateEnvVars() {
+    if (!process.env.AZURE_TENANT_ID || !process.env.AZURE_CLIENT_ID || !process.env.AZURE_CLIENT_SECRET) {
+        throw new Error("ERROR: Environment variables for Azure Trusted Signing not found.")
+    }
+    // TODO: add other env vars here to validate
+}
 
 // update the electron-builder configuration
 //   - append region shortcode to productName
@@ -37,9 +48,7 @@ function updateBuildConfiguration() {
     const ebJSON = JSON.parse(ebRaw.toString());
 
     // only backup the file if this script hasn't been run before
-    if (!existsSync(BUILDER_OLD_PATH)) {
-        copyFileSync(BUILDER_PATH, BUILDER_OLD_PATH);
-    }
+    backupFileIfExists(BUILDER_PATH, BUILDER_OLD_PATH);
     
     ebJSON.productName = ebJSON.productName + '-' + ALGO_REGION.toLowerCase();
     ebJSON.appId = ebJSON.appId + ALGO_REGION.toLowerCase();
@@ -62,14 +71,19 @@ function updatePackageJson() {
     const pkgJSON = JSON.parse(pkgRaw.toString());
 
     // only backup the file if this script hasn't been run before
-    if (!existsSync(PACKAGE_OLD_PATH)) {
-        copyFileSync(PACKAGE_PATH, PACKAGE_OLD_PATH);
-    }
-    
+    backupFileIfExists(PACKAGE_PATH, PACKAGE_OLD_PATH);
+
     pkgJSON.name = pkgJSON.name + '-' + ALGO_REGION.toLowerCase();
     
     writeFileSync(PACKAGE_PATH, JSON.stringify(pkgJSON, null, 2));
 }
 
+function updatePackageLockJson() {
+    // only backup the file if this script hasn't been run before
+    backupFileIfExists(PACKAGE_LOCK_PATH, PACKAGE_LOCK_OLD_PATH);
+}
+
 updateBuildConfiguration();
-updatePackageJson()
+updatePackageJson();
+updatePackageLockJson();
+validateEnvVars();

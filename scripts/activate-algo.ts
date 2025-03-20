@@ -13,7 +13,7 @@
 
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-import { writeFileSync, copyFileSync } from 'node:fs';
+import { copyFileSync } from 'node:fs';
 import { program as programme } from 'commander';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -37,10 +37,8 @@ function copyBackupConfig() {
   
   const backupConfigSource = join(algoDir, 'config', 'config.backup.toml');
 
-  if (!checkConfigSignature(backupConfigSource, REGION_CODE)) {
-    console.error("ERROR: could not validate backup configuration file");
-    return
-  }
+  if (!checkConfigSignature(backupConfigSource, REGION_CODE))
+    throw new Error(`Could not validate backup configuration file: ${backupConfigSource}, ${REGION_CODE}`);
 
   console.log('Copying backup config from', backupConfigSource);
   console.log('                        to', BACKUP_CONFIG_TARGET_PATH);
