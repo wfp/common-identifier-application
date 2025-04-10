@@ -1,6 +1,6 @@
 import { Command } from '@commander-js/extra-typings';
 import { exec } from 'child_process';
-import { promises as fs } from 'fs';
+import { cpSync, existsSync, mkdirSync, rmSync } from 'node:fs';
 import { fileURLToPath } from 'url';
 import { join, dirname } from 'path';
 import { promisify } from 'util';
@@ -11,7 +11,7 @@ const execPromise = promisify(exec);
 const program = new Command()
   .requiredOption('--algorithm-directory <ALGORITHM_DIRECORY>', 'The name of the algorithm directory')       // i.e. syria
   .requiredOption('--algorithm-short-code <ALGORITHM_SHORT_CODE>', 'The algorithm code AKA the region code') // i.e. SYR
-  .option('--no-build', 'Build the application')
+  .option('--no-build', 'Don\'t build the application')
   .option('--run-tests', 'Run the test suite')
   .option('--package', 'Package the application')
   .option('--repository-url [REPO_URL]', 'The algorithm repository url', 'https://github.com/wfp/common-identifier-algorithms') // could be a local directory if needed
@@ -34,9 +34,9 @@ async function runCommand(command: string) {
   if (stderr) console.error(`ERROR: \n${stderr}`);
 }
 
-async function cleanUpRepo() {
-  if (await fs.stat(REPO_DIR).catch(() => false)) await fs.rm(REPO_DIR, { recursive: true, force: true });
-}
+const cleanUpRepo = () => existsSync(REPO_DIR)
+  ? rmSync(REPO_DIR, { recursive: true, force: true })
+  : null;
 
 async function cloneAndCheckoutAlgorithm() {
   // shallow clone the algorithms repository
@@ -49,20 +49,20 @@ async function cloneAndCheckoutAlgorithm() {
   await runCommand('git checkout');
 
   // copy the checked out algorithm to ./electron/main/algo
-  await fs.mkdir(DEST_DIR, { recursive: true });
-  await fs.cp(SOURCE_DIR, DEST_DIR, { recursive: true });
+  mkdirSync(DEST_DIR, { recursive: true });
+  cpSync(SOURCE_DIR, DEST_DIR, { recursive: true });
 }
 
 async function buildApplication() {
   console.log(`Building Application: algo=${PROG_OPTIONS.algorithmDirectory}, code=${PROG_OPTIONS.algorithmShortCode}`);
 
-  await cleanUpRepo(); // this can't be baked into the npm script since it is a separate git repo
+  cleanUpRepo(); // this can't be baked into the npm script since it is a separate git repo
   await runCommand('npm run clean:app');
 
   await cloneAndCheckoutAlgorithm();
 
   process.chdir(join(__dirname, '..'));
-  await fs.rm(REPO_DIR, { recursive: true, force: true });
+  rmSync(REPO_DIR, { recursive: true, force: true });
   
   await runCommand('npm install');
   await runCommand(`tsx scripts/activate-algo.ts ${PROG_OPTIONS.algorithmShortCode}`);
