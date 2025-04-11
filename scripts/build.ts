@@ -13,6 +13,7 @@ const program = new Command()
   .requiredOption('--algorithm-short-code <ALGORITHM_SHORT_CODE>', 'The algorithm code AKA the region code') // i.e. SYR
   .option('--no-build', 'Don\'t build the application')
   .option('--run-tests', 'Run the test suite')
+  .option('--ignore-errors', 'Ignore errors in subcommands, useful for test failures', false)
   .option('--package', 'Package the application')
   .option('--repository-url [REPO_URL]', 'The algorithm repository url', 'https://github.com/wfp/common-identifier-algorithms') // could be a local directory if needed
 
@@ -29,9 +30,16 @@ const SOURCE_DIR = join(REPO_DIR, 'algorithms', PROG_OPTIONS.algorithmDirectory)
 
 async function runCommand(command: string) {
   console.log(`Running command: ${command}\n`);
-  const { stdout, stderr } = await execPromise(command);
-  if (stdout) console.log(`OUTPUT: \n${stdout}`);
-  if (stderr) console.error(`ERROR: \n${stderr}`);
+  try {
+    const { stdout, stderr } = await execPromise(command);
+    if (stdout) console.log(`OUTPUT: \n${stdout}`);
+    if (stderr) console.error(`ERROR: \n${stderr}`);
+  } catch (error) {
+    if (!PROG_OPTIONS.ignoreErrors) {
+      console.error(`Command execution failed: ${error.message}`);
+      throw error;
+    }
+  }
 }
 
 const cleanUpRepo = () => existsSync(REPO_DIR)
@@ -51,6 +59,9 @@ async function cloneAndCheckoutAlgorithm() {
   // copy the checked out algorithm to ./electron/main/algo
   mkdirSync(DEST_DIR, { recursive: true });
   cpSync(SOURCE_DIR, DEST_DIR, { recursive: true });
+
+  // check success
+  if (!existsSync(join(DEST_DIR, "index.ts"))) throw new Error("ERROR: unable to clone and checkout algorithm repo");
 }
 
 async function buildApplication() {

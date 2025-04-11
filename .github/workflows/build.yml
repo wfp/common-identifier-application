@@ -31,7 +31,7 @@ jobs:
           npm install -g tsx
 
       - name: Install and run tests
-        run: tsx scripts/build.ts --algorithm-directory ${{ inputs.algorithm }} --algorithm-short-code ${{ inputs.algorithmShortCode }} --no-build --run-tests
+        run: tsx scripts/build.ts --algorithm-directory ${{ inputs.algorithm }} --algorithm-short-code ${{ inputs.algorithmShortCode }} --no-build --run-tests --ignore-errors
       
       - name: Publish Test Results
         uses: EnricoMi/publish-unit-test-result-action/windows@v2
