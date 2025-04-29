@@ -75,7 +75,7 @@ function updateHTML() {
   const title = root.querySelector('title');
   if (!title) throw new Error(`Unable to find title element in html file: ${renderHTMLPath}`);
 
-  title.set_content(`Common Identifier Application - ${ALGO_REGION}`);
+  title.set_content(`Common Identifier Application - ${ALGO_REGION.toUpperCase()}`);
   writeFileSync(renderHTMLPath, root.toString());
 }
 
