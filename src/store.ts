@@ -149,7 +149,7 @@ export const useAppStore = createStore<AppState>()((set) => ({
       config: state.config,
       screen: SCREENS.ERROR,
       isRuntimeError: false,
-      errorMessage: 'Error in the configuration file: ' + error,
+      errorMessage: 'Error in the configuration file:\n' + error,
     };
   }),
   removeUserConfig: () => set(state => {
@@ -161,7 +161,7 @@ export const useAppStore = createStore<AppState>()((set) => ({
     console.log("USER_CONFIG_REMOVED");
     if (!success) return {
       config: state.config, screen: SCREENS.ERROR, isRuntimeError: false,
-      errorMessage: 'Error in the backup configuration file: ' + error,
+      errorMessage: 'Error in the backup configuration file:\n' + error,
     }
     return {
       screen: SCREENS.CONFIG_UPDATED,

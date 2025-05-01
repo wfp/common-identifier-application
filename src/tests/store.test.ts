@@ -244,7 +244,7 @@ describe('useAppStore', () => {
     }));
 
     expect(result.current.screen).toBe(SCREENS.ERROR);
-    expect(result.current.errorMessage).toBe('Error in the backup configuration file: Failed to remove config');
+    expect(result.current.errorMessage).toBe('Error in the backup configuration file:\nFailed to remove config');
   });
 
   // INTERCOM :: PREROCESSING RELATED
