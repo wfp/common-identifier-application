@@ -17,6 +17,8 @@
 import { useAppStore } from '../store';
 import ErrorWrapper from '../components/ErrorWrapper';
 import type { ILoadConfigFailed } from '../../common/types';
+import type React from 'react';
+import { DeveloperInformation } from '../components/DeveloperInformation';
 
 function Error({ config, isRuntimeError, errorMessage }: Omit<ILoadConfigFailed, "screen">) {
   const backToMainScreen = useAppStore((store) => store.backToMainScreen);
@@ -41,10 +43,7 @@ function Error({ config, isRuntimeError, errorMessage }: Omit<ILoadConfigFailed,
         </button>
       </div>
 
-      <div className="developerInformation">
-        <h4>Technical Details</h4>
-        <code>{errorMessage}</code>
-      </div>
+      <DeveloperInformation errorMessage={errorMessage} />
     </div>
   );
 }

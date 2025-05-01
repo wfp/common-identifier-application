@@ -606,7 +606,7 @@ button {
   place-self: flex-end;
   color: var(--color-text-03);
   background: var(--color-ui-02);
-  padding: 2em;
+  padding: 1em;
   width: 100vw;
   height: 100%;
   text-align: center;
@@ -614,12 +614,31 @@ button {
   overflow-y: scroll;
   scrollbar-color: var(--color-ui-04) transparent;
   scrollbar-width: thin;
+  position: relative;
 }
 
 .error-screen .developerInformation h4 {
   margin: 0 0 1rem 0;
   color: var(--color-text-03);
   text-decoration: underline;
+}
+
+.error-screen .developerInformation button {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+
+  width: 40px;
+  height: 40px;
+  padding: 0;
+
+  background-color: var(--color-ui-04);
+  border-color: var(--color-ui-05);
+}
+
+.error-screen .developerInformation button:hover,
+.error-screen .developerInformation button:focus-visible {
+  background-color: var(--color-ui-05);
 }
 
 .InvalidConfig {

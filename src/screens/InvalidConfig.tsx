@@ -17,6 +17,7 @@
 import { useAppStore } from '../store';
 import ErrorWrapper from '../components/ErrorWrapper';
 import type { ILoadConfigFailed } from '../../common/types';
+import { DeveloperInformation } from '../components/DeveloperInformation';
 
 function InvalidConfig({ config, errorMessage }: Omit<ILoadConfigFailed, "screen"|"isRuntimeError">) {
   const loadNewConfig = useAppStore((store) => store.loadNewConfig);
@@ -41,10 +42,7 @@ function InvalidConfig({ config, errorMessage }: Omit<ILoadConfigFailed, "screen
         </button>
       </div>
 
-      <div className="developerInformation">
-        <h4>Technical Details</h4>
-        <code>{errorMessage}</code>
-      </div>
+      <DeveloperInformation errorMessage={errorMessage} />
     </div>
   );
 }
