@@ -6,6 +6,7 @@
   "main": "./dist-electron/index.js",
   "type": "module",
   "scripts": {
+    "watch": "tsc -w",
     "format": "prettier --write .",
     "dev": "vite",
     "dev:debug": "set DEBUG=CID:*& vite",

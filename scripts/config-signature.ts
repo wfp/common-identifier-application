@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // COMMAND-LINE WRAPPER TO GENERATE SIGNATURES FOR CONFIG FILES
 import { program as programme } from 'commander';
-import { generateConfigHash, attemptToReadTOMLData, validateConfig  } from 'common-identifier-algorithm-shared';
+import { generateConfigHash, attemptToReadTOMLData, validateConfigFile  } from 'common-identifier-algorithm-shared';
 import type { Config  } from 'common-identifier-algorithm-shared';
 
 programme.argument('<path>', 'Config file to generate signatures for');
@@ -30,13 +30,13 @@ const FILE_PATH = programme.args[0];
 const REGION_CODE = programme.args[1]
 
 function checkConfigSignature() {
-  const config = attemptToReadTOMLData<Config.Options>(FILE_PATH, "utf-8");
+  const config = attemptToReadTOMLData<Config.FileConfiguration>(FILE_PATH, "utf-8");
   if (!config) {
     console.error(`ERROR: could not read configuration file: ${FILE_PATH}`);
     return;
   }
 
-  const validationResult = validateConfig(config, REGION_CODE);
+  const validationResult = validateConfigFile(config, REGION_CODE);
   if (!!validationResult) {
     console.error(`ERROR: could not validate configuration file: ${validationResult}`);
     return;

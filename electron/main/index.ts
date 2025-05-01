@@ -219,14 +219,17 @@ function unregisterIpcHandlers() {
 app.whenReady().then(() => {
   log("createAndRegisterWindow");
   const configStore = makeConfigStore({
-    configFilePath: CONFIG_FILE_PATH,
-    appConfigFilePath: APP_CONFIG_FILE_PATH,
-    backupConfigFilePath: BACKUP_CONFIG_FILE_PATH,
-    region: REGION
+    filePaths: {
+      config: CONFIG_FILE_PATH,
+      appConfig: APP_CONFIG_FILE_PATH,
+      backupConfig: BACKUP_CONFIG_FILE_PATH
+    },
+    region: REGION,
+    usingUI: true
   });
   configStore.boot();
   
-  const mainWindow = createWindow(configStore);
+  createWindow(configStore);
 });
 
 // Quit when all windows are closed, except on macOS. There, it's common

@@ -173,7 +173,7 @@ import {
 import type { Config, Validation, makeHasherFunction } from 'common-identifier-algorithm-shared';
 
 class MyAlgorithmHasher extends BaseHasher {
-    constructor(config: Config.Options["algorithm"]) {
+    constructor(config: Config.CoreConfiguration["algorithm"]) {
         super(config);
     }
 
@@ -182,7 +182,7 @@ class MyAlgorithmHasher extends BaseHasher {
         return {}
     }
 }
-export const makeHasher: makeHasherFunction = (config: Config.Options["algorithm"]) => {
+export const makeHasher: makeHasherFunction = (config: Config.CoreConfiguration["algorithm"]) => {
     // some validation checks here
     return new MyAlgorithmHasher(config);
 }

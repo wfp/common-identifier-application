@@ -27,7 +27,7 @@ const MAX_ROWS_TO_PREVIEW = 500;
 export async function preProcessFile(mainWindow: BrowserWindow, configStore: ConfigStore, filePath: string) {
   log(`Dropped File: ${filePath}`);
 
-  const config = configStore.getConfig() as Config.Options;
+  const config = configStore.getConfig() as Config.FileConfiguration;
 
   const { isValid, isMappingDocument, document, errorFilePath, inputFilePath } =
     await backendPreProcessFile({ config, inputFilePath: filePath });

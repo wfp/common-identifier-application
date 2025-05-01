@@ -3,7 +3,7 @@ import type { Config, CidDocument } from "common-identifier-algorithm-shared";
 export type { Config, CidDocument } from 'common-identifier-algorithm-shared';
 
 export type IRequestConfigUpdate = {
-  config: Config.Options;
+  config: Config.FileConfiguration;
   isBackup: boolean;
   lastUpdated: Date;
   error: string | undefined;
@@ -13,14 +13,14 @@ export type IRequestConfigUpdate = {
 export type ILoadNewConfig = {
   success: boolean;
   cancelled: boolean;
-  config: Config.Options;
+  config: Config.FileConfiguration;
   lastUpdated: Date;
   error?: string;
 }
 
 export type IRemoveUserConfig = {
   success: boolean;
-  config: Config.Options;
+  config: Config.FileConfiguration;
   lastUpdated: Date;
   error?: string;
 }
@@ -45,7 +45,7 @@ export interface BaseConfig {
   isBackup: boolean;
   isInitial: boolean;
   lastUpdated: Date;
-  data: Config.Options;
+  data: Config.FileConfiguration;
 }
 
 export interface BaseState {

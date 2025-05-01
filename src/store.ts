@@ -46,7 +46,7 @@ export interface BaseAppState {
     isInitial: boolean;
 
     lastUpdated: Date;
-    data: Config.Options;
+    data: Config.FileConfiguration;
   }
   inputFilePath?: string;
   outputFilePath?: string;
@@ -60,7 +60,7 @@ export interface BaseAppState {
 
 export interface AppState extends BaseAppState {
   boot: ({ config, lastUpdated, isBackup, error, hasAcceptedTermsAndConditions } : IRequestConfigUpdate) => void;
-  updateConfig: (newConfig: Config.Options, isBackup: boolean) => void;
+  updateConfig: (newConfig: Config.FileConfiguration, isBackup: boolean) => void;
   loadNewConfig: () => void;
   loadNewConfigDone: ({ success, cancelled, error, config, lastUpdated }: ILoadNewConfig) => void;
   removeUserConfig: () => void;

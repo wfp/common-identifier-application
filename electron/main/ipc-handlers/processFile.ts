@@ -38,7 +38,7 @@ async function doProcessFile(
   inputFilePath: string,
   outputPath: string,
 ) {
-  const config = configStore.getConfig() as Config.Options;
+  const config = configStore.getConfig() as Config.FileConfiguration;
   let outputFormat = undefined;
   let outputBasePath = outputPath;
   // figure out the output path

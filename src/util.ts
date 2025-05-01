@@ -85,7 +85,7 @@ export function isMappingOnlyDocument(
 
 // Returns a new validator dictionary, keeps only the columns needed by the
 // algorithm (so only columns relevant for mapping files are checked)
-export function keepValidatorsForColumns(config: Config.Options, validatorDict: { [key: string]: any[] }) {
+export function keepValidatorsForColumns(config: Config.FileConfiguration, validatorDict: { [key: string]: any[] }) {
   const keepColumnList = mapRequiredColumns(
     config.algorithm['columns'],
     config.source,
@@ -96,7 +96,7 @@ export function keepValidatorsForColumns(config: Config.Options, validatorDict: 
 
 // Returns a new output configuration with only the columns needed by the
 // algorithm (so the validation result of a mapping document only has the mapping columns present)
-export function keepOutputColumns(config: Config.Options, outputConfig: Config.ColumnMap) {
+export function keepOutputColumns(config: Config.FileConfiguration, outputConfig: Config.ColumnMap) {
   const keepColumnSet = new Set(
     mapRequiredColumns(config.algorithm['columns'], config.source, config.destination_map),
   );

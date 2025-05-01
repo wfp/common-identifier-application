@@ -18,7 +18,7 @@ import { program as programme } from 'commander';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { generateConfigHash, attemptToReadTOMLData, validateConfig  } from 'common-identifier-algorithm-shared';
+import { generateConfigHash, attemptToReadTOMLData, validateConfigFile  } from 'common-identifier-algorithm-shared';
 import type { Config  } from 'common-identifier-algorithm-shared';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -47,13 +47,13 @@ function copyBackupConfig() {
 }
 
 function checkConfigSignature(filePath: string, region: string) {
-  const config = attemptToReadTOMLData<Config.Options>(filePath, "utf-8");
+  const config = attemptToReadTOMLData<Config.FileConfiguration>(filePath, "utf-8");
   if (!config) {
     console.error(`ERROR: could not read configuration file: ${filePath}`);
     return false;
   }
 
-  const validationResult = validateConfig(config, region);
+  const validationResult = validateConfigFile(config, region);
   if (!!validationResult) {
     console.error(`ERROR: could not validate configuration file: ${validationResult}`);
     return false;
