@@ -179,6 +179,7 @@ export const useAppStore = createStore<AppState>()((set) => ({
   }),
   backToMainScreen: () => set((state): BaseState => {
     console.log("BACK_TO_MAIN_SCREEN");
+    state.inputFilePath = undefined;
     return { config: state.config, screen: SCREENS.MAIN }
   }),
   showTermsAndConditions: () => set((state): BaseState => {
@@ -192,11 +193,13 @@ export const useAppStore = createStore<AppState>()((set) => ({
   }),
   processingCancelled: () => set((state): BaseState => {
     console.log("PROCESSING_CANCELLED");
+    state.inputFilePath = undefined;
     return { config: state.config, screen: SCREENS.PROCESSING_CANCELLED }
   }),
   
   preProcessFileOpenDialog: () => set((state): BaseState => {
     console.log("PRE_PROCESS_FILE_OPEN_DIALOG");
+    state.inputFilePath = undefined;
     intercomApi.preProcessFileOpenDialog();
     return {
       config: state.config,
@@ -234,6 +237,7 @@ export const useAppStore = createStore<AppState>()((set) => ({
 
   processingDone: ({ isMappingDocument, document, outputFilePath, mappingFilePath }) => set((state): IProcessingFinished => {
     console.log("PROCESSING_DONE");
+    state.inputFilePath = undefined;
     return {
       screen: SCREENS.PROCESSING_FINISHED, config: state.config,
       isMappingDocument, document,
