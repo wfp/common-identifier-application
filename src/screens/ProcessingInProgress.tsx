@@ -14,13 +14,28 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-function ProcessingInProgress() {
+function baseFileName(filePath: string) {
+  const splitName = filePath.split(/[\\/]/);
+  return splitName[splitName.length - 1];
+}
+
+function ProcessingInProgress({ inputFilePath } : {inputFilePath: string|undefined}) {
   return (
     <div className="ProcessingInProgress progressIndicator">
       <div className="loaderWrapper">
         <span className="loader"></span>
       </div>
-      <div className="help">Processing the file...</div>
+      {/* <div className="help">Processing the file...</div> */}
+      <div className="help">
+        {!inputFilePath || inputFilePath.length === 0 ? (
+          <p>Processing File...</p>
+        ) : (
+          <p>
+            Processing File:{' '}
+            <span className="fileName">{baseFileName(inputFilePath)}</span>
+          </p>
+        )}
+      </div>
     </div>
   );
 }

@@ -122,7 +122,7 @@ function App() {
     }
 
     case SCREENS.PROCESSING_IN_PROGRESS: {
-      screen = <ProcessingInProgress />;
+      screen = <ProcessingInProgress inputFilePath={inputFilePath} />;
       break;
     }
 
