@@ -76,7 +76,7 @@ async function buildApplication() {
   rmSync(REPO_DIR, { recursive: true, force: true });
   
   await runCommand('npm install');
-  await runCommand(`tsx scripts/activate-algo.ts --algorithm-id ${PROG_OPTIONS.algorithmId}`);
+  await runCommand(`tsx scripts/activate-algo.ts --algorithm-id ${PROG_OPTIONS.algorithmId.toUpperCase()}`);
 
   if (PROG_OPTIONS.runTests) {
     console.log("Running tests");
