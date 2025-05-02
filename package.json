@@ -1,6 +1,6 @@
 {
   "name": "common-identifier-application",
-  "version": "1.1.2",
+  "version": "1.2.0",
   "author": "World Food Programme",
   "description": "Common Identifier generation tool for Assistance and Mapping documents.",
   "main": "./dist-electron/index.js",
