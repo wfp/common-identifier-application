@@ -19,7 +19,9 @@ import { Command } from '@commander-js/extra-typings';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-const programme = new Command().requiredOption('--algorithm-id <ALGORITHM_ID>', 'The id of the algorithm distribution, typically config.meta.id');
+const programme = new Command()
+    .requiredOption('--algorithm-id <ALGORITHM_ID>', 'The id of the algorithm distribution, typically config.meta.id')
+    .option('--no-validate-env', 'Don\'t validate environment variables', false);
 programme.parse();
 
 const PACKAGE_PATH = join(__dirname, '..', 'package.json');
@@ -81,7 +83,11 @@ function updatePackageLockJson() {
     backupFileIfExists(PACKAGE_LOCK_PATH, PACKAGE_LOCK_OLD_PATH);
 }
 
-updateBuildConfiguration();
-updatePackageJson();
-updatePackageLockJson();
-validateEnvVars();
+function main() {
+    if (programme.opts().validateEnv) validateEnvVars();
+
+    updateBuildConfiguration();
+    updatePackageJson();
+    updatePackageLockJson();
+}
+main()
