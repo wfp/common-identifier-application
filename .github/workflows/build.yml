@@ -5,7 +5,7 @@ on:
       algorithm:
         required: true
         type: string
-      algorithmShortCode:
+      algorithmId:
         required: true
         type: string
 
@@ -31,7 +31,7 @@ jobs:
           npm install -g tsx
 
       - name: Install and run tests
-        run: tsx scripts/build.ts --algorithm-directory ${{ inputs.algorithm }} --algorithm-short-code ${{ inputs.algorithmShortCode }} --no-build --run-tests --ignore-errors
+        run: tsx scripts/build.ts --algorithm-directory ${{ inputs.algorithm }} --algorithm-id ${{ inputs.algorithmId }} --no-build --run-tests --ignore-errors
       
       - name: Publish Test Results
         uses: EnricoMi/publish-unit-test-result-action/windows@v2
@@ -64,7 +64,7 @@ jobs:
           npm install -g tsx
 
       - name: Build and package application
-        run: tsx scripts/build.ts --algorithm-directory ${{ inputs.algorithm }} --algorithm-short-code ${{ inputs.algorithmShortCode }} --package
+        run: tsx scripts/build.ts --algorithm-directory ${{ inputs.algorithm }} --algorithm-id ${{ inputs.algorithmId }} --package
         env:
           AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
           AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
@@ -73,5 +73,5 @@ jobs:
       - name: Upload build artefacts
         uses: actions/upload-artifact@v4
         with:
-          name: common-identifier-application-${{ inputs.algorithmShortCode }}
+          name: common-identifier-application-${{ inputs.algorithmId }}
           path: release/*/*-setup.exe

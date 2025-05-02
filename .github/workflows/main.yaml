@@ -23,12 +23,12 @@ jobs:
         algorithm: [ syria_north_west, syria ]
         include:
           - algorithm: syria_north_west
-            algorithmShortCode: nws
+            algorithmId: nws
           - algorithm: syria
-            algorithmShortCode: syr
+            algorithmId: syr
     uses: "./.github/workflows/build.yml"
     with:
       algorithm: ${{ matrix.algorithm }}
-      algorithmShortCode: ${{ matrix.algorithmShortCode }}
+      algorithmId: ${{ matrix.algorithmId }}
     secrets: inherit
 
