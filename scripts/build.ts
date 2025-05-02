@@ -101,4 +101,5 @@ async function buildApplication() {
 
 buildApplication().catch(err => {
   console.error('Build process failed:', err);
+  process.exit(1);
 });
