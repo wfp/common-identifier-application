@@ -30,7 +30,7 @@ function ConfigUpdated({ config }: Pick<BaseAppState, "config">) {
       <h2>
         Configuration successfully updated to
         <span className="version">
-          {meta.version}-{meta.region}
+          {meta.version}-{meta.id}
         </span>
       </h2>
 

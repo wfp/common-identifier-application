@@ -35,7 +35,7 @@ import { processFile } from './ipc-handlers/processFile';
 import { preProcessFileOpenDialog } from './ipc-handlers/preProcessFileOpenDialog';
 import { removeUserConfig } from './ipc-handlers/removeUserConfig';
 
-import { REGION } from './active_algorithm';
+import { ALGORITHM_ID } from './active_algorithm';
 import { EVENT } from '../../common/events';
 
 import Debug from 'debug';
@@ -48,9 +48,9 @@ const PRELOAD_PATH = join(__dirname, 'preload.mjs');
 const INDEX_HTML = join(RENDERER_DIST, 'index.html');
 
 // CONSTANTS FOR FILE PATHS, INSTALLATION DIRECTORIES ETC.
-const APP_DIR_NAME = `commonid-tool-${REGION.toLowerCase()}`;
-const CONFIG_FILE_NAME = `config.${REGION}.json`;
-const APP_CONFIG_FILE_NAME = `appconfig.${REGION}.json`;
+const APP_DIR_NAME = `commonid-tool-${ALGORITHM_ID.toLowerCase()}`;
+const CONFIG_FILE_NAME = `config.${ALGORITHM_ID}.json`;
+const APP_CONFIG_FILE_NAME = `appconfig.${ALGORITHM_ID}.json`;
 const BACKUP_CONFIG_FILE_PATH = join(RENDERER_DIST, 'config.backup.toml');
 
 const APP_DIR_PATH = join(appDataLocation(), APP_DIR_NAME); // the path of the application's data files
@@ -224,7 +224,7 @@ app.whenReady().then(() => {
       appConfig: APP_CONFIG_FILE_PATH,
       backupConfig: BACKUP_CONFIG_FILE_PATH
     },
-    region: REGION,
+    algorithmId: ALGORITHM_ID,
     usingUI: true
   });
   configStore.boot();

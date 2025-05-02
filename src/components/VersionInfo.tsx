@@ -24,11 +24,11 @@ function VersionInfo({ config }: Omit<BaseAppState, "screen">) {
     return <></>;
   }
 
-  const { version = 'UNKNOWN', region = 'UNKNOWN' } = config.data.meta;
+  const { version = 'UNKNOWN', id = 'UNKNOWN' } = config.data.meta;
   const { lastUpdated, isBackup } = config;
 
   const classNameString = ['version-info'];
-  let versionString = `${version}-${region}`;
+  let versionString = `${version}-${id}`;
   let lastUpdateDate = lastUpdated
     ? dateFmt(lastUpdated, 'yyyy/MM/dd HH:mm')
     : '';

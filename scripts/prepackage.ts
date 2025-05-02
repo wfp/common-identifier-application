@@ -39,8 +39,8 @@ function validateEnvVars() {
 }
 
 // update the electron-builder configuration
-//   - append region shortcode to productName
-//   - append region shortcode to nsis.shortcutName
+//   - append algo shortcode to productName
+//   - append algo shortcode to nsis.shortcutName
 function updateBuildConfiguration() {
     const ebRaw = readFileSync(BUILDER_PATH);
     const ebJSON = JSON.parse(ebRaw.toString());
@@ -59,9 +59,9 @@ function updateBuildConfiguration() {
 
 
 // update the package.json
-//   - append region shortcode to name (to alter the installation directory since it can't be overriden)
+//   - append algo shortcode to name (to alter the installation directory since it can't be overriden)
 function updatePackageJson() {
-    // update the package.name field to append the region shortcode
+    // update the package.name field to append the algo shortcode
     // this name is used as the installation directory name, and it cannot be overridden in
     // the electron-builder configuration without custom NSIS macros.
     // TODO: investigate a better way to do this... @scopes maybe?

@@ -150,7 +150,7 @@ This codebase is installed directly from GitHub via NPM, see `package.json`.
 
 ### Algorithm
 
-For the application backend to work, it MUST be implemented with at least one pluggable algorithm from the [`common-identifier-algorithms`](https://github.com/wfp/common-identifier-algorithms) repository. The algorithm must be cloned to the `electron/main/algo` directory and activated using the `scripts/activate-algo.ts <region>` script.
+For the application backend to work, it MUST be implemented with at least one pluggable algorithm from the [`common-identifier-algorithms`](https://github.com/wfp/common-identifier-algorithms) repository. The algorithm must be cloned to the `electron/main/algo` directory and activated using the `scripts/activate-algo.ts --algorithm-id <algorithm-id>` script.
 
 Any algorithm implementation has the following structure:
 
@@ -158,10 +158,10 @@ Any algorithm implementation has the following structure:
 📦algo-*
  ┣ 📂config         # contains the default configuration file and any UI styling overrides
  ┣ 📂tests          # tests for the algorithm where necessary
- ┗ 📜index.ts       # main algorithm entrypoint, exporting a makeHasher function and REGION const
+ ┗ 📜index.ts       # main algorithm entrypoint, exporting a makeHasher function and ALGORITHM_ID const
 ```
 
-For an algorithm to be "pluggable" into the main application, it must expose both a `REGION` constant and a `makerHasher` function from within `index.ts`. The constant is used during configuration file validation and for application naming, and the function should create a Hasher class extending `BaseHasher` and exposing a single `generateHashForObject` method. This method is called with a single row of input data, it should perform whatever operations are needed to generate the desired output, and return those output values. This is the simplest possible hasher:
+For an algorithm to be "pluggable" into the main application, it must expose both a `ALGORITHM_ID` constant and a `makerHasher` function from within `index.ts`. The constant is used during configuration file validation and for application naming, and the function should create a Hasher class extending `BaseHasher` and exposing a single `generateHashForObject` method. This method is called with a single row of input data, it should perform whatever operations are needed to generate the desired output, and return those output values. This is the simplest possible hasher:
 
 ```ts
 import {

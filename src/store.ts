@@ -87,7 +87,7 @@ export const useAppStore = createStore<AppState>()((set) => ({
     isBackup: false,
     lastUpdated: new Date(),
     // @ts-ignore
-    data: { meta: { region: "UNKNOWN", version: "0.0.0", signature: "" }},
+    data: { meta: { id: "UNKNOWN", version: "0.0.0", signature: "" }},
   },
   boot: ({ config, lastUpdated, isBackup, error, hasAcceptedTermsAndConditions }) => set((): IBoot => {
     console.log("BOOT");

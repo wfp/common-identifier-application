@@ -17,7 +17,7 @@ describe('useAppStore', () => {
     expect(result.current.screen).toBe(SCREENS.BOOT);
     expect(result.current.config.isInitial).toBe(true);
     expect(result.current.config.isBackup).toBe(false);
-    expect(result.current.config.data).toEqual({ meta: { region: "UNKNOWN", version: "0.0.0", signature: "" } });
+    expect(result.current.config.data).toEqual({ meta: { id: "UNKNOWN", version: "0.0.0", signature: "" } });
   });
 
   it('should update the config and screen on boot', () => {
@@ -26,7 +26,7 @@ describe('useAppStore', () => {
     act(() => {
       result.current.boot({
         // @ts-ignore
-        config: { meta: { region: "TEST", version: "1.0.0", signature: "test" } },
+        config: { meta: { id: "TEST", version: "1.0.0", signature: "test" } },
         lastUpdated: new Date(),
         isBackup: false,
         error: undefined,
@@ -36,7 +36,7 @@ describe('useAppStore', () => {
 
     expect(result.current.screen).toBe(SCREENS.MAIN);
     expect(result.current.config.isBackup).toEqual(false);
-    expect(result.current.config.data).toEqual({ meta: { region: "TEST", version: "1.0.0", signature: "test" } });
+    expect(result.current.config.data).toEqual({ meta: { id: "TEST", version: "1.0.0", signature: "test" } });
   });
 
   it('should show the T&Cs if not already accepted', () => {
@@ -44,7 +44,7 @@ describe('useAppStore', () => {
     act(() => {
       result.current.boot({
         // @ts-ignore
-        config: { meta: { region: "TEST", version: "1.0.0", signature: "test" } },
+        config: { meta: { id: "TEST", version: "1.0.0", signature: "test" } },
         lastUpdated: new Date(),
         isBackup: false,
         error: undefined,
@@ -54,7 +54,7 @@ describe('useAppStore', () => {
 
     expect(result.current.screen).toBe(SCREENS.WELCOME);
     expect(result.current.config.isBackup).toEqual(false);
-    expect(result.current.config.data).toEqual({ meta: { region: "TEST", version: "1.0.0", signature: "test" } });
+    expect(result.current.config.data).toEqual({ meta: { id: "TEST", version: "1.0.0", signature: "test" } });
   });
 
   it('should boot from backup', () => {
@@ -62,7 +62,7 @@ describe('useAppStore', () => {
     act(() => {
       result.current.boot({
         // @ts-ignore
-        config: { meta: { region: "TEST", version: "1.0.0", signature: "test" } },
+        config: { meta: { id: "TEST", version: "1.0.0", signature: "test" } },
         lastUpdated: new Date(),
         isBackup: true,
         error: undefined,
@@ -72,7 +72,7 @@ describe('useAppStore', () => {
 
     expect(result.current.screen).toBe(SCREENS.MAIN);
     expect(result.current.config.isBackup).toEqual(true);
-    expect(result.current.config.data).toEqual({ meta: { region: "TEST", version: "1.0.0", signature: "test" } });
+    expect(result.current.config.data).toEqual({ meta: { id: "TEST", version: "1.0.0", signature: "test" } });
   });
 
   it('should handle error during boot', () => {
@@ -81,7 +81,7 @@ describe('useAppStore', () => {
     act(() => {
       result.current.boot({
         // @ts-ignore
-        config: { meta: { region: "TEST", version: "1.0.0", signature: "test" } },
+        config: { meta: { id: "TEST", version: "1.0.0", signature: "test" } },
         lastUpdated: new Date(),
         isBackup: false,
         error: 'Invalid config',
@@ -179,11 +179,11 @@ describe('useAppStore', () => {
     const { result } = renderHook(() => useAppStore());
     act(() => result.current.updateConfig(
         // @ts-ignore
-        { meta: { region: "NEW_REGION", version: "2.0.0", signature: "new" } },
+        { meta: { id: "NEW_REGION", version: "2.0.0", signature: "new" } },
         false
     ));
 
-    expect(result.current.config.data).toEqual({ meta: { region: "NEW_REGION", version: "2.0.0", signature: "new" } });
+    expect(result.current.config.data).toEqual({ meta: { id: "NEW_REGION", version: "2.0.0", signature: "new" } });
     expect(result.current.config.isBackup).toBe(false);
     expect(result.current.config.isInitial).toBe(false);
   });
@@ -209,13 +209,13 @@ describe('useAppStore', () => {
         cancelled: false,
         error: undefined,
         // @ts-ignore
-        config: { meta: { region: "LOADED", version: "1.0.0", signature: "loaded" } },
+        config: { meta: { id: "LOADED", version: "1.0.0", signature: "loaded" } },
         lastUpdated: new Date(),
       })
     });
 
     expect(result.current.screen).toBe(SCREENS.CONFIG_UPDATED);
-    expect(result.current.config.data).toEqual({ meta: { region: "LOADED", version: "1.0.0", signature: "loaded" } });
+    expect(result.current.config.data).toEqual({ meta: { id: "LOADED", version: "1.0.0", signature: "loaded" } });
   });
 
   it('should handle user config removed successfully', () => {
@@ -225,12 +225,12 @@ describe('useAppStore', () => {
         success: true,
         error: undefined,
         // @ts-ignore
-        config: { meta: { region: "NEW_CONFIG", version: "1.0.0", signature: "new" } },
+        config: { meta: { id: "NEW_CONFIG", version: "1.0.0", signature: "new" } },
         lastUpdated: new Date(),
       })
     );
     expect(result.current.screen).toBe(SCREENS.CONFIG_UPDATED);
-    expect(result.current.config.data).toEqual({ meta: { region: "NEW_CONFIG", version: "1.0.0", signature: "new" } });
+    expect(result.current.config.data).toEqual({ meta: { id: "NEW_CONFIG", version: "1.0.0", signature: "new" } });
   });
 
   it('should handle user config removal failure', () => {

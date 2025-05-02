@@ -44,14 +44,14 @@ function copyBackupConfig() {
   copyFileSync(backupConfigSource, BACKUP_CONFIG_TARGET_PATH);
 }
 
-function checkConfigSignature(filePath: string, region: string) {
+function checkConfigSignature(filePath: string, algorithmId: string) {
   const config = attemptToReadTOMLData<Config.FileConfiguration>(filePath, "utf-8");
   if (!config) {
     console.error(`ERROR: could not read configuration file: ${filePath}`);
     return false;
   }
 
-  const validationResult = validateConfigFile(config, region);
+  const validationResult = validateConfigFile(config, algorithmId);
   if (!!validationResult) {
     console.error(`ERROR: could not validate configuration file: ${validationResult}`);
     return false;
