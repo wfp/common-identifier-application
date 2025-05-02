@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import { copyFileSync } from 'node:fs';
-import { program as programme } from 'commander';
+import { Command } from '@commander-js/extra-typings';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -23,10 +23,8 @@ import type { Config  } from 'common-identifier-algorithm-shared';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-programme.argument('<region_code>', 'Region code for this algorithm deployment');
+const programme = new Command().requiredOption('--algorithm-id <ALGORITHM_ID>', 'Algorithm ID for this algorithm deployment, typically config.meta.id');
 programme.parse();
-
-const REGION_CODE = programme.args[0].toUpperCase();
 
 const MAIN_DIR = join(__dirname, '..', 'electron', 'main');
 const BACKUP_CONFIG_TARGET_PATH = join(__dirname, '..', 'public', 'config.backup.toml'); // public since vite looks here for static assets
@@ -37,8 +35,8 @@ function copyBackupConfig() {
   
   const backupConfigSource = join(algoDir, 'config', 'config.backup.toml');
 
-  if (!checkConfigSignature(backupConfigSource, REGION_CODE))
-    throw new Error(`Could not validate backup configuration file: ${backupConfigSource}, ${REGION_CODE}`);
+  if (!checkConfigSignature(backupConfigSource, programme.opts().algorithmId))
+    throw new Error(`Could not validate backup configuration file: ${backupConfigSource}, ${programme.opts().algorithmId}`);
 
   console.log('Copying backup config from', backupConfigSource);
   console.log('                        to', BACKUP_CONFIG_TARGET_PATH);

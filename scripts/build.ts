@@ -10,7 +10,7 @@ const execPromise = promisify(exec);
 
 const program = new Command()
   .requiredOption('--algorithm-directory <ALGORITHM_DIRECORY>', 'The name of the algorithm directory')       // i.e. syria
-  .requiredOption('--algorithm-short-code <ALGORITHM_SHORT_CODE>', 'The algorithm code AKA the region code') // i.e. SYR
+  .requiredOption('--algorithm-id <ALGORITHM_ID>', 'The algorithm id, typically found at config.meta.id') // i.e. SYR
   .option('--no-build', 'Don\'t build the application')
   .option('--run-tests', 'Run the test suite')
   .option('--ignore-errors', 'Ignore errors in subcommands, useful for test failures', false)
@@ -65,7 +65,7 @@ async function cloneAndCheckoutAlgorithm() {
 }
 
 async function buildApplication() {
-  console.log(`Building Application: algo=${PROG_OPTIONS.algorithmDirectory}, code=${PROG_OPTIONS.algorithmShortCode}`);
+  console.log(`Building Application: algo=${PROG_OPTIONS.algorithmDirectory}, code=${PROG_OPTIONS.algorithmId}`);
 
   cleanUpRepo(); // this can't be baked into the npm script since it is a separate git repo
   await runCommand('npm run clean:app');
@@ -76,7 +76,7 @@ async function buildApplication() {
   rmSync(REPO_DIR, { recursive: true, force: true });
   
   await runCommand('npm install');
-  await runCommand(`tsx scripts/activate-algo.ts ${PROG_OPTIONS.algorithmShortCode}`);
+  await runCommand(`tsx scripts/activate-algo.ts --algorithm-id ${PROG_OPTIONS.algorithmId}`);
 
   if (PROG_OPTIONS.runTests) {
     console.log("Running tests");
@@ -86,12 +86,12 @@ async function buildApplication() {
   if (PROG_OPTIONS.build) {
     console.log("Building app");
     await runCommand('npm run build');
-    await runCommand(`tsx scripts/update-rendered-components.ts ${PROG_OPTIONS.algorithmShortCode}`);
+    await runCommand(`tsx scripts/update-rendered-components.ts --suffix ${PROG_OPTIONS.algorithmId}`);
   }
   
   if (PROG_OPTIONS.build && PROG_OPTIONS.package) {
     console.log("Packaging app");
-    await runCommand(`tsx scripts/prepackage.ts ${PROG_OPTIONS.algorithmShortCode}`);
+    await runCommand(`tsx scripts/prepackage.ts --algorithm-id ${PROG_OPTIONS.algorithmId}`);
     await runCommand('npm run package');
   }
 

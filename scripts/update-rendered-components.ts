@@ -23,24 +23,18 @@ import {
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parse as htmlParse } from 'node-html-parser';
-import { program } from 'commander';
+import { Command } from '@commander-js/extra-typings';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-program.argument(
-  '<region>',
-  'The region suffix to append to rendered title components.',
-);
-
-program.parse();
-
-const ALGO_REGION = program.args[0];
+const programme = new Command().requiredOption('--suffix <SUFFIX>', "The string to append to rendered components.")
+programme.parse();
 
 const MAIN_DIR = join(__dirname, '..', 'electron', 'main');
 const ALGO_DIR = join(MAIN_DIR, "algo");
 const RENDERER_DIR = join(__dirname, '..', 'dist');
 
-console.log('Updating rendered components:', ALGO_REGION);
+console.log('Updating rendered components:', programme.opts().suffix);
 
 // TODO: actually parse the CSS AST to make sure overrides make sense
 function updateCSS() {
@@ -75,7 +69,7 @@ function updateHTML() {
   const title = root.querySelector('title');
   if (!title) throw new Error(`Unable to find title element in html file: ${renderHTMLPath}`);
 
-  title.set_content(`Common Identifier Application - ${ALGO_REGION.toUpperCase()}`);
+  title.set_content(`Common Identifier Application - ${programme.opts().suffix.toUpperCase()}`);
   writeFileSync(renderHTMLPath, root.toString());
 }
 

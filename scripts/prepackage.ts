@@ -15,14 +15,12 @@
 import { copyFileSync, existsSync, readFileSync, writeFileSync } from "node:fs";
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { program } from 'commander';
+import { Command } from '@commander-js/extra-typings';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-program.argument('<region>', 'The region suffix to append.');
-program.parse();
-
-const ALGO_REGION = program.args[0];
+const programme = new Command().requiredOption('--algorithm-id <ALGORITHM_ID>', 'The id of the algorithm distribution, typically config.meta.id');
+programme.parse();
 
 const PACKAGE_PATH = join(__dirname, '..', 'package.json');
 const PACKAGE_OLD_PATH = join(__dirname, '..', 'package.old.json');
@@ -50,11 +48,11 @@ function updateBuildConfiguration() {
     // only backup the file if this script hasn't been run before
     backupFileIfExists(BUILDER_PATH, BUILDER_OLD_PATH);
     
-    ebJSON.productName = ebJSON.productName + '-' + ALGO_REGION.toLowerCase();
-    ebJSON.appId = ebJSON.appId + ALGO_REGION.toLowerCase();
-    ebJSON.directories.output = "release/" + ALGO_REGION + "-${version}";
-    ebJSON.nsis.shortcutName = ebJSON.nsis.shortcutName + ' - ' + ALGO_REGION.toUpperCase();
-    ebJSON.nsis.uninstallDisplayName = ebJSON.nsis.uninstallDisplayName + ' - ' + ALGO_REGION.toUpperCase()
+    ebJSON.productName = ebJSON.productName + '-' + programme.opts().algorithmId.toLowerCase();
+    ebJSON.appId = ebJSON.appId + programme.opts().algorithmId.toLowerCase();
+    ebJSON.directories.output = "release/" + programme.opts().algorithmId + "-${version}";
+    ebJSON.nsis.shortcutName = ebJSON.nsis.shortcutName + ' - ' + programme.opts().algorithmId.toUpperCase();
+    ebJSON.nsis.uninstallDisplayName = ebJSON.nsis.uninstallDisplayName + ' - ' + programme.opts().algorithmId.toUpperCase()
 
     writeFileSync(BUILDER_PATH, JSON.stringify(ebJSON, null, 2));
 }
@@ -73,7 +71,7 @@ function updatePackageJson() {
     // only backup the file if this script hasn't been run before
     backupFileIfExists(PACKAGE_PATH, PACKAGE_OLD_PATH);
 
-    pkgJSON.name = pkgJSON.name + '-' + ALGO_REGION.toLowerCase();
+    pkgJSON.name = pkgJSON.name + '-' + programme.opts().algorithmId.toLowerCase();
     
     writeFileSync(PACKAGE_PATH, JSON.stringify(pkgJSON, null, 2));
 }
