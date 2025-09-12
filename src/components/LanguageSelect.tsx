@@ -13,18 +13,23 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-import { useTranslation } from "react-i18next";
 
-function LoadNewConfig() {
-  const { t } = useTranslation()
+import { useTranslation } from 'react-i18next';
+
+const LanguageSelect = () => {
+  const { t, i18n } = useTranslation();
+  const changeLanguage = (lng: string) => i18n.changeLanguage(lng);
+
   return (
-    <div className="LoadNewConfig progressIndicator">
-      <div className="loaderWrapper">
-        <span className="loader"></span>
-      </div>
-      <div className="help">{t("loadConfig description")}</div>
+    <div className="language-select">
+      <button className="language-tab" onClick={() => changeLanguage('en')}>
+        <img alt='switch language to English' src="/public/locales/en/gb.svg" />
+      </button>
+      <button className="language-tab" onClick={() => changeLanguage('es')}>
+        <img alt='switch language to Spanish' src="/public/locales/es/es.svg" />
+      </button>
     </div>
-  );
+  )
 }
 
-export default LoadNewConfig;
+export default LanguageSelect;

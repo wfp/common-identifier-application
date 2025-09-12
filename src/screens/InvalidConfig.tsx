@@ -18,14 +18,16 @@ import { useAppStore } from '../store';
 import ErrorWrapper from '../components/ErrorWrapper';
 import type { ILoadConfigFailed } from '../../common/types';
 import { DeveloperInformation } from '../components/DeveloperInformation';
+import { useTranslation } from 'react-i18next';
 
 function InvalidConfig({ config, errorMessage }: Omit<ILoadConfigFailed, "screen"|"isRuntimeError">) {
   const loadNewConfig = useAppStore((store) => store.loadNewConfig);
+  const { t } = useTranslation()
 
   return (
     <div className="error-screen InvalidConfig appScreen">
       <div className="help">
-        <h3 className="titleText">Configuration error</h3>
+        <h3 className="titleText">{t("invalidConfig title")}</h3>
         <ErrorWrapper
           config={config}
           isRuntimeError={false}
@@ -38,7 +40,7 @@ function InvalidConfig({ config, errorMessage }: Omit<ILoadConfigFailed, "screen
           className="cid-button cid-button-lg cid-button-alert"
           onClick={loadNewConfig}
         >
-          <span className="icon">⚙</span> Update the configuration from a file
+          <span className="icon">⚙</span> {t("mainScreen updateConfig")}
         </button>
       </div>
 

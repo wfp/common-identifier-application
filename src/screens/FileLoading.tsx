@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { useTranslation } from "react-i18next";
+
 // Returns the "base name" (the plain file name, the last component of the path, without any directories)
 function baseFileName(filePath: string) {
   const splitName = filePath.split(/[\\/]/);
@@ -21,6 +23,7 @@ function baseFileName(filePath: string) {
 }
 
 function FileLoading({ inputFilePath } : {inputFilePath: string}) {
+  const { t } = useTranslation()
   return (
     <div className="FileLoading appScreen progressIndicator">
       <div className="loaderWrapper">
@@ -28,10 +31,10 @@ function FileLoading({ inputFilePath } : {inputFilePath: string}) {
       </div>
       <div className="help">
         {!inputFilePath || inputFilePath.length === 0 ? (
-          <p>Loading file...</p>
+          <p>{t("fileLoading noPath")}</p>
         ) : (
           <p>
-            Loading file:{' '}
+            {t("fileLoading withPath")}{' '}
             <span className="fileName">{baseFileName(inputFilePath)}</span>
           </p>
         )}

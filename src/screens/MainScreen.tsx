@@ -15,11 +15,13 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAppStore } from '../store';
 
 function MainScreen() {
   // is anything dragged over the screen?
   const [isDraggedOver, setIsDraggedOver] = useState(false);
+  const { t } = useTranslation();
 
   const preProcessFileOpenDialog = useAppStore(
     (store) => store.preProcessFileOpenDialog,
@@ -98,8 +100,8 @@ function MainScreen() {
   return (
     <div className={divClassName} onDragEnter={dragEnter}>
       <div className="region region-main">
-        <h1>DRAG & DROP AN EXCEL OR CSV FILE</h1>
-        <h2>to start processing</h2>
+        <h1>{t('mainScreen title')}</h1>
+        <h2>{t('mainScreen subtitle')}</h2>
       </div>
 
       <div className="region region-open-file">
@@ -107,7 +109,7 @@ function MainScreen() {
           className="open-file cid-button cid-button-primary"
           onClick={preProcessFileOpenDialog}
         >
-          Open a file
+          {t("mainScreen openFile")}
         </button>
       </div>
 
@@ -116,7 +118,7 @@ function MainScreen() {
           onClick={startConfigChange}
           className="cid-button cid-button-secondary"
         >
-          <span className="icon">⚙</span> Update the configuration{' '}
+          <span className="icon">⚙</span>  {t("mainScreen updateConfig")}
         </button>
       </div>
 

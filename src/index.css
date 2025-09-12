@@ -389,6 +389,7 @@ button {
 /*#region Navbar */
 
 .main-navigation {
+  position: relative;
   display: flex;
   justify-content: flex-end;
   background-color: var(--color-interactive-01);
@@ -442,6 +443,41 @@ button {
 
 .version-info dl > div > dt {
   font-weight: bold;
+}
+
+.WelcomeScreen .language-select {
+  top: 0%;
+}
+
+.language-select {
+  position: absolute;
+  top: 100%;
+  left: 0.5rem;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.language-select .language-tab {
+  background-color: var(--color-ui-01);
+  border: none;
+  padding: 0.3rem;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  transition: opacity 0.2s ease;
+}
+
+.language-select .language-tab:hover {
+  opacity: 1;
+}
+
+.language-select .language-tab img {
+  width: 48px;
+  height: 36px;
+  display: block;
+}
+
+.language-select .language-tab {
+  opacity: 0.4;
 }
 
 /*#endregion */

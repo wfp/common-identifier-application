@@ -1,0 +1,100 @@
+import i18n from "i18next";
+import { initReactI18next } from "react-i18next";
+import detector from "i18next-browser-languagedetector";
+
+const resources = {
+  en: {
+    translation: {
+      "boot": "Initialising the application...",
+      "terms title": "Terms and Conditions",
+      "terms leftButton": "Disagree and quit",
+      "terms rightButton": "Agree to terms of use",
+
+      "navbar version": "Version",
+      "navbar lastUpdated": "Last Updated",
+      "navbar backButton": "Back to the main screen",
+
+      "error title": "ERROR", 
+      "error backButton": "Back to the main screen",
+      "developerDetails title": "Technical Details",
+      "error configError": "An internal error occured and the configuration is invalid.",
+      "error runtimeError": "Internal error in the application.",
+      "emptyTable title": "No data in the table",
+
+      "mainScreen title": "DRAG & DROP AN EXCEL OR CSV FILE",
+      "mainScreen subtitle": "to start processing",
+      "mainScreen openFile": "Open a file",
+      "mainScreen updateConfig": "Update the configuration",
+      
+      "updateConfig title": "Update Configuration",
+      "updateConfig loadButton": "Load a new configuration file",
+      "updateConfig defaultButton": "Use the default configuration",
+      "updateConfig defaultDescription": "Revert to the default (built-in) configuration supplied with the application",
+      
+      "updateConfig load title": "Update Configuration",
+      "updateConfig load description": "Are you sure you want to load a new configuration file?",
+      "updateConfig load cancel": "Cancel",
+      "updateConfig load confirm": "Yes, load a file",
+
+      "updateConfig default title": "Update Configuration",
+      "updateConfig default description": "Are you sure you want to use the default configuration?",
+      "updateConfig default cancel": "Cancel",
+      "updateConfig default confirm": "Yes, use the default",
+      
+      "loadConfig description": "Loading new configuration file...",
+      "invalidConfig title": "Configuration error",
+
+      "configUpdated title": "Configuration Updated",
+      "configUpdated subtitle": "Configuration successfully updated to",
+      "configUpdated confirm": "Done",
+
+      "fileLoading noPath": "Loading file...",
+      "fileLoading withPath": "Loading file",
+
+      "validationSuccess fileInfo": "Ready to process the file",
+      "validationSuccess title": "Validation finished. No errors encountered.",
+      "validationSuccess subtitleMapping": "Valid mapping file.",
+      "validationSuccess subtitleAssistance": "Valid intended assistance file.",
+      "validationSuccess leftButton": "Open a different file",
+      "validationSuccess rightButton": "Process the file",
+
+      "validationFailed fileInfo": "The input file is invalid",
+      "validationFailed title": "Validation finished. Critical errors encountered.",
+      "validationFailed subtitle": "You cannot continue until the noted issues are resolved.",
+
+      "validationFailed mappingFile": "Valid mapping file.",
+      "validationFailed assistanceFile": "Valid intended assistance file.",
+      "validationFailed leftButton": "Open a different file",
+      "validationFailed rightButton": "Retry the same file",
+      "validationFailed errorButton": "Open error list",
+
+      "processingCancelled title": "Processing Cancelled",
+      "processingCancelled confirm": "Done",
+
+      "processingInProgress path": "Processing file...",
+      "processingInProgress noPath": "Processing file",
+
+      "processFinished fileInfo": "Saved as",
+      "processFinished leftButton": "Open a different file",
+      "processFinished rightButton": "Done",
+    }
+  },
+  es: {
+    translation: {
+
+    }
+  }
+};
+
+i18n
+  .use(detector)
+  .use(initReactI18next)
+  .init({
+    resources,
+    lng: "en",
+    fallbackLng: "en",
+    keySeparator: false,
+    interpolation: { escapeValue: false }
+  });
+
+export default i18n;

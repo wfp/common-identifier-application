@@ -19,14 +19,16 @@ import ErrorWrapper from '../components/ErrorWrapper';
 import type { ILoadConfigFailed } from '../../common/types';
 import type React from 'react';
 import { DeveloperInformation } from '../components/DeveloperInformation';
+import { useTranslation } from 'react-i18next';
 
 function Error({ config, isRuntimeError, errorMessage }: Omit<ILoadConfigFailed, "screen">) {
   const backToMainScreen = useAppStore((store) => store.backToMainScreen);
+  const { t } = useTranslation();
 
   return (
     <div className="error-screen">
       <div className="help">
-        <h3 className="titleText">ERROR</h3>
+        <h3 className="titleText">{t("error title")}</h3>
         <ErrorWrapper
           config={config}
           errorMessage={errorMessage}
@@ -39,7 +41,7 @@ function Error({ config, isRuntimeError, errorMessage }: Omit<ILoadConfigFailed,
           className="cid-button cid-button-lg cid-button-alert"
           onClick={backToMainScreen}
         >
-          Back to the main screen
+          {t("error backButton")}
         </button>
       </div>
 

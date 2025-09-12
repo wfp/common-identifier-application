@@ -14,14 +14,18 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { useTranslation } from 'react-i18next';
+
 import { useAppStore } from '../store';
 import { SCREENS } from '../../common/screens';
 import VersionInfo from './VersionInfo';
 import type { BaseAppState } from '../store';
+import LanguageSelect from './LanguageSelect';
 
 // returns a navbar based on the name of the screen
 function Navbar({ config, screen }: BaseAppState) {
   const backToMainScreen = useAppStore((store) => store.backToMainScreen);
+  const { t, i18n } = useTranslation();
 
   let backButton;
 
@@ -38,19 +42,18 @@ function Navbar({ config, screen }: BaseAppState) {
     default:
       backButton = (
         <a href="#" onClick={backToMainScreen}>
-          &larr; Back to the main screen
+          &larr; {t("navbar backButton")}
         </a>
       );
   }
 
   // if we're on the initial configuration (meaning we don't have a valid config or salt)
   // don't show the back button
-  if (config.isInitial) {
-    backButton = <></>;
-  }
+  if (config.isInitial) backButton = <></>;
 
   return (
     <div className="main-navigation">
+      <LanguageSelect />
       <div className="back-button">{backButton}</div>
 
       <VersionInfo config={config} />

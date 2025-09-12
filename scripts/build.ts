@@ -34,9 +34,9 @@ async function runCommand(command: string) {
     const { stdout, stderr } = await execPromise(command);
     if (stdout) console.log(`OUTPUT: \n${stdout}`);
     if (stderr) console.error(`ERROR: \n${stderr}`);
-  } catch (error) {
+  } catch (error: any) {
     if (!PROG_OPTIONS.ignoreErrors) {
-      console.error(`Command execution failed: ${error.message}`);
+      console.error(`Command execution failed: ` + error.message);
       throw error;
     }
   }

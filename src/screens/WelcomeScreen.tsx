@@ -18,12 +18,15 @@ import { useAppStore } from '../store';
 import type { BaseAppState } from '../store';
 import { useState, useRef } from 'react';
 import BottomButtons from '../components/BottomButtons';
+import { useTranslation } from 'react-i18next';
+import LanguageSelect from '../components/LanguageSelect';
 
 // Sets the maximum distance in pixels from the bottom of the Terms & Conditions
 // from which point we consider the TnC acceptable.
 const MAX_DISTANCE_FROM_BOTTOM_FOR_TOC_ACCEPTANCE = 32;
 
 function WelcomeScreen({ config }: { config: BaseAppState["config"]}) {
+  const { t } = useTranslation();
   const acceptTermsAndConditions = useAppStore(
     (store) => store.acceptTermsAndConditions,
   );
@@ -75,7 +78,8 @@ function WelcomeScreen({ config }: { config: BaseAppState["config"]}) {
 
   return (
     <div className="WelcomeScreen">
-      <h4 className="titleText">Terms and conditions</h4>
+      <LanguageSelect />
+      <h4 className="titleText">{t("terms title")}</h4>
 
       <div
         className="textContainer"
@@ -93,8 +97,8 @@ function WelcomeScreen({ config }: { config: BaseAppState["config"]}) {
         l_disabled={false}
         r_onClick={acceptTermsAndConditions}
         r_disabled={!reachedBottom}
-        l_content="Disagree and quit"
-        r_content="Agree to terms of use"
+        l_content={t("terms leftButton")}
+        r_content={t("terms rightButton")}
       />
     </div>
   );

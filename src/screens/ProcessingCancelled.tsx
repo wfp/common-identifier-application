@@ -14,20 +14,22 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { useTranslation } from 'react-i18next';
 import { useAppStore } from '../store';
 
 function ProcessingCancelled() {
   const backToMainScreen = useAppStore((store) => store.backToMainScreen);
+  const { t } = useTranslation();
 
   return (
     <div className="ProcessingCancelled">
-      <h2 className="titleText">Processing cancelled</h2>
+      <h2 className="titleText">{t("processingCancelled title")}</h2>
       <div className="cid-button-row">
         <button
           className="cid-button cid-button-lg cid-button-primary"
           onClick={backToMainScreen}
         >
-          Done
+          {t("processingCancelled confirm")}
         </button>
       </div>
     </div>

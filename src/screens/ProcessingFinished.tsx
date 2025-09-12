@@ -19,22 +19,22 @@ import FileInfo from '../components/FileInfo';
 import PreviewTable from '../components/PreviewTable';
 import { useAppStore } from '../store';
 import type { IProcessingFinished } from '../../common/types';
+import { useTranslation } from 'react-i18next';
 
 function ProcessingFinished({
   config, isMappingDocument, document, outputFilePath, mappingFilePath,
 }: Omit<IProcessingFinished, "screen">) {
   const backToMainScreen = useAppStore((store) => store.backToMainScreen);
-  const preProcessFileOpenDialog = useAppStore(
-    (store) => store.preProcessFileOpenDialog,
-  );
+  const preProcessFileOpenDialog = useAppStore((store) => store.preProcessFileOpenDialog);
+  const { t } = useTranslation();
 
   const fileInfoRow = isMappingDocument ? (
-    <FileInfo filePath={mappingFilePath} helpText="Saved as" />
+    <FileInfo filePath={mappingFilePath} helpText={t("processingFinished fileInfo")} />
   ) : (
     <FileInfo
       filePath={outputFilePath}
       otherFilePath={mappingFilePath}
-      helpText="Saved as"
+      helpText={t("processingFinished fileInfo")}
     />
   );
 
@@ -50,10 +50,10 @@ function ProcessingFinished({
       <PreviewTable tableData={document.data} columnsConfig={columnsConfig} />
 
       <BottomButtons
-        l_content="Open a different file"
+        l_content={t("processFinished leftButton")}
         l_onClick={preProcessFileOpenDialog}
         r_onClick={backToMainScreen}
-        r_content="Done"
+        r_content={t("processFinished rightButton")}
       />
     </div>
   );

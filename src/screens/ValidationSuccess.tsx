@@ -19,8 +19,11 @@ import PreviewTable from '../components/PreviewTable';
 import { useAppStore } from '../store';
 import { keepOutputColumns } from '../util';
 import type { IValidationSuccess } from '../../common/types';
+import { useTranslation } from 'react-i18next';
 
 function ValidationSuccess({ config, document, inputFilePath, isMappingDocument }: Omit<IValidationSuccess, "screen">) {
+    const { t } = useTranslation();
+  
     const preProcessFileOpenDialog = useAppStore(
       (store) => store.preProcessFileOpenDialog,
     );
@@ -37,26 +40,26 @@ function ValidationSuccess({ config, document, inputFilePath, isMappingDocument 
 
     return (
       <div className="ValidationSuccess">
-        <FileInfo filePath={inputFilePath} helpText="Ready to process the file" />
+        <FileInfo filePath={inputFilePath} helpText={t("validationSuccess fileInfo")} />
 
         <PreviewTable tableData={document.data} columnsConfig={columnsConfig} />
 
         <div className="validationResult ok">
           <div className="validationState">
-            Validation finished. No errors encountered.
+            {t("validationSuccess title")}
             <div className="help">
               {isMappingDocument
-                ? 'Valid mapping file.'
-                : 'Valid intended assistance file.'}
+                ? t("validationSuccess subtitleMapping")
+                : t("validationSuccess subtitleAssistance")}
             </div>
           </div>
         </div>
 
         <BottomButtons
-          l_content="Open a different file"
+          l_content={t("validationSuccess leftButton")}
           l_onClick={preProcessFileOpenDialog}
           r_onClick={processTheFile}
-          r_content="Process the file"
+          r_content={t("validationSuccess rightButton")}
         />
       </div>
     );

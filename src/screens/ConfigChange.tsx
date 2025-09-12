@@ -16,6 +16,7 @@
 
 import { useState } from 'react';
 import { useAppStore } from '../store';
+import { useTranslation } from 'react-i18next';
 
 enum HANDLERS {
   NONE = 0,
@@ -27,6 +28,7 @@ export default function ConfigChange() {
   const backToMainScreen = useAppStore((store) => store.backToMainScreen);
   const loadNewConfig = useAppStore((store) => store.loadNewConfig);
   const removeUserConfig = useAppStore((store) => store.removeUserConfig);
+    const { t } = useTranslation();
 
   const [handler, setHandler] = useState<HANDLERS>(HANDLERS.NONE);
 
@@ -39,23 +41,23 @@ export default function ConfigChange() {
     case HANDLERS.LOAD_NEW_CONFIG: {
       return (
         <div className="config-change appScreen loadNewConfig">
-          <h3 className="titleText">Update configuration</h3>
+          <h3 className="titleText">{t("updateConfig load title")}</h3>
 
           <p className="descriptionText">
-            Are you sure you want to load a new configuration file?
+            {t("updateConfig load description")}
           </p>
           <div className="cid-button-row cid-button-row-horiz">
             <button
               className="cid-button cid-button-lg cid-button-secondary"
               onClick={backToMainScreen}
             >
-              Cancel
+              {t("updateConfig load cancel")}
             </button>
             <button
               className="cid-button cid-button-lg cid-button-primary"
               onClick={loadNewConfig}
             >
-              Yes, load a file
+              {t("updateConfig load confirm")}
             </button>
           </div>
         </div>
@@ -65,9 +67,9 @@ export default function ConfigChange() {
     case HANDLERS.REMOVE_USER_CONFIG: {
       return (
         <div className="config-change defaultConfig">
-          <h3 className="titleText">Update configuration</h3>
+          <h3 className="titleText">{t("updateConfig default title")}</h3>
           <p className="descriptionText">
-            Are you sure you want to use the default configuration?
+            {t("updateConfig default description")}
           </p>
 
           <div className="cid-button-row cid-button-row-horiz">
@@ -75,13 +77,13 @@ export default function ConfigChange() {
               className="cid-button cid-button-lg cid-button-secondary"
               onClick={backToMainScreen}
             >
-              Cancel
+              {t("updateConfig default cancel")}
             </button>
             <button
               className="cid-button cid-button-lg cid-button-primary"
               onClick={removeUserConfig}
             >
-              Yes, use the default
+              {t("updateConfig default confirm")}
             </button>
           </div>
         </div>
@@ -92,25 +94,24 @@ export default function ConfigChange() {
     default: {
       return (
         <div className="config-change">
-          <h3 className="titleText">Update configuration</h3>
+          <h3 className="titleText">{t("updateConfig title")}</h3>
 
           <div className="cid-button-row cid-button-row-vert">
             <button
               className="cid-button cid-button-lg cid-button-primary"
               onClick={setHandlerOnClick(HANDLERS.LOAD_NEW_CONFIG)}
             >
-              Load a new configuration file
+              {t("updateConfig loadButton")}
             </button>
             <div className="cid-button-with-helptext">
               <button
                 className="cid-button cid-button-lg cid-button-secondary"
                 onClick={setHandlerOnClick(HANDLERS.REMOVE_USER_CONFIG)}
-              >
-                Use the default configuration
+                >
+                {t("updateConfig defaultButton")}
               </button>
               <p className="helptext">
-                Revert to the default (built-in) configuration supplied with the
-                application
+                {t("updateConfig defaultDescription")}
               </p>
             </div>
           </div>

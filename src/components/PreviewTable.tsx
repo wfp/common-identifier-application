@@ -13,10 +13,12 @@
 
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
+import { useTranslation } from 'react-i18next';
 import type { Config, MappedData } from '../../common/types';
 
 function EmptyTable() {
-  return <div className="EmptyTable">No data in the table</div>;
+  const { t } = useTranslation();
+  return <div className="EmptyTable">{t("emptyTable title")}</div>;
 }
 
 function TableRow({ rowData, keys }: { rowData: MappedData, keys: string[] }) {

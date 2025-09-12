@@ -17,8 +17,10 @@
 // A version information box (config version, last update)
 import { format as dateFmt } from 'date-fns';
 import type { BaseAppState } from '../store';
+import { useTranslation } from 'react-i18next';
 
 function VersionInfo({ config }: Omit<BaseAppState, "screen">) {
+    const { t } = useTranslation();
   // if the current config is the initial one we dont want to display anything
   if (config.isInitial) {
     return <></>;
@@ -43,12 +45,12 @@ function VersionInfo({ config }: Omit<BaseAppState, "screen">) {
     <div className={classNameString.join(' ')}>
       <dl>
         <div>
-          <dt>Version:</dt>
+          <dt>{t("navbar version")}:</dt>
           <dd>{versionString}</dd>
         </div>
         {!isBackup ? (
           <div>
-            <dt>Last Updated:</dt>
+            <dt>{t("navbar lastUpdated")}:</dt>
             <dd>{lastUpdateDate}</dd>
           </div>
         ) : null}

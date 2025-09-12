@@ -14,10 +14,12 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { useTranslation } from 'react-i18next';
 import { useAppStore } from '../store';
 import type { BaseAppState } from '../store';
 
 function ConfigUpdated({ config }: Pick<BaseAppState, "config">) {
+  const { t } = useTranslation();
   const showTermsAndConditions = useAppStore(
     (store) => store.showTermsAndConditions,
   );
@@ -26,9 +28,9 @@ function ConfigUpdated({ config }: Pick<BaseAppState, "config">) {
 
   return (
     <div className="config-change config-updated">
-      <h3 className="titleText">Configuration Updated</h3>
+      <h3 className="titleText">{t("configUpdated title")}</h3>
       <h2>
-        Configuration successfully updated to
+        {t("configUpdated subtitle")}
         <span className="version">
           {meta.version}-{meta.id}
         </span>
@@ -39,7 +41,7 @@ function ConfigUpdated({ config }: Pick<BaseAppState, "config">) {
           className="cid-button cid-button-lg cid-button-primary"
           onClick={showTermsAndConditions}
         >
-          Done
+          {t("configUpdated confirm")}
         </button>
       </div>
     </div>

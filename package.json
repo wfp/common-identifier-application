@@ -48,8 +48,11 @@
   },
   "dependencies": {
     "common-identifier-algorithm-shared": "github:wfp/common-identifier-algorithm-shared",
+    "i18next": "^25.5.2",
+    "i18next-browser-languagedetector": "^8.2.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-i18next": "^15.7.3",
     "zustand": "^5.0.3"
   }
 }

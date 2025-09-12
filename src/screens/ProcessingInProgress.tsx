@@ -1,18 +1,20 @@
 // Common Identifier Application
 // Copyright (C) 2024 World Food Programme
-
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU Affero General Public License for more details.
-
+//
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+import { useTranslation } from "react-i18next";
 
 function baseFileName(filePath: string) {
   const splitName = filePath.split(/[\\/]/);
@@ -20,6 +22,7 @@ function baseFileName(filePath: string) {
 }
 
 function ProcessingInProgress({ inputFilePath } : {inputFilePath: string|undefined}) {
+  const { t } = useTranslation();
   return (
     <div className="ProcessingInProgress progressIndicator">
       <div className="loaderWrapper">
@@ -28,10 +31,10 @@ function ProcessingInProgress({ inputFilePath } : {inputFilePath: string|undefin
       {/* <div className="help">Processing the file...</div> */}
       <div className="help">
         {!inputFilePath || inputFilePath.length === 0 ? (
-          <p>Processing File...</p>
+          <p>{t("processingInProgress noPath")}</p>
         ) : (
           <p>
-            Processing File:{' '}
+            {t("processingInProgress path")}:{' '}
             <span className="fileName">{baseFileName(inputFilePath)}</span>
           </p>
         )}

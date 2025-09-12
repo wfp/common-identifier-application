@@ -13,6 +13,7 @@
 
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
+import { useTranslation } from "react-i18next";
 import type { ILoadConfigFailed } from "../../common/types";
 
 // Attempts to display the for-end-users error summary
@@ -21,6 +22,7 @@ import type { ILoadConfigFailed } from "../../common/types";
 //
 // messageKey is the name of the message inside the messages key in the config
 function ErrorWrapper({ config, errorMessage, isRuntimeError }: Omit<ILoadConfigFailed, "screen">) {
+  const { t } = useTranslation();
   if (!errorMessage) errorMessage = "";
   let userMessage = config.data.messages?.error_in_config;
 
@@ -38,14 +40,14 @@ function ErrorWrapper({ config, errorMessage, isRuntimeError }: Omit<ILoadConfig
   ) {
     return (
       <div className="userErrorMessage textFromConfig">
-        An internal error occured and the configuration is invalid.
+        {t("error configError")}
       </div>
     );
   }
 
   // runtime errors are currently handled as special cases
   if (isRuntimeError) {
-    userMessage = 'Internal error in the application';
+    userMessage = t("error runtimeError");
   }
 
   return (

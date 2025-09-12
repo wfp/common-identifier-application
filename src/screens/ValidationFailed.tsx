@@ -20,9 +20,11 @@ import FileInfo from '../components/FileInfo';
 import PreviewTable from '../components/PreviewTable';
 import { useAppStore } from '../store';
 import type { IValidationFailed } from '../../common/types';
+import { useTranslation } from 'react-i18next';
 
 function OpenErrorListButton({ errorFilePath }: { errorFilePath: string}) {
   const openOutputPath = useAppStore((store) => store.openOutputFile);
+  const { t } = useTranslation();
 
   // open the output file
   function openOutputFile() {
@@ -34,7 +36,7 @@ function OpenErrorListButton({ errorFilePath }: { errorFilePath: string}) {
       className="cid-button cid-button-lg cid-button-alert"
       onClick={openOutputFile}
     >
-      Open error list
+      {t("validationFailed errorButton")}
     </button>
   );
 }
@@ -44,6 +46,7 @@ function ValidationFailed({
 }: Omit<IValidationFailed, "screen">) {
   const startPreProcessingFile = useAppStore((store) => store.startPreProcessingFile);
   const preProcessFileOpenDialog = useAppStore((store) => store.preProcessFileOpenDialog);
+  const { t } = useTranslation();
 
   // on retry we simply re-submit the same path
   const retryFileLoad = () => startPreProcessingFile(inputFilePath);
@@ -66,31 +69,27 @@ function ValidationFailed({
   );
 
   // The file invalid message differs between mapping & assistance documents
-  const fileIsNotValidMessage =
-    'Validation finished. Critical errors encountered.';
-
+  const fileIsNotValidMessage = t("validationFailed title");
   return (
     <div className="ValidationFailed appScreen">
-      <FileInfo filePath={inputFilePath} helpText="The input file is invalid" />
+      <FileInfo filePath={inputFilePath} helpText={t("validationFailed fileInfo")} />
 
       <PreviewTable tableData={document.data} columnsConfig={errorColumns} />
 
       <div className="validationResult error">
         <div className="validationState">
           {fileIsNotValidMessage}
-          <div className="help">
-            You cannot continue until the noted issues are resolved.
-          </div>
+          <div className="help">{t("validationFailed subtitle")}</div>
         </div>
 
         <OpenErrorListButton errorFilePath={errorFilePath} />
       </div>
 
       <BottomButtons
-        l_content="Open a different file"
+        l_content={t("validationFailed leftButton")}
         l_onClick={preProcessFileOpenDialog}
         r_onClick={retryFileLoad}
-        r_content="Retry the same file"
+        r_content={t("validationFailed rightButton")}
       />
     </div>
   );
