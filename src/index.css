@@ -452,9 +452,8 @@ button {
 .language-select {
   position: absolute;
   top: 100%;
-  left: 0.5rem;
+  left: 0;
   display: flex;
-  gap: 0.5rem;
 }
 
 .language-select .language-tab {
@@ -462,11 +461,11 @@ button {
   border: none;
   padding: 0.3rem;
   cursor: pointer;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
   transition: opacity 0.2s ease;
 }
 
-.language-select .language-tab:hover {
+.language-select .language-tab:hover,
+.language-select .language-tab:focus {
   opacity: 1;
 }
 
@@ -478,6 +477,10 @@ button {
 
 .language-select .language-tab {
   opacity: 0.4;
+}
+
+.language-select .language-tab.active {
+  opacity: 1;
 }
 
 /*#endregion */
@@ -519,11 +522,11 @@ button {
 .main-screen .region-open-file .cid-button {
   height: 5.5rem;
   font-size: 2.5rem;
-  width: max(25%, 250px);
+  width: max(40%, 300px);
 }
 
 .main-screen .region-update-config .cid-button {
-  width: max(20%, 250px);
+  width: max(30%, 300px);
 }
 
 .drop-target {
@@ -582,8 +585,11 @@ button {
   width: 300px;
 }
 
+.config-change .cid-button-row-vert {
+  width: fit-content;
+}
 .config-change .cid-button-row-vert button {
-  width: 400px;
+  width: 100%;
 }
 
 .loadNewConfig,

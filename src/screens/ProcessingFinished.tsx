@@ -50,10 +50,10 @@ function ProcessingFinished({
       <PreviewTable tableData={document.data} columnsConfig={columnsConfig} />
 
       <BottomButtons
-        l_content={t("processFinished leftButton")}
+        l_content={t("processingFinished leftButton")}
         l_onClick={preProcessFileOpenDialog}
         r_onClick={backToMainScreen}
-        r_content={t("processFinished rightButton")}
+        r_content={t("processingFinished rightButton")}
       />
     </div>
   );

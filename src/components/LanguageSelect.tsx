@@ -15,17 +15,23 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import { useTranslation } from 'react-i18next';
+import { useState } from "react";
 
 const LanguageSelect = () => {
-  const { t, i18n } = useTranslation();
-  const changeLanguage = (lng: string) => i18n.changeLanguage(lng);
+  const { i18n } = useTranslation();
+  const [selectedLang, setSelectedLang] = useState(i18n.language || 'en');
+
+  const changeLanguage = (lng: string) => {
+    i18n.changeLanguage(lng);
+    setSelectedLang(lng);
+  }
 
   return (
     <div className="language-select">
-      <button className="language-tab" onClick={() => changeLanguage('en')}>
+      <button className={`language-tab ${selectedLang === 'en' ? 'active' : ''}`} onClick={() => changeLanguage('en')}>
         <img alt='switch language to English' src="/public/locales/en/gb.svg" />
       </button>
-      <button className="language-tab" onClick={() => changeLanguage('es')}>
+      <button className={`language-tab ${selectedLang === 'es' ? 'active' : ''}`} onClick={() => changeLanguage('es')}>
         <img alt='switch language to Spanish' src="/public/locales/es/es.svg" />
       </button>
     </div>
