@@ -36,6 +36,7 @@ function Navbar({ config, screen }: BaseAppState) {
     case SCREENS.LOAD_NEW_CONFIG:
     case SCREENS.FILE_LOADING:
     case SCREENS.CONFIG_UPDATED:
+    case SCREENS.WELCOME:
     case SCREENS.MAIN:
       backButton = <></>;
       break;

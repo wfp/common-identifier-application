@@ -64,7 +64,8 @@ function App() {
     }
 
     case SCREENS.WELCOME: {
-      return <WelcomeScreen config={config} />;
+      screen = <WelcomeScreen config={config} />;
+      break;
     }
 
     case SCREENS.MAIN: {
@@ -73,7 +74,8 @@ function App() {
     }
 
     case SCREENS.INVALID_CONFIG: {
-      return <InvalidConfig errorMessage={errorMessage!} config={config} />;
+      screen = <InvalidConfig errorMessage={errorMessage!} config={config} />;
+      break;
     }
 
     case SCREENS.LOAD_NEW_CONFIG: {

@@ -78,7 +78,6 @@ function WelcomeScreen({ config }: { config: BaseAppState["config"]}) {
 
   return (
     <div className="WelcomeScreen">
-      <LanguageSelect />
       <h4 className="titleText">{t("terms title")}</h4>
 
       <div
