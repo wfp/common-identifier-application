@@ -29,10 +29,10 @@ const LanguageSelect = () => {
   return (
     <div className="language-select">
       <button className={`language-tab ${selectedLang === 'en' ? 'active' : ''}`} onClick={() => changeLanguage('en')}>
-        <img alt='switch language to English' src="/public/locales/en/gb.svg" />
+        <img alt='switch language to English' src="/locales/en/gb.svg" />
       </button>
       <button className={`language-tab ${selectedLang === 'es' ? 'active' : ''}`} onClick={() => changeLanguage('es')}>
-        <img alt='switch language to Spanish' src="/public/locales/es/es.svg" />
+        <img alt='switch language to Spanish' src="/locales/es/es.svg" />
       </button>
     </div>
   )
