@@ -120,11 +120,7 @@ export const useAppStore = createStore<AppState>()((set) => ({
   }),
   loadNewConfigDone: ({ success, cancelled, error, config, lastUpdated }) => set((state): ILoadConfigFinished | ILoadConfigFailed => {
     console.log("LOAD_NEW_CONFIG_DONE");
-    // if the load was OK update the config and go to the main screen
-    if (success) return {
-      screen: SCREENS.CONFIG_UPDATED,
-      config: { data: config, lastUpdated: lastUpdated, isInitial: false, isBackup: false }
-    }
+    console.log(success, cancelled, error, config, lastUpdated);
     // if the load was cancelled go to the main screen with the old config
     if (cancelled) {
       // handle cancelation of inital load when there was an error booting
@@ -135,6 +131,11 @@ export const useAppStore = createStore<AppState>()((set) => ({
         errorMessage: state.errorMessage
       }
       return { screen: SCREENS.MAIN, config: state.config }
+    }
+    // if the load was OK update the config and go to the main screen
+    if (success) return {
+      screen: SCREENS.CONFIG_UPDATED,
+      config: { data: config, lastUpdated: lastUpdated, isInitial: false, isBackup: false }
     }
     // If we still have the initial config this means there is no valid config present
     // so fall back to the invalid config screen
