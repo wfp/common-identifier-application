@@ -9,6 +9,7 @@
   "error title": "ERROR",
   "error backButton": "Back to the main screen",
   "developerDetails title": "Technical Details",
+  "developerDetails copied": "Copied",
   "error configError": "An internal error occured and the configuration is invalid.",
   "error runtimeError": "Internal error in the application.",
   "emptyTable title": "No data in the table",

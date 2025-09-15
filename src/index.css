@@ -665,22 +665,41 @@ button {
   text-decoration: underline;
 }
 
-.error-screen .developerInformation button {
+.developerInformation .copy-container {
   position: absolute;
+  display: inline-block;
   top: 5px;
   right: 5px;
+}
 
+.copy-container button {
   width: 40px;
   height: 40px;
   padding: 0;
+
+  color: var(--color-ui-05);
 
   background-color: var(--color-ui-04);
   border-color: var(--color-ui-05);
 }
 
-.error-screen .developerInformation button:hover,
-.error-screen .developerInformation button:focus-visible {
+.copy-container button:hover,
+.copy-container button:focus-visible {
   background-color: var(--color-ui-05);
+  color: var(--color-ui-02);
+}
+
+.copy-container .tooltip {
+  position: absolute;
+  left: -0.25em;
+  top: 0;
+  transform: translateX(-100%);
+  background-color: var(--color-ui-05);
+  color: var(--color-ui-02);
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.75em;
+  white-space: nowrap;
 }
 
 .InvalidConfig {

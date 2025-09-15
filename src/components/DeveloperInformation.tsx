@@ -14,24 +14,33 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import type React from "react"
+import { useState, type MouseEvent } from "react"
 import { useTranslation } from "react-i18next";
 
 export const DeveloperInformation = ({errorMessage} : {errorMessage: string | undefined}) => {
+  const [ copied, setCopied ] = useState(false);
   const { t } = useTranslation();
-  const handleCopyText = (e: React.MouseEvent) => {
+
+  const handleCopyText = (e: MouseEvent) => {
     e.preventDefault();
-    if (errorMessage) navigator.clipboard.writeText(errorMessage);
-    console.log("Copied text to clipboard");
+    if (errorMessage) {
+      navigator.clipboard.writeText(errorMessage);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+      console.log("Copied text to clipboard");
+    }
   }
   return (
     <div className="developerInformation">
       <h4>{t("developerDetails title")}</h4>
-      <button onClick={handleCopyText} className="cid-button">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-          <path fill-rule="evenodd" d="M4 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-1h1v1a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h1v1z" />
-        </svg>
-      </button>
+      <div className="copy-container">
+        {copied && <span className="tooltip">{t("developerDetails copied")}</span>}
+        <button onClick={handleCopyText} className="cid-button">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+            <path fillRule="evenodd" d="M4 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-1h1v1a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h1v1z" />
+          </svg>
+        </button>
+      </div>
       <code className="technicalDetails">{errorMessage}</code>
     </div>
   )

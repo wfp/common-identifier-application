@@ -17,7 +17,6 @@
 import { useAppStore } from '../store';
 import ErrorWrapper from '../components/ErrorWrapper';
 import type { ILoadConfigFailed } from '../../common/types';
-import type React from 'react';
 import { DeveloperInformation } from '../components/DeveloperInformation';
 import { useTranslation } from 'react-i18next';
 
