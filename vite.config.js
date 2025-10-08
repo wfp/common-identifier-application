@@ -9,7 +9,6 @@ import pkg from './package.json';
 export default defineConfig(({ command }) => {
   rmSync('dist-electron', { recursive: true, force: true });
   const isServe = command === 'serve';
-  const isBuild = command === 'build';
 
   return {
     resolve: {
@@ -27,12 +26,7 @@ export default defineConfig(({ command }) => {
           vite: {
             build: {
               sourcemap: isServe ? 'inline' : false,
-              minify: true,
-              // rollupOptions: {
-              //   external: Object.keys(
-              //     'dependencies' in pkg ? pkg.dependencies : {},
-              //   ),
-              // },
+              minify: true
             }
           }
         },
