@@ -8,6 +8,9 @@ on:
       algorithmId:
         required: true
         type: string
+      locale:
+        required: false
+        type: string
 
 jobs:
   RunTestSuite:
@@ -66,6 +69,7 @@ jobs:
       - name: Build and package application
         run: tsx scripts/build.ts --algorithm-directory ${{ inputs.algorithm }} --algorithm-id ${{ inputs.algorithmId }} --package
         env:
+          VITE_LOCALE: ${{ inputs.locale }}
           AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
           AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
           AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}

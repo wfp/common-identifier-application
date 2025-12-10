@@ -24,8 +24,10 @@ jobs:
         include:
           - algorithm: syria_north_west
             algorithmId: nws
+            # locale: arabic
           - algorithm: syria
             algorithmId: syr
+            # locale: arabic
     uses: "./.github/workflows/build.yml"
     with:
       algorithm: ${{ matrix.algorithm }}
