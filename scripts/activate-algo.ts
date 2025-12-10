@@ -27,7 +27,7 @@ const programme = new Command().requiredOption('--algorithm-id <ALGORITHM_ID>', 
 programme.parse();
 
 const MAIN_DIR = join(__dirname, '..', 'electron', 'main');
-const BACKUP_CONFIG_TARGET_PATH = join(__dirname, '..', 'public', 'config.backup.toml'); // public since vite looks here for static assets
+const BACKUP_CONFIG_TARGET_PATH = join(__dirname, '..', 'assets', 'config.backup.toml');
 
 function copyBackupConfig() {
   // the algorithm directory

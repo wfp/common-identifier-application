@@ -16,7 +16,8 @@ release
 algo_repo
 electron/main/algo
 
-public/config.backup.toml
+assets/config.backup.toml
+assets/salt**
 *.old.json
 # NOTE: adding package-lock.json since there are issues relating to versioning when pulling
 #       code directly from GitHub.

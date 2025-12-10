@@ -25,6 +25,7 @@
       "publisherName": "WFP"
     },
     "azureSignOptions": {
+      "publisherName": "WFP",
       "certificateProfileName": "buildingblocks",
       "codeSigningAccountName": "buildingblocks",
       "endpoint": "https://weu.codesigning.azure.net",

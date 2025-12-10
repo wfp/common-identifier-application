@@ -20,12 +20,8 @@ import { shell } from 'electron';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import {
-  makeConfigStore,
-  appDataLocation,
-} from 'common-identifier-algorithm-shared';
+import { makeConfigStore, appDataLocation, getSaltPath } from 'common-identifier-algorithm-shared';
 import type { ConfigStore } from 'common-identifier-algorithm-shared';
-
 
 // IPC event handlers
 import { requestConfigUpdate } from './ipc-handlers/requestConfigUpdate';
@@ -44,6 +40,7 @@ const log = Debug('CID:main');
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const RENDERER_DIST = join(__dirname, '../dist');
+const ASSETS_DIR = join(__dirname, 'assets/');
 const PRELOAD_PATH = join(__dirname, 'preload.mjs');
 const INDEX_HTML = join(RENDERER_DIST, 'index.html');
 
@@ -51,9 +48,10 @@ const INDEX_HTML = join(RENDERER_DIST, 'index.html');
 const APP_DIR_NAME = `commonid-tool-${ALGORITHM_ID.toLowerCase()}`;
 const CONFIG_FILE_NAME = `config.${ALGORITHM_ID}.json`;
 const APP_CONFIG_FILE_NAME = `appconfig.${ALGORITHM_ID}.json`;
-const BACKUP_CONFIG_FILE_PATH = join(RENDERER_DIST, 'config.backup.toml');
+const BACKUP_CONFIG_FILE_PATH = join(ASSETS_DIR, 'config.backup.toml');
 
 const APP_DIR_PATH = join(appDataLocation(), APP_DIR_NAME); // the path of the application's data files
+const SALT_FILE_PATH = join(ASSETS_DIR, "salt.asc"); // the path to the bundled salt file in the assets dir
 const CONFIG_FILE_PATH = join(APP_DIR_PATH, CONFIG_FILE_NAME); // the path of the store configuration file
 const APP_CONFIG_FILE_PATH = join(APP_DIR_PATH, APP_CONFIG_FILE_NAME); // the path of the application config file (containing config-independent settings)
 
@@ -222,13 +220,14 @@ app.whenReady().then(() => {
     filePaths: {
       config: CONFIG_FILE_PATH,
       appConfig: APP_CONFIG_FILE_PATH,
-      backupConfig: BACKUP_CONFIG_FILE_PATH
+      backupConfig: BACKUP_CONFIG_FILE_PATH,
+      salt: SALT_FILE_PATH,
     },
     algorithmId: ALGORITHM_ID,
     usingUI: true
   });
   configStore.boot();
-  
+
   createWindow(configStore);
 });
 
