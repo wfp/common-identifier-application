@@ -61,7 +61,7 @@ function checkConfigSignature(filePath: string, algorithmId: string) {
   if (hash !== config.meta.signature) {
     console.error(`ERROR: configuration file contains invalid signature`)
     console.error(`       EXPECTED: ${hash}`);
-    console.error(`            GOT: ${hash}`);
+    console.error(`            GOT: ${config.meta.signature}`);
     return false;
   }
   return true;

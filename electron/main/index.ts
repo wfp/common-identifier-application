@@ -20,7 +20,7 @@ import { shell } from 'electron';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { makeConfigStore, appDataLocation, getSaltPath } from 'common-identifier-algorithm-shared';
+import { makeConfigStore, appDataLocation } from 'common-identifier-algorithm-shared';
 import type { ConfigStore } from 'common-identifier-algorithm-shared';
 
 // IPC event handlers
@@ -221,10 +221,10 @@ app.whenReady().then(() => {
       config: CONFIG_FILE_PATH,
       appConfig: APP_CONFIG_FILE_PATH,
       backupConfig: BACKUP_CONFIG_FILE_PATH,
-      salt: SALT_FILE_PATH,
     },
     algorithmId: ALGORITHM_ID,
-    usingUI: true
+    usingUI: true,
+    saltConfiguration: { source: "FILE", value: SALT_FILE_PATH }
   });
   configStore.boot();
 
