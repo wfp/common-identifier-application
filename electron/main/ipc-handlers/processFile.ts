@@ -20,13 +20,13 @@ import { baseFileName } from '../util';
 import {
   processFile as backendProcessFile,
   SUPPORTED_FILE_TYPES,
-} from 'common-identifier-algorithm-shared';
-import type { Config, ConfigStore } from 'common-identifier-algorithm-shared';
+} from '@wfp/common-identifier-algorithm-shared';
+import type { Config, ConfigStore } from '@wfp/common-identifier-algorithm-shared';
 
 import Debug from 'debug';
 const log = Debug('CID:main:ipc::processFile');
 
-import { makeHasher } from '../active_algorithm';
+import { makeHasher } from '@selected-algo';
 import { EVENT } from '../../../common/events';
 
 const MAX_ROWS_TO_PREVIEW = 500;

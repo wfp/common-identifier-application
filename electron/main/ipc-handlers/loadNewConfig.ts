@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import { dialog } from 'electron';
-import type { ConfigStore } from 'common-identifier-algorithm-shared';
+import type { ConfigStore } from '@wfp/common-identifier-algorithm-shared';
 
 import Debug from 'debug';
 import type { ILoadNewConfig } from '../../../common/types';

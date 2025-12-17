@@ -4,15 +4,21 @@ on:
     branches:
       - main
       - develop
+      - feat/*
     paths-ignore:
       - '**.md'
-      - '**.spec.js'
       - '.gitignore'
   pull_request:
-    branches: ['main']
-    types: [opened, reopened, edited]
-  release:
-    types: [created]
+    branches:
+      - develop
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: read
+  pull-requests: read
+  checks: write
 
 jobs:
   AlgorithmMatrix:

@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import type { ConfigStore } from 'common-identifier-algorithm-shared';
+import type { ConfigStore } from '@wfp/common-identifier-algorithm-shared';
 import type { IRequestConfigUpdate } from '../../../common/types';
 
 import Debug from 'debug';

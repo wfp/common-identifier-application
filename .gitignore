@@ -18,8 +18,7 @@ electron/main/algo
 
 assets/config.backup.toml
 assets/salt**
+common/selected-algo.d.ts
 *.old.json
-# NOTE: adding package-lock.json since there are issues relating to versioning when pulling
-#       code directly from GitHub.
-# TODO: port shared code to an actual npm registry and re-enable package-lock versioning.
-package-lock.json
+
+scratch

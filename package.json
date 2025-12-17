@@ -47,7 +47,8 @@
     "vite-plugin-electron-renderer": "^0.14.6"
   },
   "dependencies": {
-    "common-identifier-algorithm-shared": "github:wfp/common-identifier-algorithm-shared",
+    "@wfp/common-identifier-algorithm-shared": "^2.0.0",
+    "@wfp/common-identifier-algorithms": "^2.1.1",
     "i18next": "^25.7.2",
     "i18next-browser-languagedetector": "^8.2.0",
     "react": "^19.2.1",

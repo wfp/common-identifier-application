@@ -15,8 +15,8 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import { BrowserWindow } from 'electron';
-import { preprocessFile as backendPreProcessFile } from 'common-identifier-algorithm-shared';
-import type { Config, ConfigStore } from 'common-identifier-algorithm-shared';
+import { preprocessFile as backendPreProcessFile } from '@wfp/common-identifier-algorithm-shared';
+import type { Config, ConfigStore } from '@wfp/common-identifier-algorithm-shared';
 import { EVENT } from '../../../common/events';
 
 import Debug from 'debug';

@@ -29,8 +29,8 @@ function revertFileIfExists(fileName: string, oldPath: string, newPath: string) 
     if (!existsSync(oldPath)) {
         console.warn(`WARN: ${fileName} does not exists, not overwriting file.`);
     } else {
-        console.log(`Overwriting ${PACKAGE_PATH} with ${oldPath}`);
-        copyFileSync(oldPath, PACKAGE_PATH);
+        console.log(`Overwriting ${newPath} with ${oldPath}`);
+        copyFileSync(oldPath, newPath);
         unlinkSync(oldPath);
     }
 }

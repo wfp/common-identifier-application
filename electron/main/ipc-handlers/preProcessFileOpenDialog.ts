@@ -16,7 +16,7 @@
 
 import { BrowserWindow, dialog } from 'electron';
 import { preProcessFile } from './preProcessFile';
-import type { ConfigStore } from 'common-identifier-algorithm-shared';
+import type { ConfigStore } from '@wfp/common-identifier-algorithm-shared';
 
 import Debug from 'debug';
 import { EVENT } from '../../../common/events';

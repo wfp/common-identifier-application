@@ -20,8 +20,8 @@ import { shell } from 'electron';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { makeConfigStore, appDataLocation } from 'common-identifier-algorithm-shared';
-import type { ConfigStore } from 'common-identifier-algorithm-shared';
+import { makeConfigStore, appDataLocation } from '@wfp/common-identifier-algorithm-shared';
+import type { ConfigStore } from '@wfp/common-identifier-algorithm-shared';
 
 // IPC event handlers
 import { requestConfigUpdate } from './ipc-handlers/requestConfigUpdate';
@@ -31,7 +31,7 @@ import { processFile } from './ipc-handlers/processFile';
 import { preProcessFileOpenDialog } from './ipc-handlers/preProcessFileOpenDialog';
 import { removeUserConfig } from './ipc-handlers/removeUserConfig';
 
-import { ALGORITHM_ID } from './active_algorithm';
+import { ALGORITHM_ID } from '@selected-algo';
 import { EVENT } from '../../common/events';
 
 import Debug from 'debug';
