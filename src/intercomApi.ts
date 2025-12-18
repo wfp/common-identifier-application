@@ -16,7 +16,7 @@
 import { useAppStore } from './store';
 
 import Debug from 'debug';
-const log = Debug('CID:Renderer::intercom');
+const log = Debug('cid::renderer::intercom');
 
 function withElectronAPI(label: string, fn: CallableFunction, elseFn = () => {}) {
   if (typeof window.electronAPI === 'object') {

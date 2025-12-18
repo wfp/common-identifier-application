@@ -18,13 +18,14 @@ import type { ConfigStore } from '@wfp/common-identifier-algorithm-shared';
 import type { IRequestConfigUpdate } from '../../../common/types';
 
 import Debug from 'debug';
-const log = Debug('CID:main:ipc::requestConfigUpdate');
+const log = Debug('cid::electron::ipc::requestConfigUpdate');
 
 export function requestConfigUpdate(configStore: ConfigStore): IRequestConfigUpdate {
-  log('App requesting config udpate');
+  log('[DEBUG] App requesting config udpate');
 
   const config = configStore.getConfig();
   if (config === undefined) {
+    log(`[ERROR] Config undefined -- Unable to read current or backup configuration file: ${configStore.getConfigFilePath()} || ${configStore.getBackupConfigFilePath()}`);
     throw new Error(`Unable to read configuration file:
       ${configStore.getConfigFilePath()} || 
       ${configStore.getBackupConfigFilePath()}`

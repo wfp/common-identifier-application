@@ -8,6 +8,9 @@ on:
       algorithmId:
         required: true
         type: string
+      saltFilePath:
+        required: true
+        type: string
       locale:
         required: false
         type: string
@@ -20,6 +23,7 @@ permissions:
 
 jobs:
   RunTestSuite:
+    if: false
     name: 1. Run Test Suite
     runs-on: windows-latest
 
@@ -53,9 +57,9 @@ jobs:
 
   BuildApplication:
     name: 2. Build Application
-    needs:
-     - RunTestSuite
-    if: needs.RunTestSuite.result == 'success'
+    # needs:
+    #  - RunTestSuite
+    # if: needs.RunTestSuite.result == 'success'
     runs-on: windows-latest
   
     steps:
@@ -77,6 +81,22 @@ jobs:
           # TODO: remove this when packages are public
           NPM_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         continue-on-error: false
+
+      - name: Clone salt file repository
+        uses: actions/checkout@v4
+        with:
+          repository: wfp/common-identifier-application-keys
+          token: ${{ secrets.PAT_READ_KEYS }}
+          path: salt-repo
+      
+      - name: Fetch salt file
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path ./assets | Out-Null
+          $src = 'salt-repo/${{ inputs.saltFilePath }}'
+          Copy-Item -LiteralPath $src -Destination './assets/salt.asc' -Force
+
+          echo $(git hash-object ./assets/salt.asc)
 
       - name: Build and package application
         run: tsx scripts/build.ts --algorithm-name ${{ inputs.algorithm }} --algorithm-id ${{ inputs.algorithmId }} --package

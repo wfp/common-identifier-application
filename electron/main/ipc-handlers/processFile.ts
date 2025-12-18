@@ -24,7 +24,7 @@ import {
 import type { Config, ConfigStore } from '@wfp/common-identifier-algorithm-shared';
 
 import Debug from 'debug';
-const log = Debug('CID:main:ipc::processFile');
+const log = Debug('cid::electron::ipc::process');
 
 import { makeHasher } from '@selected-algo';
 import { EVENT } from '../../../common/events';

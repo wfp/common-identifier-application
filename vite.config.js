@@ -1,6 +1,6 @@
 import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
-import { rmSync, statSync, mkdirSync, cpSync } from 'node:fs';
+import { rmSync, statSync, mkdirSync, cpSync, readdirSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import electron from 'vite-plugin-electron/simple';
 import renderer from 'vite-plugin-electron-renderer';
@@ -37,6 +37,7 @@ function copyAssetsToDistElectron() {
       mkdirSync(DEST_ASSETS, { recursive: true });
       cpSync(SRC_ASSETS, DEST_ASSETS, {recursive: true});
       console.log(`[copy-assets-to-dist-electron] Copied assets -> ${DEST_ASSETS}`);
+      console.log(`[copy-assets-to-dist-electron] Assets directory contains: ${readdirSync(DEST_ASSETS)}`);
     },
   };
 }

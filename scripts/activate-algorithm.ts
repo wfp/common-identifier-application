@@ -26,6 +26,10 @@ program.parse();
   if (!checkConfigSignature(configPath, algorithmId))
     throw new Error(`Could not validate backup configuration file: ${configPath}, ${algorithmId}`);
 
+  // TODO: Investigate pulling the config file directly from @selected-algo/config/config.toml.
+  //       For now, we are copying the config file to the assets directory here instead of fetching it from the target module during
+  //       runtime. This is simpler, but annoying. It would be better to pull the backup config file from the algorithm library itself,
+  //       but we then run into issues exposing it from the bundled app.asar.
   const assetsDir = resolve(__dirname, '../assets');
   const configDest = resolve(assetsDir, 'config.backup.toml')
 
