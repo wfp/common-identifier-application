@@ -21,10 +21,8 @@
     ],
     "artifactName": "${productName}-${os}-${version}-setup.${ext}",
     "icon": "public/logo.ico",
-    "signtoolOptions": {
-      "publisherName": "WFP"
-    },
     "azureSignOptions": {
+      "publisherName": "WFP",
       "certificateProfileName": "buildingblocks",
       "codeSigningAccountName": "buildingblocks",
       "endpoint": "https://weu.codesigning.azure.net",

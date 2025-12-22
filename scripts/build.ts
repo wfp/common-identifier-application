@@ -1,21 +1,16 @@
 import { Command } from '@commander-js/extra-typings';
 import { exec } from 'child_process';
-import { cpSync, existsSync, mkdirSync, rmSync } from 'node:fs';
-import { fileURLToPath } from 'url';
-import { join, dirname } from 'path';
 import { promisify } from 'util';
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
 const execPromise = promisify(exec);
 
 const program = new Command()
-  .requiredOption('--algorithm-directory <ALGORITHM_DIRECORY>', 'The name of the algorithm directory')       // i.e. syria
+  .requiredOption('--algorithm-name <ALGORITHM_NAME>', 'The name of the algorithm, typically the directory name')       // i.e. syria
   .requiredOption('--algorithm-id <ALGORITHM_ID>', 'The algorithm id, typically found at config.meta.id') // i.e. SYR
   .option('--no-build', 'Don\'t build the application')
   .option('--run-tests', 'Run the test suite')
   .option('--ignore-errors', 'Ignore errors in subcommands, useful for test failures', false)
   .option('--package', 'Package the application')
-  .option('--repository-url [REPO_URL]', 'The algorithm repository url', 'https://github.com/wfp/common-identifier-algorithms') // could be a local directory if needed
 
 program.parse();
 
@@ -23,10 +18,6 @@ const PROG_OPTIONS = program.opts();
 
 if (PROG_OPTIONS.package && !PROG_OPTIONS.build)
   throw new Error("ERROR: Unable to package the application without also building it, remove the --no-build flag");
-
-const REPO_DIR   = join(__dirname, '..', 'algo_repo');
-const DEST_DIR   = join(__dirname, '..', 'electron', 'main', 'algo');
-const SOURCE_DIR = join(REPO_DIR, 'algorithms', PROG_OPTIONS.algorithmDirectory);
 
 async function runCommand(command: string) {
   console.log(`Running command: ${command}\n`);
@@ -42,41 +33,14 @@ async function runCommand(command: string) {
   }
 }
 
-const cleanUpRepo = () => existsSync(REPO_DIR)
-  ? rmSync(REPO_DIR, { recursive: true, force: true })
-  : null;
-
-async function cloneAndCheckoutAlgorithm() {
-  // shallow clone the algorithms repository
-  await runCommand(`git clone --filter=blob:none --no-checkout --depth 1 ${PROG_OPTIONS.repositoryUrl} ${REPO_DIR}`);
-
-  // checkout the selected algorithm from the algorithms repository
-  process.chdir(REPO_DIR);
-  await runCommand('git sparse-checkout init --no-cone');
-  await runCommand(`git sparse-checkout set algorithms/${PROG_OPTIONS.algorithmDirectory}`);
-  await runCommand('git checkout');
-
-  // copy the checked out algorithm to ./electron/main/algo
-  mkdirSync(DEST_DIR, { recursive: true });
-  cpSync(SOURCE_DIR, DEST_DIR, { recursive: true });
-
-  // check success
-  if (!existsSync(join(DEST_DIR, "index.ts"))) throw new Error("ERROR: unable to clone and checkout algorithm repo");
-}
 
 async function buildApplication() {
-  console.log(`Building Application: algo=${PROG_OPTIONS.algorithmDirectory}, code=${PROG_OPTIONS.algorithmId}`);
+  console.log(`Building Application: algo=${PROG_OPTIONS.algorithmName}, code=${PROG_OPTIONS.algorithmId}`);
 
-  cleanUpRepo(); // this can't be baked into the npm script since it is a separate git repo
   await runCommand('npm run clean:app');
-
-  await cloneAndCheckoutAlgorithm();
-
-  process.chdir(join(__dirname, '..'));
-  rmSync(REPO_DIR, { recursive: true, force: true });
   
   await runCommand('npm install');
-  await runCommand(`tsx scripts/activate-algo.ts --algorithm-id ${PROG_OPTIONS.algorithmId.toUpperCase()}`);
+  await runCommand(`tsx scripts/activate-algorithm.ts --algorithm-name ${PROG_OPTIONS.algorithmName}`);
 
   if (PROG_OPTIONS.runTests) {
     console.log("Running tests");
@@ -85,6 +49,8 @@ async function buildApplication() {
   
   if (PROG_OPTIONS.build) {
     console.log("Building app");
+    // [NOTE] setting the SELECTED_ALGORITHM env var here since vite does not support passing in params.
+    process.env.SELECTED_ALGORITHM = PROG_OPTIONS.algorithmName;
     await runCommand('npm run build');
     await runCommand(`tsx scripts/update-rendered-components.ts --suffix ${PROG_OPTIONS.algorithmId}`);
   }

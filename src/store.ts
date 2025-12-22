@@ -37,7 +37,8 @@ import type {
 } from '../common/types';
 
 import Debug from 'debug';
-const log = Debug('CID:Renderer::store');
+// TODO: Come back to migrate console.log to electron-log syntax
+const log = Debug('cid::renderer::store');
 
 export interface BaseAppState {
   screen: SCREENS;
@@ -107,7 +108,6 @@ export const useAppStore = createStore<AppState>()((set) => ({
   }),
   updateConfig: (newConfig, isBackup) => set((state): BaseState => {
     console.log("UPDATE_CONFIG");
-    log(state);
     return {
       screen: state.screen,
       config: { isInitial: false, isBackup: isBackup, data: newConfig, lastUpdated: new Date() }

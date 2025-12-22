@@ -17,6 +17,16 @@
 import { useTranslation } from 'react-i18next';
 import { useState } from "react";
 
+
+// TODO: move locale selection into the backend as preload to auto-select from the users OS preference
+const SUPPORTED_LOCALES = [
+  {
+    name: "Spanish",
+    code: "es",
+    flagUrl: new URL('/locales/es.svg', import.meta.url).href,
+  }
+]
+
 const LanguageSelect = () => {
   const { i18n } = useTranslation();
   const [selectedLang, setSelectedLang] = useState(i18n.language || 'en');
@@ -26,13 +36,20 @@ const LanguageSelect = () => {
     setSelectedLang(lng);
   }
 
+  const envLocale = import.meta.env.VITE_LOCALE as string | undefined;
+  const locale = envLocale ? SUPPORTED_LOCALES.find((loc) => loc.code === envLocale) : undefined;
+
+  if (envLocale && !locale) console.warn(`Unsupported LOCALE "${envLocale}". Falling back to English.`);
+
+  if (!locale) return <div />;
+
   return (
     <div className="language-select">
       <button className={`language-tab ${selectedLang === 'en' ? 'active' : ''}`} onClick={() => changeLanguage('en')}>
-        <img alt='switch language to English' src="/locales/en/gb.svg" />
+        <img alt='switch language to English' src={new URL('/locales/gb.svg', import.meta.url).href} />
       </button>
-      <button className={`language-tab ${selectedLang === 'es' ? 'active' : ''}`} onClick={() => changeLanguage('es')}>
-        <img alt='switch language to Spanish' src="/locales/es/es.svg" />
+      <button className={`language-tab ${selectedLang === locale.code ? 'active' : ''}`} onClick={() => changeLanguage(locale.code)}>
+        <img alt={`switch language to ${locale.name}`} src={locale.flagUrl} />
       </button>
     </div>
   )

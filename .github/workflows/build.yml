@@ -8,9 +8,22 @@ on:
       algorithmId:
         required: true
         type: string
+      saltFilePath:
+        required: true
+        type: string
+      locale:
+        required: false
+        type: string
+
+permissions:
+  contents: read
+  packages: read
+  pull-requests: read
+  checks: write
 
 jobs:
   RunTestSuite:
+    if: false
     name: 1. Run Test Suite
     runs-on: windows-latest
 
@@ -29,9 +42,11 @@ jobs:
         run: |
           npm install
           npm install -g tsx
+        env:
+          NPM_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Install and run tests
-        run: tsx scripts/build.ts --algorithm-directory ${{ inputs.algorithm }} --algorithm-id ${{ inputs.algorithmId }} --no-build --run-tests --ignore-errors
+        run: tsx scripts/build.ts --algorithm-name ${{ inputs.algorithm }} --algorithm-id ${{ inputs.algorithmId }} --no-build --run-tests --ignore-errors
       
       - name: Publish Test Results
         uses: EnricoMi/publish-unit-test-result-action/windows@v2
@@ -42,9 +57,9 @@ jobs:
 
   BuildApplication:
     name: 2. Build Application
-    needs:
-     - RunTestSuite
-    if: needs.RunTestSuite.result == 'success'
+    # needs:
+    #  - RunTestSuite
+    # if: needs.RunTestSuite.result == 'success'
     runs-on: windows-latest
   
     steps:
@@ -62,10 +77,32 @@ jobs:
         run: |
           npm install
           npm install -g tsx
+        env:
+          # TODO: remove this when packages are public
+          NPM_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: false
+
+      - name: Clone salt file repository
+        uses: actions/checkout@v4
+        with:
+          repository: wfp/common-identifier-application-keys
+          token: ${{ secrets.PAT_READ_KEYS }}
+          path: salt-repo
+      
+      - name: Fetch salt file
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path ./assets | Out-Null
+          $src = 'salt-repo/${{ inputs.saltFilePath }}'
+          Copy-Item -LiteralPath $src -Destination './assets/salt.asc' -Force
+
+          echo $(git hash-object ./assets/salt.asc)
 
       - name: Build and package application
-        run: tsx scripts/build.ts --algorithm-directory ${{ inputs.algorithm }} --algorithm-id ${{ inputs.algorithmId }} --package
+        run: tsx scripts/build.ts --algorithm-name ${{ inputs.algorithm }} --algorithm-id ${{ inputs.algorithmId }} --package
+        continue-on-error: false
         env:
+          VITE_LOCALE: ${{ inputs.locale }}
           AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
           AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
           AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}

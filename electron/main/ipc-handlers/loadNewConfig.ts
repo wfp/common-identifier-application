@@ -15,14 +15,14 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import { dialog } from 'electron';
-import type { ConfigStore } from 'common-identifier-algorithm-shared';
+import type { ConfigStore } from '@wfp/common-identifier-algorithm-shared';
 
 import Debug from 'debug';
 import type { ILoadNewConfig } from '../../../common/types';
-const log = Debug('CID:main:ipc::loadNewConfig');
+const log = Debug('cid::electron::ipc::loadNewConfig');
 
 export async function loadNewConfig(configStore: ConfigStore): Promise<ILoadNewConfig> {
-  log('App requested loading a new config');
+  log('[INFO] App requested loading a new config');
 
   const response = await dialog.showOpenDialog({
     properties: ['openFile'],
@@ -43,13 +43,13 @@ export async function loadNewConfig(configStore: ConfigStore): Promise<ILoadNewC
   if (!response.canceled) {
     // handle fully qualified file name
     const filePath = response.filePaths[0];
-    log('Starting to load config file from open dialog: ', filePath);
+    log('[INFO] Starting to load config file from open dialog: ', filePath);
 
     // attempt to load into the store
     const loadError = configStore.updateUserConfig(filePath);
 
     if (loadError) {
-      log('CONFIG LOAD ERROR: ', loadError);
+      log('[ERROR] CONFIG LOAD ERROR: ', loadError);
       return {
         success: false, cancelled: false,
         config, lastUpdated: configStore.lastUpdated,

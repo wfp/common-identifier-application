@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "types": [ "./common/selected-algo.d.ts" ],
     "target": "ESNext",
     "module": "ESNext",
     "lib": [ "ESNext", "DOM", "DOM.Iterable" ],

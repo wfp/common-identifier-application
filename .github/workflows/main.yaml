@@ -4,15 +4,25 @@ on:
     branches:
       - main
       - develop
+      - feat/*
     paths-ignore:
       - '**.md'
-      - '**.spec.js'
       - '.gitignore'
   pull_request:
-    branches: ['main']
-    types: [opened, reopened, edited]
-  release:
-    types: [created]
+    branches:
+      - develop
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: read
+  pull-requests: read
+  checks: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   AlgorithmMatrix:
@@ -24,11 +34,14 @@ jobs:
         include:
           - algorithm: syria_north_west
             algorithmId: nws
+            saltFilePath: ${{ vars.SALT_NWS }}
           - algorithm: syria
             algorithmId: syr
+            saltFilePath: ${{ vars.SALT_SYR }}
     uses: "./.github/workflows/build.yml"
     with:
       algorithm: ${{ matrix.algorithm }}
       algorithmId: ${{ matrix.algorithmId }}
+      saltFilePath: ${{ matrix.saltFilePath }}
     secrets: inherit
 
