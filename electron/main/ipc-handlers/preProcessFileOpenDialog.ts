@@ -16,11 +16,11 @@
 
 import { BrowserWindow, dialog } from 'electron';
 import { preProcessFile } from './preProcessFile';
-import type { ConfigStore } from 'common-identifier-algorithm-shared';
+import type { ConfigStore } from '@wfp/common-identifier-algorithm-shared';
 
 import Debug from 'debug';
 import { EVENT } from '../../../common/events';
-const log = Debug('CID:main:ipc::preProcessFileOpenDialog');
+const log = Debug('cid::electron::ipc::preProcessFileOpenDialog');
 
 // Shows a file open dialog and starts preprocessing the selected file
 export async function preProcessFileOpenDialog(mainWindow: BrowserWindow, configStore: ConfigStore,) {
@@ -31,10 +31,10 @@ export async function preProcessFileOpenDialog(mainWindow: BrowserWindow, config
   if (!response.canceled) {
     // handle fully qualified file name
     const filePath = response.filePaths[0];
-    log(`Starting to process file from open dialog: ${filePath}`);
+    log(`[INFO] Starting to process file from open dialog: ${filePath}`);
     return preProcessFile(mainWindow, configStore, filePath);
   } else {
-    log('no file selected');
+    log('[WARN] no file selected');
     // send the cancelec message
     mainWindow.webContents.send(EVENT.PROCESSING_CANCELLED, {});
   }

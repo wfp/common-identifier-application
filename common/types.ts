@@ -1,6 +1,6 @@
 import { SCREENS } from "./screens";
-import type { Config, CidDocument } from "common-identifier-algorithm-shared";
-export type { Config, CidDocument } from 'common-identifier-algorithm-shared';
+import type { Config, CidDocument } from "@wfp/common-identifier-algorithm-shared";
+export type { Config, CidDocument } from '@wfp/common-identifier-algorithm-shared';
 
 export type IRequestConfigUpdate = {
   config: Config.FileConfiguration;
