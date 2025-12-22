@@ -114,10 +114,13 @@ function createWindow(configStore: ConfigStore) {
     mainWindow.setIcon(`${resolve(__dirname, '../public/logo.png')}`);
   }
 
-  mainWindow.on('close', () => {
-    const windowBounds = { ...mainWindow.getBounds(), fullscreen: mainWindow.isFullScreen() }
-    configStore.updateDisplayConfig(windowBounds);
-  });
+  // TODO: something here isn't working with second monitors.
+  //       If the app was running on 2nd monitor that was then disconnected, there are some instances
+  //       where it still launches off-screen. Disabling this for not, investigate further.
+  // mainWindow.on('close', () => {
+  //   const windowBounds = { ...mainWindow.getBounds(), fullscreen: mainWindow.isFullScreen() }
+  //   configStore.updateDisplayConfig(windowBounds);
+  // });
 
   return mainWindow;
 }
