@@ -23,7 +23,6 @@ permissions:
 
 jobs:
   RunTestSuite:
-    if: false
     name: 1. Run Test Suite
     runs-on: windows-latest
 
@@ -57,9 +56,9 @@ jobs:
 
   BuildApplication:
     name: 2. Build Application
-    # needs:
-    #  - RunTestSuite
-    # if: needs.RunTestSuite.result == 'success'
+    needs:
+     - RunTestSuite
+    if: needs.RunTestSuite.result == 'success'
     runs-on: windows-latest
   
     steps:
