@@ -48,7 +48,7 @@
   },
   "dependencies": {
     "@wfp/common-identifier-algorithm-shared": "^2.0.2",
-    "@wfp/common-identifier-algorithms": "^2.1.1",
+    "@wfp/common-identifier-algorithms": "^2.1.2",
     "electron-log": "^5.4.3",
     "i18next": "^25.7.2",
     "i18next-browser-languagedetector": "^8.2.0",
