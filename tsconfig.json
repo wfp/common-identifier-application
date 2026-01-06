@@ -1,13 +1,22 @@
 {
   "compilerOptions": {
-    "types": [ "./common/selected-algo.d.ts" ],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": [ "./src/*" ]
+    },
+    "types": [
+      "./common/selected-algo.d.ts",
+      "vite/client"
+    ],
+
     "target": "ESNext",
     "module": "ESNext",
     "lib": [ "ESNext", "DOM", "DOM.Iterable" ],
 
     "moduleResolution": "bundler",
-    "allowImportingTsExtensions": true,
     "verbatimModuleSyntax": true,
+  
+    "allowImportingTsExtensions": true,
     "noEmit": true,
     
     "strict": true,
@@ -22,8 +31,9 @@
     "useDefineForClassFields": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
+  
     "jsx": "react-jsx",
   },
-  "include": ["src", "electron", "common", "data", "tests"],
-  "exclude": ["node_modules"]
+  "include": [ "src/**/*.tsx", "electron/**/*.ts", "common/**/*.ts", "tests/**/*.ts" ],
+  "exclude": [ "node_modules", "dist", "dist-electon", "tmp", "**/tmp" ]
 }

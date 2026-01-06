@@ -44,7 +44,7 @@ async function buildApplication() {
 
   if (PROG_OPTIONS.runTests) {
     console.log("Running tests");
-    await runCommand('npm run test');
+    await runCommand('npm run test:coverage');
   }
   
   if (PROG_OPTIONS.build) {
