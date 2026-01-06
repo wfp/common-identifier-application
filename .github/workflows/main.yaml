@@ -5,6 +5,7 @@ on:
       - main
       - develop
       - feat/*
+      - fix/*
     paths-ignore:
       - '**.md'
       - '.gitignore'
@@ -25,8 +26,44 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  RunTestSuite:
+    name: 1. Run Test Suite
+    if: ${{ !contains(github.event.head_commit.message, '[skip ci]') }}
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      
+      - name: Setup node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      
+      - name: Install dependencies
+        run: npm install
+        env:
+          NPM_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Run tests
+        run: npm run test:coverage
+      
+      - name: Report Coverage
+        if: (!cancelled())
+        uses: davelosert/vitest-coverage-report-action@v2
+      
+      - name: Publish JUnit Test Report
+        if: (!cancelled()) && (success() || failure())
+        uses: mikepenz/action-junit-report@v5
+        with:
+          report_paths: reports/junit.xml
+          check_name: 'Vitest JUnit'
+
   AlgorithmMatrix:
     if: ${{ !contains(github.event.head_commit.message, '[skip ci]') }}
+    needs: RunTestSuite
     strategy:
       fail-fast: false
       matrix:
