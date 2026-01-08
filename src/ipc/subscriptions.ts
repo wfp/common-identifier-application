@@ -17,13 +17,33 @@
 ************************************************************************ */
 import { registerSubscriptions } from './intercom-bridge';
 import { useAppStore } from '../store';
+import log from 'electron-log';
+import { EVENT } from '../../common/events';
+
+const logger = log.scope('renderer:ipc');
 
 export function registerIpcSubscriptions() {
+  logger.debug('Registering IPC Subscriptions');
   return registerSubscriptions({
-    preprocessingDone: (_e, value) => useAppStore.getState().endPreprocessing(value),
-    processingDone: (_e, value) => useAppStore.getState().endProcessing(value),
-    configChanged: (_e, { config, isBackup }) => useAppStore.getState().setConfig(config, isBackup),
-    processingCancelled: () => useAppStore.getState().cancelWorkflow(),
-    error: (_e, message) => useAppStore.getState().showError(message, true),
+    preprocessingDone: (_e, value) => { 
+      logger.debug(`Event: ${EVENT.PREPROCESSING_FINISHED}`);
+      return useAppStore.getState().endPreprocessing(value)
+    },
+    processingDone: (_e, value) => {
+      logger.debug(`Event: ${EVENT.PROCESSING_FINISHED}`);
+      return useAppStore.getState().endProcessing(value)
+    },
+    configChanged: (_e, { config, isBackup }) => {
+      logger.debug(`Event: ${EVENT.CONFIG_CHANGED}`);
+      return useAppStore.getState().setConfig(config, isBackup)
+    },
+    processingCancelled: () => {
+      logger.debug(`Event: ${EVENT.WORKFLOW_CANCELLED}`);
+      return useAppStore.getState().cancelWorkflow()
+    },
+    error: (_e, message) => {
+      logger.debug(`Event: ${EVENT.ERROR}`);
+      return useAppStore.getState().showError(message, true)
+    },
   });
 }

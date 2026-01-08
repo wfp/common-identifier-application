@@ -17,21 +17,24 @@
 ************************************************************************ */
 
 import type { ConfigStore } from '@wfp/common-identifier-algorithm-shared';
-import Debug from 'debug';
+import log from "electron-log/main";
+
 import type { IRemoveUserConfig } from '../../../common/types';
-const log = Debug('cid::electron::ipc::removeUserConfig');
+
+const ipcLog = log.scope("ipc:removeConfig"); 
 
 // Removes the user configuration and falls back to the built-in default
 export function removeUserConfig(configStore: ConfigStore): IRemoveUserConfig {
-  log('[INFO] start');
+  ipcLog.info('Attempting to remove configuration file');
 
   const loadError = configStore.removeUserConfig();
 
-  log('[INFO] result: ', loadError);
+  if (loadError) ipcLog.error('Error removing user configuration: ', loadError);
+  else ipcLog.info('User configuration removed, reverted to built-in default');
 
   const config = configStore.getConfig();
   if (config === undefined) {
-    log(`[ERROR] Config undefined -- Unable to read current or backup configuration file: ${configStore.getConfigFilePath()} || ${configStore.getBackupConfigFilePath()}`);
+    ipcLog.error(`Config undefined -- Unable to read current or backup configuration file: ${configStore.getConfigFilePath()} || ${configStore.getBackupConfigFilePath()}`);
     throw new Error(`Unable to read configuration file: ${configStore.getConfigFilePath()} || ${configStore.getBackupConfigFilePath()}`);
   }
   if (!loadError) return {

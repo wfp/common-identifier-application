@@ -18,18 +18,18 @@
 
 import path from 'node:path';
 import { BrowserWindow, dialog } from 'electron';
+import log from "electron-log/main";
+
 import { baseFileName } from '../util';
 import {
   processFile as backendProcessFile,
   SUPPORTED_FILE_TYPES,
 } from '@wfp/common-identifier-algorithm-shared';
 import type { Config, ConfigStore } from '@wfp/common-identifier-algorithm-shared';
-
-import Debug from 'debug';
-const log = Debug('cid::electron::ipc::process');
-
 import { makeHasher } from '@selected-algo';
 import { EVENT } from '../../../common/events';
+
+const ipcLog = log.scope("ipc:process"); 
 
 const MAX_ROWS_TO_PREVIEW = 500;
 
@@ -75,10 +75,10 @@ async function doProcessFile(
       format: outputFormat,
     });
 
-  log('PROCESSING DONE');
+  ipcLog.info('PROCESSING DONE');
 
   if (document.data.length > MAX_ROWS_TO_PREVIEW) {
-    log(`dataset has ${document.data.length} rows, trimming for frontend preview`);
+    ipcLog.warn(`Dataset has ${document.data.length} rows, trimming for frontend preview`);
     document.data = document.data.slice(0, MAX_ROWS_TO_PREVIEW);
   }
   mainWindow.webContents.send(EVENT.PROCESSING_FINISHED, {
@@ -91,18 +91,18 @@ async function doProcessFile(
 
 // Process a file
 export async function processFile(mainWindow: BrowserWindow, configStore: ConfigStore, filePath: string) {
-  log('Processing File:', filePath);
+  ipcLog.info('Processing File:', filePath);
 
   const response = await dialog.showSaveDialog({
     defaultPath: baseFileName(filePath),
   });
   if (response.canceled || response.filePath === '') {
-    log('no file selected');
+    ipcLog.info('No file selected, cancelling workflow');
     // send the canceled message
     mainWindow.webContents.send(EVENT.WORKFLOW_CANCELLED, {});
     return;
   }
   const outputPath = response.filePath;
-  log('STARTING TO PROCESS AS', outputPath);
+  ipcLog.info('Starting to process as', outputPath);
   return doProcessFile(mainWindow, configStore, filePath, outputPath);
 }

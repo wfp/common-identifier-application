@@ -17,34 +17,36 @@
 ************************************************************************ */
 
 import { BrowserWindow } from 'electron';
+import log from "electron-log/main";
+
 import { preprocessFile as backendPreProcessFile } from '@wfp/common-identifier-algorithm-shared';
 import type { Config, ConfigStore } from '@wfp/common-identifier-algorithm-shared';
 import { EVENT } from '../../../common/events';
 
-import Debug from 'debug';
-const log = Debug('cid::electron::ipc::preprocess');
+
+const ipcLog = log.scope("ipc:preprocess"); 
 
 const MAX_ROWS_TO_PREVIEW = 500;
 
 export async function preProcessFile(mainWindow: BrowserWindow, configStore: ConfigStore, filePath: string) {
-  log(`[INFO] Dropped File: ${filePath}`);
+  ipcLog.info(`Dropped File: ${filePath}`);
 
   const config = configStore.getConfig() as Config.FileConfiguration;
 
   const { isValid, isMappingDocument, document, errorFilePath, inputFilePath } =
     await backendPreProcessFile({ config, inputFilePath: filePath });
-  log('[INFO] PREPROCESSING DONE');
+  ipcLog.info('PREPROCESSING DONE');
 
   // if this is error data, filter to only errors first.
   if (!isValid) {
     const errors = document.data.filter((r) => r.errors);
-    log(`[INFO] ${errors.length} validation errors found`);
+    ipcLog.info(`${errors.length} validation errors found`);
     document.data = errors;
   }
 
   // don't return large datasets back to the frontend, instead splice and send n rows
   if (document.data.length > MAX_ROWS_TO_PREVIEW) {
-    log(`[WARN] input data array has ${document.data.length} rows, trimming for frontend preview`);
+    ipcLog.warn(`Input data array has ${document.data.length} rows, trimming for frontend preview`);
     document.data = document.data.slice(0, MAX_ROWS_TO_PREVIEW);
   }
 

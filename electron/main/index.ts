@@ -16,6 +16,8 @@
 *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ************************************************************************ */
 import { app, BrowserWindow, screen } from 'electron';
+import log from "electron-log/main";
+
 import { dirname, join, resolve } from 'node:path';
 import { existsSync, mkdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
@@ -26,11 +28,9 @@ import { deregisterIpcHandlers, registerIpcHandlers } from './ipc-handlers';
 import { ALGORITHM_ID } from '@selected-algo';
 import { registerLogHandlers } from './util';
 
-import Debug from 'debug';
-const log = Debug('cid::electron::main');
-
 // init logs and redirect debug output to file to capture engine logs
 registerLogHandlers();
+const mainLog = log.scope("main"); 
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -80,15 +80,40 @@ function createMainWindow(configStore: ConfigStore) {
   return mainWindow;
 }
 
+app.whenReady().then(async () => {
+  mainLog.info("Starting application...");
+  const { makeConfigStore } = await import('@wfp/common-identifier-algorithm-shared');
+  
+  mainLog.debug("Initialising config store");
+  const configStore = makeConfigStore({
+    filePaths: {
+      config: CONFIG_FILE_PATH,
+      appConfig: APP_CONFIG_FILE_PATH,
+      backupConfig: BACKUP_CONFIG_FILE_PATH,
+    },
+    algorithmId: ALGORITHM_ID,
+    usingUI: true,
+    saltConfiguration: { source: "FILE", value: SALT_FILE_PATH }
+  });
+  configStore.boot();
+  mainLog.debug("Config store booted");
+
+  createWindow(configStore);
+});
+
 function createWindow(configStore: ConfigStore) {
+  mainLog.debug("Creating main window");
   const mainWindow = createMainWindow(configStore);
 
+  mainLog.debug("Registering IPC handlers");
   registerIpcHandlers(app, mainWindow, configStore);
 
   if (process.env.VITE_DEV_SERVER_URL) {
+    mainLog.debug("Development mode, loading from Vite url");
     mainWindow.loadURL(process.env.VITE_DEV_SERVER_URL);
     mainWindow.webContents.openDevTools();
   } else {
+    mainLog.debug("Production mode, loading from index.html");
     mainWindow.loadFile(INDEX_HTML);
   }
 
@@ -109,26 +134,8 @@ function createWindow(configStore: ConfigStore) {
   return mainWindow;
 }
 
-app.whenReady().then(async () => {
-  const { makeConfigStore } = await import('@wfp/common-identifier-algorithm-shared');
-  
-  log("[INFO] createAndRegisterWindow");
-  const configStore = makeConfigStore({
-    filePaths: {
-      config: CONFIG_FILE_PATH,
-      appConfig: APP_CONFIG_FILE_PATH,
-      backupConfig: BACKUP_CONFIG_FILE_PATH,
-    },
-    algorithmId: ALGORITHM_ID,
-    usingUI: true,
-    saltConfiguration: { source: "FILE", value: SALT_FILE_PATH }
-  });
-  configStore.boot();
-
-  createWindow(configStore);
-});
-
 app.on('window-all-closed', () => {
+  mainLog.info('All windows closed, quitting app');
   deregisterIpcHandlers();
   if (process.platform !== 'darwin') app.quit();
 });

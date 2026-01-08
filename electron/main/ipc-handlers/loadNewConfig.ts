@@ -17,14 +17,15 @@
 ************************************************************************ */
 
 import { dialog } from 'electron';
+import log from "electron-log/main";
 import type { ConfigStore } from '@wfp/common-identifier-algorithm-shared';
 
-import Debug from 'debug';
 import type { ILoadNewConfig } from '../../../common/types';
-const log = Debug('cid::electron::ipc::loadNewConfig');
+
+const ipcLog = log.scope("ipc:loadNewConfig"); 
 
 export async function loadNewConfig(configStore: ConfigStore): Promise<ILoadNewConfig> {
-  log('[INFO] App requested loading a new config');
+  ipcLog.info('App requested loading a new config');
 
   const response = await dialog.showOpenDialog({
     properties: ['openFile'],
@@ -45,20 +46,20 @@ export async function loadNewConfig(configStore: ConfigStore): Promise<ILoadNewC
   if (!response.canceled) {
     // handle fully qualified file name
     const filePath = response.filePaths[0];
-    log('[INFO] Starting to load config file from open dialog: ', filePath);
+    ipcLog.info('Starting to load config file from open dialog: ', filePath);
 
     // attempt to load into the store
     const loadError = configStore.updateUserConfig(filePath);
 
     if (loadError) {
-      log('[ERROR] CONFIG LOAD ERROR: ', loadError);
+      ipcLog.error('CONFIG LOAD ERROR: ', loadError);
       return {
         success: false, cancelled: false,
         config, lastUpdated: configStore.lastUpdated,
         error: loadError,
       };
     }
-  }
+  } else ipcLog.info('User cancelled config file open dialog');
 
   return {
     success: true, cancelled: response.canceled,

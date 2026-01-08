@@ -17,22 +17,24 @@
 ************************************************************************ */
 
 import type { ConfigStore } from '@wfp/common-identifier-algorithm-shared';
+import log from "electron-log/main";
+
 import type { IRequestConfigUpdate } from '../../../common/types';
 
-import Debug from 'debug';
-const log = Debug('cid::electron::ipc::requestConfigUpdate');
+const ipcLog = log.scope("ipc:requestConfigUpdate"); 
 
 export function requestConfigUpdate(configStore: ConfigStore): IRequestConfigUpdate {
-  log('[DEBUG] App requesting config udpate');
+  ipcLog.info('App requesting config update');
 
   const config = configStore.getConfig();
   if (config === undefined) {
-    log(`[ERROR] Config undefined -- Unable to read current or backup configuration file: ${configStore.getConfigFilePath()} || ${configStore.getBackupConfigFilePath()}`);
+    ipcLog.error(`Config undefined -- Unable to read current or backup configuration file: ${configStore.getConfigFilePath()} || ${configStore.getBackupConfigFilePath()}`);
     throw new Error(`Unable to read configuration file:
       ${configStore.getConfigFilePath()} || 
       ${configStore.getBackupConfigFilePath()}`
     );
   }
+  ipcLog.info('Returning current configuration to renderer process');
   return {
     config,
     isBackup: configStore.isUsingBackupConfig,

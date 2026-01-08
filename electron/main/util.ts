@@ -31,9 +31,13 @@ export function registerLogHandlers() {
   log.transports.file.level = "debug";
   log.transports.file.maxSize = 1024 * 1024; // 1MB for now, tune this later.
 
+  log.transports.console.level = "info"; // Disable console logging
+  log.transports.ipc.level = false; // Disable IPC logging
+  
+  const engineLog = log.scope("engine");
   log.initialize();
 
-  const logRegex = /(?<namespace>cid::[A-Za-z0-9_:.-]+)\s+\[(?<level>INFO|DEBUG|ERROR|WARN)\]\s+(?<message>.*)/
+  const logRegex = /(?<namespace>cid::[A-Za-z0-9_:.-]+)\s+\[(?<level>INFO|DEBUG|ERROR|WARN)\]\s+(?<message>.*)/;
 
   // TODO: descope this namespace to only log sensible events; there is not need to log everything all the time.
   createDebug.enable("cid::*");
@@ -43,33 +47,33 @@ export function registerLogHandlers() {
       if (typeof args[0] === "string") {
         const matches = args[0].match(logRegex);
         if (!matches || !matches.groups) {
-          log.debug(String(args[0]));
+          engineLog.debug(String(args[0]));
           return;
         }
 
         const message = `${matches.groups.namespace} - ${matches.groups.message}`;
         switch (matches.groups.level) {
           case "DEBUG":
-            log.debug(message);
+            engineLog.debug(message);
             return;
           case "INFO":
-            log.info(message);
+            engineLog.info(message);
             return;
           case "WARN":
-            log.warn(message);
+            engineLog.warn(message);
             return;
           case "ERROR":
-            log.error(message);
+            engineLog.error(message);
             return;
           default:
-            log.debug(message);
+            engineLog.debug(message);
         }
       }
-      else log.debug(String(args[0]));
+      else engineLog.debug(String(args[0]));
     }
     catch (err) {
-      log.error("Log handler error:", err);
-      log.debug(String(args[0]));
+      engineLog.error("Log handler error:", err);
+      engineLog.debug(String(args[0]));
     }
   }
 }

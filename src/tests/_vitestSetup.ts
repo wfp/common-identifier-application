@@ -15,6 +15,29 @@
 *  You should have received a copy of the GNU Affero General Public License
 *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ************************************************************************ */
+import { vi } from 'vitest';
+
+// Mock electron-log to prevent actual logging during tests
+function createMockLogger() {
+  const self: any = {
+    debug: vi.fn(),
+    info: vi.fn(),
+    warn: vi.fn(),
+    error: vi.fn(),
+    transports: {
+      console: { level: 'debug' as const },
+      ipc:     { level: false as any }, // IMPORTANT: disable IPC in tests
+      file:    { level: false as any },
+    },
+    scope: (name: string) => self,
+  };
+  return self;
+}
+
+vi.mock('electron-log/renderer', () => ({ default: createMockLogger() }));
+vi.mock('electron-log/main',     () => ({ default: createMockLogger() }));
+vi.mock('electron-log',          () => ({ default: createMockLogger() }));
+
 Object.defineProperty(window, "electronAPI", {
   configurable: true,
   writable: true,

@@ -16,10 +16,13 @@
 *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ************************************************************************ */
 import type { StateCreator } from 'zustand';
+import log from 'electron-log/renderer';
 
 import type { UIState } from '../types';
 import { SCREENS } from '../../../common/screens';
 import type { Store } from '..';
+
+const logger = log.scope('renderer:store');
 
 export type UISlice = UIState & {
   go: (screen: SCREENS) => void;
@@ -40,6 +43,7 @@ export const createUISlice: StateCreator<
   go: (screen) => set(s => { s.screen = screen }, false),
 
   showError: (message, isRuntime = true) => set(s => {
+    logger.debug(`Showing error. Runtime: ${isRuntime}, Message: ${message}`);
     s.errorMessage = message;
     s.isRuntimeError = isRuntime;
     s.screen = SCREENS.ERROR;

@@ -15,6 +15,7 @@
 *  You should have received a copy of the GNU Affero General Public License
 *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ************************************************************************ */
+import log from 'electron-log/renderer';
 import type {
   IRequestConfigUpdate,
   ILoadNewConfig,
@@ -24,12 +25,14 @@ import type {
 } from '../../common/types';
 import { EVENT } from '../../common/events';
 
+const logger = log.scope('renderer:ipc');
+
 function hasElectron(): boolean {
   return typeof (window as any).electronAPI === 'object';
 }
 
 function logNoElectron(label: string) {
-  console.warn(`[IPC] Cannot call ${label} - Electron API not available`);
+  logger.warn(`Cannot call ${label} - Electron API not available`);
 }
 
 async function invoke<T>(label: string, fn: () => Promise<T>): Promise<T> {
@@ -40,44 +43,66 @@ async function invoke<T>(label: string, fn: () => Promise<T>): Promise<T> {
   }
   try { return await fn() }
   catch (err) {
-    console.error(`[IPC] invoke(${label}) failed:`, err);
+    logger.error(`Invoke(${label}) failed:`, err);
     throw err;
   }
 }
 
 // INVOKES
-export const requestConfigUpdate = async (): Promise<IRequestConfigUpdate> => 
-  invoke(EVENT.CONFIG_REQUEST_UPDATE, () => (window as any).electronAPI.invoke.requestConfigUpdate());
+export const requestConfigUpdate = async (): Promise<IRequestConfigUpdate> => {
+  logger.debug(`Invoke: ${EVENT.CONFIG_REQUEST_UPDATE}`); 
+  return invoke(EVENT.CONFIG_REQUEST_UPDATE, () => (window as any).electronAPI.invoke.requestConfigUpdate());
+}
 
-export const loadNewConfig = async (): Promise<ILoadNewConfig> =>
-  invoke(EVENT.CONFIG_LOAD_NEW, () => (window as any).electronAPI.invoke.loadNewConfig());
+export const loadNewConfig = async (): Promise<ILoadNewConfig> => {
+  logger.debug(`Invoke: ${EVENT.CONFIG_REQUEST_UPDATE}`);
+  return invoke(EVENT.CONFIG_LOAD_NEW, () => (window as any).electronAPI.invoke.loadNewConfig());
+}
 
-export const removeUserConfig = async (): Promise<IRemoveUserConfig> =>
-  invoke(EVENT.CONFIG_REMOVE, () => (window as any).electronAPI.invoke.removeUserConfig());
+export const removeUserConfig = async (): Promise<IRemoveUserConfig> => {
+  logger.debug(`Invoke: ${EVENT.CONFIG_REQUEST_UPDATE}`);
+  return invoke(EVENT.CONFIG_REMOVE, () => (window as any).electronAPI.invoke.removeUserConfig());
+}
 
-export const fileDropped = async (filePath: string): Promise<void> =>
-  invoke(EVENT.PREPROCESSING_START_DROP, () => (window as any).electronAPI.invoke.fileDropped(filePath));
+export const fileDropped = async (filePath: string): Promise<void> => {
+  logger.debug(`Invoke: ${EVENT.CONFIG_REQUEST_UPDATE}`);
+  return invoke(EVENT.PREPROCESSING_START_DROP, () => (window as any).electronAPI.invoke.fileDropped(filePath));
+}
 
-export const preProcessFileOpenDialog = async (): Promise<void> =>
-  invoke(EVENT.PREPROCESSING_START_DIALOGUE, () => (window as any).electronAPI.invoke.preProcessFileOpenDialog());
+export const preProcessFileOpenDialog = async (): Promise<void> => {
+  logger.debug(`Invoke: ${EVENT.CONFIG_REQUEST_UPDATE}`);
+  return invoke(EVENT.PREPROCESSING_START_DIALOGUE, () => (window as any).electronAPI.invoke.preProcessFileOpenDialog());
+}
 
-export const processFile = async (filePath: string): Promise<void> =>
-  invoke(EVENT.PROCESSING_START, () => (window as any).electronAPI.invoke.processFile(filePath));
+export const processFile = async (filePath: string): Promise<void> => {
+  logger.debug(`Invoke: ${EVENT.CONFIG_REQUEST_UPDATE}`);
+  return invoke(EVENT.PROCESSING_START, () => (window as any).electronAPI.invoke.processFile(filePath));
+}
 
-export const openOutputFile = async (filePath: string): Promise<void> =>
-  invoke(EVENT.OPEN_OUTPUT_FILE, () => (window as any).electronAPI.invoke.openOutputFile(filePath));
+export const openOutputFile = async (filePath: string): Promise<void> => {
+  logger.debug(`Invoke: ${EVENT.CONFIG_REQUEST_UPDATE}`);
+  return invoke(EVENT.OPEN_OUTPUT_FILE, () => (window as any).electronAPI.invoke.openOutputFile(filePath));
+}
 
-export const acceptTermsAndConditions = async (): Promise<void> =>
-  invoke(EVENT.ACCEPT_TERMS_AND_CONDITIONS, () => (window as any).electronAPI.invoke.acceptTermsAndConditions());
+export const acceptTermsAndConditions = async (): Promise<void> => {
+  logger.debug(`Invoke: ${EVENT.CONFIG_REQUEST_UPDATE}`);
+  return invoke(EVENT.ACCEPT_TERMS_AND_CONDITIONS, () => (window as any).electronAPI.invoke.acceptTermsAndConditions());
+}
 
-export const quit = async (): Promise<void> =>
-  invoke(EVENT.QUIT, () => (window as any).electronAPI.invoke.quit());
+export const quit = async (): Promise<void> => {
+  logger.debug(`Invoke: ${EVENT.CONFIG_REQUEST_UPDATE}`);
+  return invoke(EVENT.QUIT, () => (window as any).electronAPI.invoke.quit());
+}
 
-export const getFilePath = async (file: File): Promise<string | undefined> =>
-  invoke("GET_FILE_PATH", () => (window as any).electronAPI.invoke.getFilePath(file));
+export const getFilePath = async (file: File): Promise<string | undefined> => {
+  logger.debug(`Invoke: ${EVENT.CONFIG_REQUEST_UPDATE}`);
+  return invoke("GET_FILE_PATH", () => (window as any).electronAPI.invoke.getFilePath(file));
+}
 
-export const getPosixFilePath = async (file: File): Promise<string | undefined> =>
-  invoke("GET_POSIX_FILE_PATH", () => (window as any).electronAPI.invoke.getPosixFilePath(file));
+export const getPosixFilePath = async (file: File): Promise<string | undefined> => {
+  logger.debug(`Invoke: ${EVENT.CONFIG_REQUEST_UPDATE}`);
+  return invoke("GET_POSIX_FILE_PATH", () => (window as any).electronAPI.invoke.getPosixFilePath(file));
+}
 
 
 // EVENT LISTENERS

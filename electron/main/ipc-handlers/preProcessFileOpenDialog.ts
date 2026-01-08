@@ -17,12 +17,13 @@
 ************************************************************************ */
 
 import { BrowserWindow, dialog } from 'electron';
-import { preProcessFile } from './preProcessFile';
+import log from "electron-log/main";
 import type { ConfigStore } from '@wfp/common-identifier-algorithm-shared';
 
-import Debug from 'debug';
+import { preProcessFile } from './preProcessFile';
 import { EVENT } from '../../../common/events';
-const log = Debug('cid::electron::ipc::preProcessFileOpenDialog');
+
+const ipcLog = log.scope("ipc:openDialogue"); 
 
 // Shows a file open dialog and starts preprocessing the selected file
 export async function preProcessFileOpenDialog(mainWindow: BrowserWindow, configStore: ConfigStore,) {
@@ -33,10 +34,10 @@ export async function preProcessFileOpenDialog(mainWindow: BrowserWindow, config
   if (!response.canceled) {
     // handle fully qualified file name
     const filePath = response.filePaths[0];
-    log(`[INFO] Starting to process file from open dialog: ${filePath}`);
+    ipcLog.info(`Starting to process file from open dialog: ${filePath}`);
     return preProcessFile(mainWindow, configStore, filePath);
   } else {
-    log('[WARN] no file selected');
+    ipcLog.warn('No file selected');
     // send the cancelec message
     mainWindow.webContents.send(EVENT.WORKFLOW_CANCELLED, {});
   }
