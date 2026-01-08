@@ -62,7 +62,6 @@ jobs:
           check_name: 'Vitest JUnit'
 
   AlgorithmMatrix:
-    if: ${{ !contains(github.event.head_commit.message, '[skip ci]') }}
     needs: RunTestSuite
     strategy:
       fail-fast: false
