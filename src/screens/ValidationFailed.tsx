@@ -20,23 +20,18 @@ import { keepOutputColumns } from '../util';
 import BottomButtons from '../components/BottomButtons';
 import FileInfo from '../components/FileInfo';
 import PreviewTable from '../components/PreviewTable';
-import { useAppStore } from '../store';
 import type { IValidationFailed } from '../../common/types';
 import { useTranslation } from 'react-i18next';
+import { startPreprocessing } from '../store/actions/workflow.action';
+import { openOutputFile } from '../store/actions/system.action';
 
 function OpenErrorListButton({ errorFilePath }: { errorFilePath: string}) {
-  const openOutputPath = useAppStore((store) => store.openOutputFile);
   const { t } = useTranslation();
-
-  // open the output file
-  function openOutputFile() {
-    openOutputPath(errorFilePath);
-  }
 
   return (
     <button
       className="cid-button cid-button-lg cid-button-alert"
-      onClick={openOutputFile}
+      onClick={() => openOutputFile(errorFilePath)}
     >
       {t("validationFailed errorButton")}
     </button>
@@ -46,12 +41,11 @@ function OpenErrorListButton({ errorFilePath }: { errorFilePath: string}) {
 function ValidationFailed({
   config, document, inputFilePath, errorFilePath, isMappingDocument,
 }: Omit<IValidationFailed, "screen">) {
-  const startPreProcessingFile = useAppStore((store) => store.startPreProcessingFile);
-  const preProcessFileOpenDialog = useAppStore((store) => store.preProcessFileOpenDialog);
+
   const { t } = useTranslation();
 
   // on retry we simply re-submit the same path
-  const retryFileLoad = () => startPreProcessingFile(inputFilePath);
+  const retryFileLoad = () => startPreprocessing(inputFilePath);
 
   // Add the row number to the list of regular error columns for display
   let columnsConfig = config.data.destination_errors.columns;
@@ -89,7 +83,7 @@ function ValidationFailed({
 
       <BottomButtons
         l_content={t("validationFailed leftButton")}
-        l_onClick={preProcessFileOpenDialog}
+        l_onClick={() => startPreprocessing()}
         r_onClick={retryFileLoad}
         r_content={t("validationFailed rightButton")}
       />

@@ -22,12 +22,13 @@ import PreviewTable from '../components/PreviewTable';
 import { useAppStore } from '../store';
 import type { IProcessingFinished } from '../../common/types';
 import { useTranslation } from 'react-i18next';
+import { SCREENS } from 'common/screens';
+import { startPreprocessing } from '../store/actions/workflow.action';
 
 function ProcessingFinished({
   config, isMappingDocument, document, outputFilePath, mappingFilePath,
 }: Omit<IProcessingFinished, "screen">) {
-  const backToMainScreen = useAppStore((store) => store.backToMainScreen);
-  const preProcessFileOpenDialog = useAppStore((store) => store.preProcessFileOpenDialog);
+  const backToMainScreen = () => useAppStore.getState().go(SCREENS.MAIN);
   const { t } = useTranslation();
 
   const fileInfoRow = isMappingDocument ? (
@@ -53,7 +54,7 @@ function ProcessingFinished({
 
       <BottomButtons
         l_content={t("processingFinished leftButton")}
-        l_onClick={preProcessFileOpenDialog}
+        l_onClick={() => startPreprocessing()}
         r_onClick={backToMainScreen}
         r_content={t("processingFinished rightButton")}
       />

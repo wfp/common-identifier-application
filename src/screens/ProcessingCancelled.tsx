@@ -18,9 +18,10 @@
 
 import { useTranslation } from 'react-i18next';
 import { useAppStore } from '../store';
+import { SCREENS } from 'common/screens';
 
 function ProcessingCancelled() {
-  const backToMainScreen = useAppStore((store) => store.backToMainScreen);
+  const backToMainScreen = () => useAppStore.getState().go(SCREENS.MAIN);
   const { t } = useTranslation();
 
   return (

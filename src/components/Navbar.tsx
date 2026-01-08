@@ -18,15 +18,17 @@
 
 import { useTranslation } from 'react-i18next';
 
-import { useAppStore } from '../store';
 import { SCREENS } from '../../common/screens';
+
+import { useAppStore } from '../store';
+import type { ConfigState } from '../store/types';
+
 import VersionInfo from './VersionInfo';
-import type { BaseAppState } from '../store';
 import LanguageSelect from './LanguageSelect';
 
 // returns a navbar based on the name of the screen
-function Navbar({ config, screen }: BaseAppState) {
-  const backToMainScreen = useAppStore((store) => store.backToMainScreen);
+function Navbar({ config, screen }: { config: ConfigState; screen: SCREENS }) {
+  const backToMainScreen = () => useAppStore.getState().go(SCREENS.MAIN);
   const { t, i18n } = useTranslation();
 
   let backButton;

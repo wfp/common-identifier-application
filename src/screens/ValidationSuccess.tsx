@@ -18,19 +18,15 @@
 import BottomButtons from '../components/BottomButtons';
 import FileInfo from '../components/FileInfo';
 import PreviewTable from '../components/PreviewTable';
-import { useAppStore } from '../store';
 import { keepOutputColumns } from '../util';
 import type { IValidationSuccess } from '../../common/types';
 import { useTranslation } from 'react-i18next';
+import { startPreprocessing, startProcessing } from '../store/actions/workflow.action';
+import { useAppStore } from '../store';
 
-function ValidationSuccess({ config, document, inputFilePath, isMappingDocument }: Omit<IValidationSuccess, "screen">) {
+function ValidationSuccess({ document, inputFilePath, isMappingDocument }: any) {
     const { t } = useTranslation();
-  
-    const preProcessFileOpenDialog = useAppStore(
-      (store) => store.preProcessFileOpenDialog,
-    );
-    const startProcessingFile = useAppStore((store) => store.startProcessingFile);
-    const processTheFile = (_: React.UIEvent) => startProcessingFile(inputFilePath, '/tmp');
+    const config = useAppStore.getState().config;
 
     // The schema for displaying the table
     let columnsConfig = config.data.source.columns;
@@ -59,8 +55,8 @@ function ValidationSuccess({ config, document, inputFilePath, isMappingDocument 
 
         <BottomButtons
           l_content={t("validationSuccess leftButton")}
-          l_onClick={preProcessFileOpenDialog}
-          r_onClick={processTheFile}
+          l_onClick={() => startPreprocessing()}
+          r_onClick={() => startProcessing(inputFilePath)}
           r_content={t("validationSuccess rightButton")}
         />
       </div>

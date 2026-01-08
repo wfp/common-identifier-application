@@ -15,23 +15,10 @@
 *  You should have received a copy of the GNU Affero General Public License
 *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ************************************************************************ */
-import { boot } from "../store/actions/system.action";
-import { useEffect } from "react";
-import { useTranslation } from "react-i18next";
+import { useAppStore } from '../store';
 
-function Boot() {
-  const { t } = useTranslation();
-  useEffect(() => {
-    boot();
-  }, []);
-  return (
-    <div className="Boot progressIndicator">
-      <div className="loaderWrapper">
-        <span className="loader"></span>
-      </div>
-      <div className="help">{t("boot")}</div>
-    </div>
-  );
-}
+const initial = useAppStore.getState();
 
-export default Boot;
+export const resetStore = () => useAppStore.setState(initial, true);
+export const getState = () => useAppStore.getState();
+export const setState = (next: Partial<typeof initial>) => useAppStore.setState({ ...useAppStore.getState(), ...next });

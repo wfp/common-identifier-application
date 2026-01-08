@@ -22,8 +22,12 @@ import App from './App';
 import './i18n';
 import './index.css';
 
+import { registerIpcSubscriptions } from './ipc/subscriptions';
+
 const root = document.getElementById('root');
 if (!root) throw Error("ERROR: Cannot find root element in DOM");
+
+registerIpcSubscriptions();
 
 ReactDOM.createRoot(root).render(
   <React.StrictMode>

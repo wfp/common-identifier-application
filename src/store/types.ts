@@ -15,23 +15,41 @@
 *  You should have received a copy of the GNU Affero General Public License
 *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ************************************************************************ */
-import { boot } from "../store/actions/system.action";
-import { useEffect } from "react";
-import { useTranslation } from "react-i18next";
+import type {
+  Config,
+  CidDocument,
+  ILoadNewConfig,
+  IRemoveUserConfig,
+  IRequestConfigUpdate,
+  IPreProcessingDone,
+  IProcessingDone,
+} from '../../common/types';
+import { SCREENS } from '../../common/screens';
 
-function Boot() {
-  const { t } = useTranslation();
-  useEffect(() => {
-    boot();
-  }, []);
-  return (
-    <div className="Boot progressIndicator">
-      <div className="loaderWrapper">
-        <span className="loader"></span>
-      </div>
-      <div className="help">{t("boot")}</div>
-    </div>
-  );
-}
+export type ConfigState = {
+  isBackup: boolean;
+  isInitial: boolean;
+  lastUpdated: Date;
+  data: Config.FileConfiguration;
+};
 
-export default Boot;
+export type UIState = {
+  screen: SCREENS;
+  errorMessage?: string;
+  isRuntimeError?: boolean;
+};
+
+export type WorkflowState = {
+  inputFilePath?: string;
+  outputFilePath?: string;
+  mappingFilePath?: string;
+  errorFilePath?: string;
+  document?: CidDocument;
+  isMappingDocument?: boolean;
+};
+
+export type BootPayload = IRequestConfigUpdate;
+export type LoadNewConfigResult = ILoadNewConfig;
+export type RemoveUserConfigResult = IRemoveUserConfig;
+export type PreprocessResult = IPreProcessingDone;
+export type ProcessResult = IProcessingDone;

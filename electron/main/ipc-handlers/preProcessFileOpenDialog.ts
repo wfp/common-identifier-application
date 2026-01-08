@@ -38,6 +38,6 @@ export async function preProcessFileOpenDialog(mainWindow: BrowserWindow, config
   } else {
     log('[WARN] no file selected');
     // send the cancelec message
-    mainWindow.webContents.send(EVENT.PROCESSING_CANCELLED, {});
+    mainWindow.webContents.send(EVENT.WORKFLOW_CANCELLED, {});
   }
 }

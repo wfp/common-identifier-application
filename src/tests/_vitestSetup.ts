@@ -15,23 +15,13 @@
 *  You should have received a copy of the GNU Affero General Public License
 *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ************************************************************************ */
-import { boot } from "../store/actions/system.action";
-import { useEffect } from "react";
-import { useTranslation } from "react-i18next";
+Object.defineProperty(window, "electronAPI", {
+  configurable: true,
+  writable: true,
+  value: undefined
+});
 
-function Boot() {
-  const { t } = useTranslation();
-  useEffect(() => {
-    boot();
-  }, []);
-  return (
-    <div className="Boot progressIndicator">
-      <div className="loaderWrapper">
-        <span className="loader"></span>
-      </div>
-      <div className="help">{t("boot")}</div>
-    </div>
-  );
+const originalError = console.error;
+console.error = (...args) => {
+  originalError(...args);
 }
-
-export default Boot;

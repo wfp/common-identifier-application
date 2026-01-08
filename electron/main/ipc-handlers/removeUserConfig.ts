@@ -34,13 +34,11 @@ export function removeUserConfig(configStore: ConfigStore): IRemoveUserConfig {
     log(`[ERROR] Config undefined -- Unable to read current or backup configuration file: ${configStore.getConfigFilePath()} || ${configStore.getBackupConfigFilePath()}`);
     throw new Error(`Unable to read configuration file: ${configStore.getConfigFilePath()} || ${configStore.getBackupConfigFilePath()}`);
   }
-  if (!loadError) {
-    return {
-      success: true,
-      config,
-      lastUpdated: configStore.lastUpdated,
-    };
-  }
+  if (!loadError) return {
+    success: true,
+    config,
+    lastUpdated: configStore.lastUpdated,
+  };
 
   return {
     success: false,

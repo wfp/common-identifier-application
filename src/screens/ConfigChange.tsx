@@ -17,8 +17,11 @@
 ************************************************************************ */
 
 import { useState } from 'react';
-import { useAppStore } from '../store';
 import { useTranslation } from 'react-i18next';
+
+import { useAppStore } from '../store';
+import { loadNewConfig, removeUserConfig } from '../store/actions/config.action';
+import { SCREENS } from 'common/screens';
 
 enum HANDLERS {
   NONE = 0,
@@ -27,10 +30,8 @@ enum HANDLERS {
 }
 
 export default function ConfigChange() {
-  const backToMainScreen = useAppStore((store) => store.backToMainScreen);
-  const loadNewConfig = useAppStore((store) => store.loadNewConfig);
-  const removeUserConfig = useAppStore((store) => store.removeUserConfig);
-    const { t } = useTranslation();
+  const backToMainScreen = () => useAppStore.getState().go(SCREENS.MAIN);
+  const { t } = useTranslation();
 
   const [handler, setHandler] = useState<HANDLERS>(HANDLERS.NONE);
 

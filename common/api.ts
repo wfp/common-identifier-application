@@ -24,14 +24,17 @@ export type Api = GetApiType<
   {
     getFilePath: (file: File) => string;
     getPosixFilePath: (file: File) => string;
-    acceptTermsAndConditions: () => void;
+
     requestConfigUpdate: () => Promise<IRequestConfigUpdate>;
     loadNewConfig: () => Promise<ILoadNewConfig>;
     removeUserConfig: () => Promise<IRemoveUserConfig>;
-    fileDropped: (filePath: string) => Promise<void>;
-    processFile: (filePath: string) => Promise<void>,
-    preProcessFileOpenDialog: () => Promise<void>,
-    openOutputFile: (filePath: string) => Promise<void>,
+
+    acceptTermsAndConditions: () => void;
+    fileDropped: (filePath: string) => void;
+    processFile: (filePath: string) => void,
+    preProcessFileOpenDialog: () => void,
+    openOutputFile: (filePath: string) => void,
+    
     quit: () => void;
   },
   {

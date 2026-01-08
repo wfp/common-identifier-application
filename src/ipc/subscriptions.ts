@@ -15,23 +15,15 @@
 *  You should have received a copy of the GNU Affero General Public License
 *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ************************************************************************ */
-import { boot } from "../store/actions/system.action";
-import { useEffect } from "react";
-import { useTranslation } from "react-i18next";
+import { registerSubscriptions } from './intercom-bridge';
+import { useAppStore } from '../store';
 
-function Boot() {
-  const { t } = useTranslation();
-  useEffect(() => {
-    boot();
-  }, []);
-  return (
-    <div className="Boot progressIndicator">
-      <div className="loaderWrapper">
-        <span className="loader"></span>
-      </div>
-      <div className="help">{t("boot")}</div>
-    </div>
-  );
+export function registerIpcSubscriptions() {
+  return registerSubscriptions({
+    preprocessingDone: (_e, value) => useAppStore.getState().endPreprocessing(value),
+    processingDone: (_e, value) => useAppStore.getState().endProcessing(value),
+    configChanged: (_e, { config, isBackup }) => useAppStore.getState().setConfig(config, isBackup),
+    processingCancelled: () => useAppStore.getState().cancelWorkflow(),
+    error: (_e, message) => useAppStore.getState().showError(message, true),
+  });
 }
-
-export default Boot;

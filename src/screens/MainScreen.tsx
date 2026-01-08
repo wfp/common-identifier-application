@@ -18,21 +18,16 @@
 
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+
+import { startPreprocessing } from '../store/actions/workflow.action'; 
 import { useAppStore } from '../store';
+import { SCREENS } from 'common/screens';
 
 function MainScreen() {
   // is anything dragged over the screen?
   const [isDraggedOver, setIsDraggedOver] = useState(false);
   const { t } = useTranslation();
 
-  const preProcessFileOpenDialog = useAppStore(
-    (store) => store.preProcessFileOpenDialog,
-  );
-  const startPreProcessingFile = useAppStore(
-    (store) => store.startPreProcessingFile,
-  );
-
-  const startConfigChange = useAppStore((store) => store.startConfigChange);
   // DRAG HANDLING
   // =============
 
@@ -74,8 +69,7 @@ function MainScreen() {
     } else {
       // when at least one file is dropped use the first one
       const filePath = window.electronAPI.invoke.getFilePath(droppedFiles[0]);
-      console.log(filePath);
-      startPreProcessingFile(filePath);
+      startPreprocessing(filePath);
     }
   }
 
@@ -109,7 +103,7 @@ function MainScreen() {
       <div className="region region-open-file">
         <button
           className="open-file cid-button cid-button-primary"
-          onClick={preProcessFileOpenDialog}
+          onClick={() => startPreprocessing()}
         >
           {t("mainScreen openFile")}
         </button>
@@ -117,7 +111,7 @@ function MainScreen() {
 
       <div className="region region-update-config">
         <button
-          onClick={startConfigChange}
+          onClick={() => useAppStore.getState().go(SCREENS.CONFIG_CHANGE)}
           className="cid-button cid-button-secondary"
         >
           <span className="icon">⚙</span>  {t("mainScreen updateConfig")}

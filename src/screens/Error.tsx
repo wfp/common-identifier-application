@@ -21,9 +21,10 @@ import ErrorWrapper from '../components/ErrorWrapper';
 import type { ILoadConfigFailed } from '../../common/types';
 import { DeveloperInformation } from '../components/DeveloperInformation';
 import { useTranslation } from 'react-i18next';
+import { SCREENS } from 'common/screens';
 
 function Error({ config, isRuntimeError, errorMessage }: Omit<ILoadConfigFailed, "screen">) {
-  const backToMainScreen = useAppStore((store) => store.backToMainScreen);
+  const backToMainScreen = () => useAppStore.getState().go(SCREENS.MAIN);
   const { t } = useTranslation();
 
   return (

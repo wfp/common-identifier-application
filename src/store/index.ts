@@ -15,23 +15,24 @@
 *  You should have received a copy of the GNU Affero General Public License
 *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ************************************************************************ */
-import { boot } from "../store/actions/system.action";
-import { useEffect } from "react";
-import { useTranslation } from "react-i18next";
+import { create } from 'zustand';
+import { immer } from 'zustand/middleware/immer';
 
-function Boot() {
-  const { t } = useTranslation();
-  useEffect(() => {
-    boot();
-  }, []);
-  return (
-    <div className="Boot progressIndicator">
-      <div className="loaderWrapper">
-        <span className="loader"></span>
-      </div>
-      <div className="help">{t("boot")}</div>
-    </div>
-  );
-}
+import { type SystemSlice, createSystemSlice } from './slices/system.slice';
+import { type ConfigSlice, createConfigSlice } from './slices/config.slice';
+import { type WorkflowSlice, createWorkflowSlice } from './slices/workflow.slice';
+import { type UISlice, createUISlice } from './slices/ui.slice';
 
-export default Boot;
+export type Store = ConfigSlice & SystemSlice & WorkflowSlice & UISlice;
+
+export const useAppStore = create<Store>()(
+  immer((set, get, api) => ({
+    ...createConfigSlice(set, get, api),
+    ...createUISlice(set, get, api),
+    ...createWorkflowSlice(set, get, api),
+    ...createSystemSlice(set, get, api),
+  })),
+);
+
+export const useScreen = () => useAppStore(state => state.screen);
+export const useConfig = () => useAppStore(state => state.config);

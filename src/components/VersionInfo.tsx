@@ -18,10 +18,10 @@
 
 // A version information box (config version, last update)
 import { format as dateFmt } from 'date-fns';
-import type { BaseAppState } from '../store';
+import type { ConfigState } from '../store/types';
 import { useTranslation } from 'react-i18next';
 
-function VersionInfo({ config }: Omit<BaseAppState, "screen">) {
+function VersionInfo({ config }: { config: ConfigState }) {
     const { t } = useTranslation();
   // if the current config is the initial one we dont want to display anything
   if (config.isInitial) {

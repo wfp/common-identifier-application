@@ -1,3 +1,4 @@
+import path from 'node:path';
 import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
@@ -9,6 +10,7 @@ export default defineConfig({
 
     include: [ "src/tests/**/*.{test,spec}.ts" ],
     exclude: [ "**/node_nodules/**", "**/dist/**", "**/dist-electron/**", "**/examples/**", "**/docs/**" ],
+    setupFiles: [ path.resolve(__dirname, "src/tests/_vitestSetup.ts") ],
     globals: true,
 
     typecheck: {

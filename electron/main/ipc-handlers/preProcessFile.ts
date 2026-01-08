@@ -48,7 +48,7 @@ export async function preProcessFile(mainWindow: BrowserWindow, configStore: Con
     document.data = document.data.slice(0, MAX_ROWS_TO_PREVIEW);
   }
 
-  mainWindow.webContents.send(EVENT.PREPROCESSING_DONE, {
+  mainWindow.webContents.send(EVENT.PREPROCESSING_FINISHED, {
     isValid,
     isMappingDocument,
     document,

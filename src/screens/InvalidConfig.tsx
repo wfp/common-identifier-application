@@ -16,14 +16,13 @@
 *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ************************************************************************ */
 
-import { useAppStore } from '../store';
 import ErrorWrapper from '../components/ErrorWrapper';
 import type { ILoadConfigFailed } from '../../common/types';
 import { DeveloperInformation } from '../components/DeveloperInformation';
 import { useTranslation } from 'react-i18next';
+import { loadNewConfig } from '../store/actions/config.action';
 
 function InvalidConfig({ config, errorMessage }: Omit<ILoadConfigFailed, "screen"|"isRuntimeError">) {
-  const loadNewConfig = useAppStore((store) => store.loadNewConfig);
   const { t } = useTranslation()
 
   return (

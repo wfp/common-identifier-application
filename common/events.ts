@@ -16,21 +16,24 @@
 *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ************************************************************************ */
 export enum EVENT {
-  FILE_DROPPED = 'fileDropped',
+  WORKFLOW_CANCELLED = 'workflowCancelled',
+  
+  PREPROCESSING_START_DROP = 'preprocessingStartDrop',           // start preprocessing on dropped file
+  PREPROCESSING_START_DIALOGUE = 'preprocessingStartDialogue',   // start preprocessing on file selected from open file dialog
 
-  PREPROCESSING_DONE = 'preprocessingDone',
-  PROCESS_FILE = 'processFile',
-  PROCESSING_DONE = 'processingDone',
-  PREPROCESS_FILE_OPEN_DIALOG = 'preProcessFileOpenDialog',
-  PROCESSING_CANCELLED = 'processingCancelled',
+  PREPROCESSING_FINISHED = 'preprocessingFinished',
+
+  PROCESSING_START = 'processingStart',
+  PROCESSING_FINISHED = 'processingFinished',
+
   OPEN_OUTPUT_FILE = 'openOutputFile',
 
+  ACCEPT_TERMS_AND_CONDITIONS = 'acceptTermsAndConditions',
+  CONFIG_REQUEST_UPDATE = 'configRequestUpdate',
+  CONFIG_LOAD_NEW = 'configLoadNew',
+  CONFIG_REMOVE = 'configRemove',
   CONFIG_CHANGED = 'configChanged',
-  REQUEST_CONFIG_UPDATE = 'requestConfigUpdate',
-  LOAD_NEW_CONFIG = 'loadNewConfig',
-  REMOVE_USER_CONFIG = 'removeUserConfig',
 
   QUIT = 'quit',
   ERROR = 'error',
-  ACCEPT_TERMS_AND_CONDITIONS = 'acceptTermsAndConditions',
 }

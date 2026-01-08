@@ -33,26 +33,23 @@ import InvalidConfig from './screens/InvalidConfig';
 import WelcomeScreen from './screens/WelcomeScreen';
 import Navbar from './components/Navbar';
 
-import { useAppStore } from './store';
+import { useAppStore, useConfig, useScreen } from './store';
 
 function App() {
-  let screen;
+  let screen = null;
+ 
+  const screenType = useScreen();
+  const config = useConfig();
 
-  const screenType = useAppStore((store) => store.screen);
-  const config = useAppStore((store) => store.config);
-
-  const inputFilePath = useAppStore((store) => store.inputFilePath);
-  const document = useAppStore((store) => store.document); // could be errors or input data
-  const errorFilePath = useAppStore((store) => store.errorFilePath);
-
-  const isMappingDocument = useAppStore((store) => store.isMappingDocument);
-
-  const outputFilePath = useAppStore((store) => store.outputFilePath);
-  const mappingFilePath = useAppStore((store) => store.mappingFilePath);
-
-  const errorMessage = useAppStore((store) => store.errorMessage);
-  const isRuntimeError = useAppStore((store) => store.isRuntimeError);
-
+  const inputFilePath     = useAppStore((s) => s.inputFilePath);
+  const outputFilePath    = useAppStore((s) => s.outputFilePath);
+  const mappingFilePath   = useAppStore((s) => s.mappingFilePath);
+  const errorFilePath     = useAppStore((s) => s.errorFilePath);
+  const document          = useAppStore((s) => s.document);
+  const isMappingDocument = useAppStore((s) => s.isMappingDocument);
+  const errorMessage      = useAppStore((s) => s.errorMessage);
+  const isRuntimeError    = useAppStore((s) => s.isRuntimeError);
+  
   switch (screenType) {
     case SCREENS.ERROR: {
       screen = (

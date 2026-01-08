@@ -15,23 +15,38 @@
 *  You should have received a copy of the GNU Affero General Public License
 *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ************************************************************************ */
-import { boot } from "../store/actions/system.action";
-import { useEffect } from "react";
-import { useTranslation } from "react-i18next";
+import type { StateCreator } from 'zustand';
 
-function Boot() {
-  const { t } = useTranslation();
-  useEffect(() => {
-    boot();
-  }, []);
-  return (
-    <div className="Boot progressIndicator">
-      <div className="loaderWrapper">
-        <span className="loader"></span>
-      </div>
-      <div className="help">{t("boot")}</div>
-    </div>
-  );
+import type { UIState } from '../types';
+import { SCREENS } from '../../../common/screens';
+import type { Store } from '..';
+
+export type UISlice = UIState & {
+  go: (screen: SCREENS) => void;
+  showError: (mesage: string, isRuntime?: boolean) => void;
+  clearError: () => void;
 }
 
-export default Boot;
+export const createUISlice: StateCreator<
+  Store,
+  [['zustand/immer', unknown]],
+  [],
+  UISlice
+> = (set) => ({
+  screen: SCREENS.BOOT,
+  errorMessage: undefined,
+  isRuntimeError: undefined,
+
+  go: (screen) => set(s => { s.screen = screen }, false),
+
+  showError: (message, isRuntime = true) => set(s => {
+    s.errorMessage = message;
+    s.isRuntimeError = isRuntime;
+    s.screen = SCREENS.ERROR;
+  }, false),
+
+  clearError: () => set(s => {
+    s.errorMessage = undefined;
+    s.isRuntimeError = undefined;
+  }, false),
+})

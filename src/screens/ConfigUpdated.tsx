@@ -18,13 +18,11 @@
 
 import { useTranslation } from 'react-i18next';
 import { useAppStore } from '../store';
-import type { BaseAppState } from '../store';
+import type { ConfigState } from '../store/types';
 
-function ConfigUpdated({ config }: Pick<BaseAppState, "config">) {
+function ConfigUpdated({ config }: { config: ConfigState}) {
   const { t } = useTranslation();
-  const showTermsAndConditions = useAppStore(
-    (store) => store.showTermsAndConditions,
-  );
+  const showTermsAndConditions = () => useAppStore.getState().showTermsAndConditions();
 
   const { meta } = config.data;
 

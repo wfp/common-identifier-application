@@ -81,7 +81,7 @@ async function doProcessFile(
     log(`dataset has ${document.data.length} rows, trimming for frontend preview`);
     document.data = document.data.slice(0, MAX_ROWS_TO_PREVIEW);
   }
-  mainWindow.webContents.send(EVENT.PROCESSING_DONE, {
+  mainWindow.webContents.send(EVENT.PROCESSING_FINISHED, {
     isMappingDocument,
     document,
     outputFilePath,
@@ -99,7 +99,7 @@ export async function processFile(mainWindow: BrowserWindow, configStore: Config
   if (response.canceled || response.filePath === '') {
     log('no file selected');
     // send the canceled message
-    mainWindow.webContents.send(EVENT.PROCESSING_CANCELLED, {});
+    mainWindow.webContents.send(EVENT.WORKFLOW_CANCELLED, {});
     return;
   }
   const outputPath = response.filePath;

@@ -15,23 +15,27 @@
 *  You should have received a copy of the GNU Affero General Public License
 *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ************************************************************************ */
-import { boot } from "../store/actions/system.action";
-import { useEffect } from "react";
-import { useTranslation } from "react-i18next";
+import { describe, it, expect, beforeEach } from 'vitest';
+import { useAppStore } from '../../store';
+import { resetStore, getState } from '../_storeTestUtils';
+import { SCREENS } from '../../../common/screens';
 
-function Boot() {
-  const { t } = useTranslation();
-  useEffect(() => {
-    boot();
-  }, []);
-  return (
-    <div className="Boot progressIndicator">
-      <div className="loaderWrapper">
-        <span className="loader"></span>
-      </div>
-      <div className="help">{t("boot")}</div>
-    </div>
-  );
-}
+describe("store::slice::ui", () => {
+  beforeEach(resetStore);
 
-export default Boot;
+  it('go() navigates to the correct screen', () => {
+    useAppStore.getState().go(SCREENS.MAIN);
+    expect(getState().screen).toBe(SCREENS.MAIN);
+  });
+  
+  it('showError() sets message + ERROR; clearError() clears it', () => {
+    useAppStore.getState().showError("Error", true);
+    expect(getState().screen).toBe(SCREENS.ERROR);
+    expect(getState().errorMessage).toBe("Error");
+    expect(getState().isRuntimeError).toBe(true);
+
+    useAppStore.getState().clearError();
+    expect(getState().errorMessage).toBeUndefined();
+    expect(getState().isRuntimeError).toBeUndefined();
+  });
+});

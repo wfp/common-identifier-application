@@ -15,23 +15,23 @@
 *  You should have received a copy of the GNU Affero General Public License
 *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ************************************************************************ */
-import { boot } from "../store/actions/system.action";
-import { useEffect } from "react";
-import { useTranslation } from "react-i18next";
+import { useAppStore } from '..';
+import * as ipc from '../../ipc/intercom-bridge';
+import { SCREENS } from '../../../common/screens';
 
-function Boot() {
-  const { t } = useTranslation();
-  useEffect(() => {
-    boot();
-  }, []);
-  return (
-    <div className="Boot progressIndicator">
-      <div className="loaderWrapper">
-        <span className="loader"></span>
-      </div>
-      <div className="help">{t("boot")}</div>
-    </div>
-  );
+export const acceptTermsAndConditions = async () => {
+  await ipc.acceptTermsAndConditions();
+  useAppStore.getState().acceptTermsAndConditions();
 }
 
-export default Boot;
+export const loadNewConfig = async () => {
+  useAppStore.getState().go(SCREENS.LOAD_NEW_CONFIG);
+  const r = await ipc.loadNewConfig();
+  useAppStore.getState().onLoadNewConfigDone(r);
+};
+
+export const removeUserConfig = async () => {
+  useAppStore.getState().go(SCREENS.LOAD_NEW_CONFIG);
+  const r = await ipc.removeUserConfig();
+  useAppStore.getState().onRemoveUserConfigDone(r);
+};

@@ -15,8 +15,7 @@
 *  You should have received a copy of the GNU Affero General Public License
 *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ************************************************************************ */
-
-import { useAppStore } from '../store';
+import { openOutputFile } from '../store/actions/system.action';
 
 // Returns the "base name" (the plain file name, the last component of the path, without any directories)
 function baseFileName(filePath: string) {
@@ -27,13 +26,12 @@ function baseFileName(filePath: string) {
 // A single link pointing to a file
 function FileRow({ path, className="" }: { path: string, className?: string}) {
   const fileName = baseFileName(path);
-  const openOutputPath = useAppStore((store) => store.openOutputFile);
 
   function clickHandler(e: React.UIEvent) {
     e.preventDefault();
     e.stopPropagation();
 
-    openOutputPath(path);
+    openOutputFile(path);
   }
 
   return (

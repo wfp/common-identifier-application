@@ -22,4 +22,5 @@ assets/salt**
 common/selected-algo.d.ts
 *.old.json
 
+tmp.*
 scratch
