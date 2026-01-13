@@ -1,6 +1,6 @@
 import { writeFileSync, mkdirSync, copyFileSync } from 'node:fs';
 import { Command } from '@commander-js/extra-typings';
-import { resolve, dirname, join } from 'node:path';
+import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { generateConfigHash, attemptToReadTOMLData, validateConfigFile  } from '@wfp/common-identifier-algorithm-shared';

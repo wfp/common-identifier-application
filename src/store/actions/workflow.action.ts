@@ -18,13 +18,18 @@
 import { useAppStore } from '..'
 import * as ipc from '../../ipc/intercom-bridge';
 
-export const startPreprocessing = async (filePath?: string) => {
-  useAppStore.getState().startPreprocessing(filePath);
-  if (filePath) await ipc.fileDropped(filePath);
-  else await ipc.preProcessFileOpenDialog();
+export const startValidation = async (filePath?: string) => {
+  useAppStore.getState().startValidation(filePath);
+  if (filePath) await ipc.validateFileDropped(filePath);
+  else await ipc.validateFileOpenDialogue();
 };
 
 export const startProcessing = async (filePath: string) => {
   useAppStore.getState().startProcessing(filePath);
   await ipc.processFile(filePath);
+};
+
+export const startEncryption = async (filePath: string) => {
+  useAppStore.getState().startEncryption(filePath);
+  await ipc.encryptFile(filePath);
 };

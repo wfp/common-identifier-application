@@ -15,21 +15,20 @@
 *  You should have received a copy of the GNU Affero General Public License
 *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ************************************************************************ */
-import { describe, it, expect, beforeEach } from 'vitest';
-import { renderHook, act } from '@testing-library/react';
+import { describe, it, expect, afterEach } from 'vitest';
+import { renderHook, act, cleanup } from '@testing-library/react';
 import { useAppStore, useScreen, useConfig } from '../store';
 import { SCREENS } from '../../common/screens';
-import { resetStore } from './_storeTestUtils';
 
 describe('Zustand store', () => {
-  beforeEach(() => resetStore());
+  afterEach(() => cleanup());
 
   it('initializes with expected default shape', () => {
     const state = useAppStore.getState();
 
     expect(state).toHaveProperty('config');
     expect(state).toHaveProperty('screen', SCREENS.BOOT);
-    expect(state).toHaveProperty('startPreprocessing');
+    expect(state).toHaveProperty('startValidation');
     expect(state).toHaveProperty('boot');
 
     expect(state.config.isInitial).toBe(true);

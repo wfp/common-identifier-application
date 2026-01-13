@@ -17,29 +17,17 @@
 ************************************************************************ */
 
 import BottomButtons from '../components/BottomButtons';
-import FileInfo from '../components/FileInfo';
 import PreviewTable from '../components/PreviewTable';
 import { useAppStore } from '../store';
-import type { IProcessingFinished } from '../../common/types';
 import { useTranslation } from 'react-i18next';
-import { SCREENS } from 'common/screens';
-import { startPreprocessing } from '../store/actions/workflow.action';
+import { SCREENS } from '../../common/screens';
 
-function ProcessingFinished({
-  config, isMappingDocument, document, outputFilePath, mappingFilePath,
-}: Omit<IProcessingFinished, "screen">) {
-  const backToMainScreen = () => useAppStore.getState().go(SCREENS.MAIN);
+function ProcessingFinished() {
+  const config = useAppStore(s => s.config);
+  const isMappingDocument = useAppStore(s => s.isMappingDocument);
+  const document = useAppStore(s => s.document) ?? { data: [], name: "" };
+
   const { t } = useTranslation();
-
-  const fileInfoRow = isMappingDocument ? (
-    <FileInfo filePath={mappingFilePath} helpText={t("processingFinished fileInfo")} />
-  ) : (
-    <FileInfo
-      filePath={outputFilePath}
-      otherFilePath={mappingFilePath}
-      helpText={t("processingFinished fileInfo")}
-    />
-  );
 
   // if this was a mapping-only document
   const columnsConfig = isMappingDocument
@@ -48,15 +36,14 @@ function ProcessingFinished({
 
   return (
     <div className="ProcessingFinished">
-      {fileInfoRow}
+      <h2 className="titleText">{t("processingFinished title")}</h2>
 
       <PreviewTable tableData={document.data} columnsConfig={columnsConfig} />
 
       <BottomButtons
-        l_content={t("processingFinished leftButton")}
-        l_onClick={() => startPreprocessing()}
-        r_onClick={backToMainScreen}
+        r_onClick={() => useAppStore.getState().go(SCREENS.PROCESSING_SUMMARY)}
         r_content={t("processingFinished rightButton")}
+        side='right'
       />
     </div>
   );

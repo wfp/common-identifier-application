@@ -17,12 +17,14 @@
 ************************************************************************ */
 
 import ErrorWrapper from '../components/ErrorWrapper';
-import type { ILoadConfigFailed } from '../../common/types';
 import { DeveloperInformation } from '../components/DeveloperInformation';
 import { useTranslation } from 'react-i18next';
 import { loadNewConfig } from '../store/actions/config.action';
+import { useAppStore } from '../store';
 
-function InvalidConfig({ config, errorMessage }: Omit<ILoadConfigFailed, "screen"|"isRuntimeError">) {
+function InvalidConfig() {
+  const config = useAppStore(s => s.config);
+  const errorMessage = useAppStore(s => s.errorMessage);
   const { t } = useTranslation()
 
   return (

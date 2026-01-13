@@ -19,30 +19,26 @@ import { SCREENS } from "./screens";
 import type { Config, CidDocument } from "@wfp/common-identifier-algorithm-shared";
 export type { Config, CidDocument } from '@wfp/common-identifier-algorithm-shared';
 
-export type IRequestConfigUpdate = {
-  config: Config.FileConfiguration;
-  isBackup: boolean;
-  lastUpdated: Date;
-  error: string | undefined;
-  hasAcceptedTermsAndConditions: boolean;
-}
+export type ILoadSystemConfig =
+  | { status: "failed"; error: string; }
+  | {
+      status: "success";
+      config: Config.FileConfiguration;
+      isBackup: boolean;
+      lastUpdated: Date;
+      hasAcceptedTermsAndConditions: boolean;
+    }
 
-export type ILoadNewConfig = {
-  success: boolean;
-  cancelled: boolean;
-  config: Config.FileConfiguration;
-  lastUpdated: Date;
-  error?: string;
-}
+export type ILoadNewConfig =
+  | { status: "success"; config: Config.FileConfiguration; lastUpdated: Date }
+  | { status: "failed"; error: string }
+  | { status: "cancelled" };
 
-export type IRemoveUserConfig = {
-  success: boolean;
-  config: Config.FileConfiguration;
-  lastUpdated: Date;
-  error?: string;
-}
+export type IRemoveConfig =
+  | { status: "failed"; error: string; }
+  | { status: "success"; config: Config.FileConfiguration; lastUpdated: Date; }
 
-export type IPreProcessingDone = {
+export type IValidationDone = {
   isValid: boolean;
   isMappingDocument: boolean;
   document: CidDocument;
@@ -55,6 +51,12 @@ export type IProcessingDone = {
   document: CidDocument;
   outputFilePath: string;
   mappingFilePath: string;
+}
+
+export type IEncryptionDone = {
+  encryptedFilePath: string;
+  error?: string;
+  errorCode?: string;
 }
 
 export type MappedData = { [key: string]: any };

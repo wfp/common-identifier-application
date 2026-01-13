@@ -18,17 +18,14 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import * as systemAction from '../../store/actions/system.action';
 import * as bridge from '../../ipc/intercom-bridge';
-import { resetStore, getState } from '../_storeTestUtils';
+import { getState } from '../_storeTestUtils';
 import { SCREENS } from '../../../common/screens';
 
 describe('system actions', () => {
-  beforeEach(() => {
-    resetStore();
-    vi.restoreAllMocks();
-  });
+  beforeEach(() => vi.restoreAllMocks());
 
   it('boot requests config and calls reducer', async () => {
-    vi.spyOn(bridge, 'requestConfigUpdate').mockResolvedValue({
+    vi.spyOn(bridge, 'loadSystemConfig').mockResolvedValue({
       config: { meta: { id: 'CID', version: '1', signature: '' } },
       isBackup: false,
       lastUpdated: new Date(),
@@ -38,7 +35,7 @@ describe('system actions', () => {
 
     await systemAction.boot();
 
-    expect(bridge.requestConfigUpdate).toHaveBeenCalled();
+    expect(bridge.loadSystemConfig).toHaveBeenCalled();
     expect(getState().config.data.meta.id).toBe('CID');
     expect([SCREENS.MAIN, SCREENS.WELCOME]).toContain(getState().screen);
   });

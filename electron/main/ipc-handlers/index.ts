@@ -17,16 +17,17 @@
 ************************************************************************ */
 import { shell, ipcMain, type BrowserWindow } from "electron";
 import log from "electron-log/main";
+import path from "node:path";
+
 import type { ConfigStore } from "@wfp/common-identifier-algorithm-shared";
+import { ALL_EVENTS, EVENT } from "../../../common/events";
 
-import { EVENT } from "../../../common/events";
-
-import { requestConfigUpdate } from './requestConfigUpdate';
+import { loadSystemConfig } from './loadSystemConfig';
 import { loadNewConfig } from './loadNewConfig';
-import { preProcessFile } from './preProcessFile';
+import { validateFile } from './validateFile';
 import { processFile } from './processFile';
-import { preProcessFileOpenDialog } from './preProcessFileOpenDialog';
-import { removeUserConfig } from './removeUserConfig';
+import { removeConfig } from './removeConfig';
+import { encryptFile } from "./encryptFile";
 
 const ipcLog = log.scope("ipc");
 
@@ -44,15 +45,15 @@ export function registerIpcHandlers(app: Electron.App, mainWindow: BrowserWindow
   }
 
   // Handle dropping of files / begin preprocessing
-  ipcMain.on(EVENT.PREPROCESSING_START_DROP, (_, filePath: string) => {
-    ipcLog.debug(`Received event on channel: ${EVENT.PREPROCESSING_START_DROP}`);
-    return withErrorReporting(() => preProcessFile(mainWindow, configStore, filePath));
+  ipcMain.on(EVENT.VALIDATION_START_DROP, (_, filePath: string) => {
+    ipcLog.debug(`Received event on channel: ${EVENT.VALIDATION_START_DROP}`);
+    return withErrorReporting(() => validateFile(mainWindow, configStore, filePath));
   });
 
   // open and process a file using an open file dialog
-  ipcMain.on(EVENT.PREPROCESSING_START_DIALOGUE, (_) => {
-    ipcLog.debug(`Received event on channel: ${EVENT.PREPROCESSING_START_DIALOGUE}`);
-    return withErrorReporting(() => preProcessFileOpenDialog(mainWindow, configStore));
+  ipcMain.on(EVENT.VALIDATION_START_DIALOGUE, (_) => {
+    ipcLog.debug(`Received event on channel: ${EVENT.VALIDATION_START_DIALOGUE}`);
+    return withErrorReporting(() => validateFile(mainWindow, configStore));
   });
 
   // Start processing the file
@@ -61,11 +62,19 @@ export function registerIpcHandlers(app: Electron.App, mainWindow: BrowserWindow
     return withErrorReporting(() => processFile(mainWindow, configStore, filePath));
   });
 
+  // Start file encryption
+  ipcMain.on(EVENT.ENCRYPTION_START, (_, filePath: string) => {
+    ipcLog.debug(`Received event on channel: ${EVENT.ENCRYPTION_START}`);
+    // TODO: investigate using utility workers or other mechanism to run heavy encryption process in a different process.
+    //       Using setImmediate for now since it is just the 1-time cold-start of GPG that takes some time (few seconds).
+    return setImmediate(() => withErrorReporting(() => encryptFile(mainWindow, configStore, filePath)));
+  });
+
   // config related events need to be initialised before the renderer since
-  // the app makes a requestConfigUpdate call on boot.
-  ipcMain.handle(EVENT.CONFIG_REQUEST_UPDATE, () => {
-    ipcLog.debug(`Received event on channel: ${EVENT.CONFIG_REQUEST_UPDATE}`);
-    return withErrorReporting(() => requestConfigUpdate(configStore));
+  // the app makes a loadSystemConfig call on boot.
+  ipcMain.handle(EVENT.CONFIG_LOAD_SYSTEM, () => {
+    ipcLog.debug(`Received event on channel: ${EVENT.CONFIG_LOAD_SYSTEM}`);
+    return withErrorReporting(() => loadSystemConfig(configStore));
   });
 
   ipcMain.handle(EVENT.CONFIG_LOAD_NEW, () => {
@@ -75,7 +84,7 @@ export function registerIpcHandlers(app: Electron.App, mainWindow: BrowserWindow
 
   ipcMain.handle(EVENT.CONFIG_REMOVE, () => {
     ipcLog.debug(`Received event on channel: ${EVENT.CONFIG_REMOVE}`);
-    return withErrorReporting(() => removeUserConfig(configStore));
+    return withErrorReporting(() => removeConfig(configStore));
   });
 
   // mark the terms and conditions accepted
@@ -85,9 +94,16 @@ export function registerIpcHandlers(app: Electron.App, mainWindow: BrowserWindow
   });
 
   // open a file with the OS default app
-  ipcMain.on(EVENT.OPEN_OUTPUT_FILE, (_, filePath: any) => {
+  ipcMain.on(EVENT.OPEN_OUTPUT_FILE, async (_, filePath: any) => {
     ipcLog.debug(`Received event on channel: ${EVENT.OPEN_OUTPUT_FILE}`);
-    shell.openPath(filePath);
+    const error = await shell.openPath(filePath);
+    if (error) ipcLog.error(`Failed to open file ${filePath}: ${error}`);
+  });
+
+  // open the file explorer/finder at the given directory path
+  ipcMain.on(EVENT.REVEAL_IN_DIRECTORY, (_, filePath: string) => {
+    ipcLog.debug(`Received event on channel: ${EVENT.REVEAL_IN_DIRECTORY}`);
+    shell.showItemInFolder(path.normalize(filePath));
   });
 
   // quit when receiving the 'quit' signal
@@ -99,31 +115,9 @@ export function registerIpcHandlers(app: Electron.App, mainWindow: BrowserWindow
 }
 
 export function deregisterIpcHandlers() {
-  ipcLog.info("Deregistering IPC Handlers");
-  // Event handlers
-  // --------------
-  [
-    EVENT.PREPROCESSING_START_DROP,
-    EVENT.PROCESSING_START,
-    EVENT.PREPROCESSING_START_DIALOGUE,
-    EVENT.OPEN_OUTPUT_FILE,
-    EVENT.QUIT,
-    EVENT.ACCEPT_TERMS_AND_CONDITIONS,
-  ].forEach((channel) => {
-    ipcLog.info(`Deregistering ${channel}`)
-    ipcMain.removeAllListeners(channel)
+  Object.entries(ALL_EVENTS).forEach(([event, type]) => {
+    ipcLog.debug(`Deregistering event: ${event} of type: ${type}`);
+    if (type === 'event') ipcMain.removeAllListeners(event);
+    if (type === 'handle') ipcMain.removeHandler(event);
   });
-
-  // IPC functions
-  // -------------
-  [
-    EVENT.CONFIG_REQUEST_UPDATE,
-    EVENT.CONFIG_LOAD_NEW,
-    EVENT.CONFIG_REMOVE,
-  ].forEach(
-    (channel) => {
-      ipcLog.debug(`Deregistering ${channel}`)
-      ipcMain.removeHandler(channel)
-    },
-  );
 }

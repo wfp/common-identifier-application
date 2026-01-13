@@ -17,31 +17,39 @@
 ************************************************************************ */
 
 import type { GetApiType } from "electron-typescript-ipc";
-import type { ILoadNewConfig, IRemoveUserConfig, IRequestConfigUpdate } from "./types";
+import type { IEncryptionDone, ILoadNewConfig, IValidationDone, IProcessingDone, IRemoveConfig, ILoadSystemConfig } from "./types";
+import type { EVENT } from "./events";
 
 // TODO: actual return types for these functions
 export type Api = GetApiType<
   {
-    getFilePath: (file: File) => string;
-    getPosixFilePath: (file: File) => string;
-
-    requestConfigUpdate: () => Promise<IRequestConfigUpdate>;
-    loadNewConfig: () => Promise<ILoadNewConfig>;
-    removeUserConfig: () => Promise<IRemoveUserConfig>;
+    loadSystemConfig: () => Promise<ILoadSystemConfig>; // load config from system
+    loadNewConfig: () => Promise<ILoadNewConfig>;       // open dialogue to load new config
+    removeConfig: () => Promise<IRemoveConfig>;         // remove user config, revert to default (backup)
 
     acceptTermsAndConditions: () => void;
-    fileDropped: (filePath: string) => void;
+
+    getFilePath: (file: File) => string | undefined;
+    getPosixFilePath: (file: File) => string | undefined;
+
+    validateFileDropped: (filePath: string) => void;
+    validateFileOpenDialogue: () => void,
+
     processFile: (filePath: string) => void,
-    preProcessFileOpenDialog: () => void,
-    openOutputFile: (filePath: string) => void,
-    
+
+    openOutputFile: (filePath: string) => void;
+    revealInDirectory: (filePath: string) => void;
+
+    encryptFile: (filePath: string) => void;
+
+    unsubscribe: (event: EVENT, handler: (...args: any[]) => void) => void;
     quit: () => void;
   },
   {
     error: (errorMessage: string) => Promise<void>,
-    configChanged: (newConfig: any) => Promise<void>
-    preprocessingDone: (value: any) => Promise<void>,
-    processingDone: (value: any) => Promise<void>,
+    validationDone: (value: IValidationDone) => Promise<void>,
+    processingDone: (value: IProcessingDone) => Promise<void>,
     processingCancelled: () => Promise<void>;
+    encryptionDone: (value: IEncryptionDone) => Promise<void>;
   }
 >

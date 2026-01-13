@@ -18,18 +18,32 @@
 import type { StateCreator } from 'zustand';
 import log from 'electron-log/renderer';
 
-import type { WorkflowState, PreprocessResult, ProcessResult } from '../types';
+import type { CidDocument, IEncryptionDone, IValidationDone, IProcessingDone } from '../../../common/types';
 import { SCREENS } from '../../../common/screens';
 import type { Store } from '..';
 
 const logger = log.scope('renderer:store');
 
-export type WorkflowSlice = WorkflowState & {
-  startPreprocessing: (filePath?: string) => void;
-  endPreprocessing: (result: PreprocessResult) => void;
+export type WorkflowSlice = {
+  inputFilePath?: string;
+  outputFilePath?: string;
+  mappingFilePath?: string;
+  errorFilePath?: string;
+
+  document?: CidDocument;
+  isMappingDocument?: boolean;
+
+  encryptedFilePath?: string;
+  encryptErrorMessage?: string;
+
+  startValidation: (filePath?: string) => void;
+  endValidation: (result: IValidationDone) => void;
 
   startProcessing: (filePath: string) => void;
-  endProcessing: (result: ProcessResult) => void;
+  endProcessing: (result: IProcessingDone) => void;
+
+  startEncryption: (filePath: string) => void;
+  endEncryption: (result: IEncryptionDone) => void;
 
   cancelWorkflow: () => void;
   backToMain: () => void;
@@ -48,15 +62,18 @@ export const createWorkflowSlice: StateCreator<
   document: undefined,
   isMappingDocument: undefined,
 
-  startPreprocessing: (filePath) => set(s => {
-    logger.debug(`Starting preprocessing for file: ${filePath}`);
+  encryptedFilePath: undefined,
+  encryptErrorMessage: undefined,
+
+  startValidation: (filePath) => set(s => {
+    logger.debug(`Starting validation for file: ${filePath}`);
     s.inputFilePath = filePath;
     s.screen = SCREENS.FILE_LOADING;
   }, false),
 
   
-  endPreprocessing: ({ isValid, isMappingDocument, document, inputFilePath, errorFilePath }) => set((s) => {
-    logger.debug(`Preprocessing ended. Filepath: ${inputFilePath}, Valid: ${isValid}, Mapping Document: ${isMappingDocument}`);
+  endValidation: ({ isValid, isMappingDocument, document, inputFilePath, errorFilePath }) => set((s) => {
+    logger.debug(`Validation ended. Filepath: ${inputFilePath}, Valid: ${isValid}, Mapping Document: ${isMappingDocument}`);
     s.isMappingDocument = isMappingDocument;
     s.document = document;
     s.inputFilePath = inputFilePath;
@@ -80,6 +97,22 @@ export const createWorkflowSlice: StateCreator<
     s.screen = SCREENS.PROCESSING_FINISHED;
   }, false),
 
+  startEncryption: (filePath) => set(s => {
+    // TODO: some stuff here - maybe set an isEncrypting flag for the UI to show progress?
+  }, false),
+
+  endEncryption: ({ encryptedFilePath, error, errorCode }) => set(s => {
+    if (error) {
+      logger.error(`Encryption error: ${error} (code: ${errorCode})`);
+      s.encryptedFilePath = undefined;
+      s.encryptErrorMessage = errorCode ? `${error} (code: ${errorCode})` : error;
+    }
+    else {
+      logger.debug(`Encryption ended. Encrypted Filepath: ${encryptedFilePath}`);
+      s.encryptedFilePath = encryptedFilePath;
+    }
+  }, false),
+
   cancelWorkflow: () => set(s => {
     logger.debug('Workflow cancelled');
     s.inputFilePath = undefined;
@@ -87,6 +120,16 @@ export const createWorkflowSlice: StateCreator<
   }, false),
 
   backToMain: () => set(s => {
+    logger.debug('Resetting store and returning to main screen');
+    s.inputFilePath = undefined;
+    s.outputFilePath = undefined;
+    s.mappingFilePath = undefined;
+    s.encryptedFilePath = undefined;
+    s.encryptErrorMessage = undefined;
+    s.errorFilePath = undefined;
+    s.document = undefined;
+    s.isMappingDocument = undefined;
+    s.errorMessage = undefined;
     s.screen = SCREENS.MAIN;
   }, false),
 });

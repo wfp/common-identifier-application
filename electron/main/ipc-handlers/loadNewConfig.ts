@@ -35,34 +35,22 @@ export async function loadNewConfig(configStore: ConfigStore): Promise<ILoadNewC
       { name: 'JSON files', extensions: ['json'] },
     ],
   });
-  const config = configStore.getConfig();
-  if (config === undefined) {
-    throw new Error(`Unable to read configuration file:
-      ${configStore.getConfigFilePath()} || 
-      ${configStore.getBackupConfigFilePath()}`
-    );
+
+  if (response.canceled) {
+    ipcLog.info('User cancelled config file open dialog');
+    return { status: "cancelled" };
   }
 
-  if (!response.canceled) {
-    // handle fully qualified file name
-    const filePath = response.filePaths[0];
-    ipcLog.info('Starting to load config file from open dialog: ', filePath);
+  const filePath = response.filePaths[0];
+  ipcLog.info('Starting to load config file from open dialog: ', filePath);
 
-    // attempt to load into the store
-    const loadError = configStore.updateUserConfig(filePath);
+  // attempt to load into the store
+  const loadError = configStore.updateUserConfig(filePath);
 
-    if (loadError) {
-      ipcLog.error('CONFIG LOAD ERROR: ', loadError);
-      return {
-        success: false, cancelled: false,
-        config, lastUpdated: configStore.lastUpdated,
-        error: loadError,
-      };
-    }
-  } else ipcLog.info('User cancelled config file open dialog');
+  if (loadError) {
+    ipcLog.error(`Unable to updated user configuration from file ${filePath}: `, loadError);
+    return { status: "failed", error: loadError };
+  }
 
-  return {
-    success: true, cancelled: response.canceled,
-    config, lastUpdated: configStore.lastUpdated
-  };
+  return { status: "success", config: configStore.getConfig()!, lastUpdated: configStore.lastUpdated };
 }

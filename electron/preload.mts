@@ -20,33 +20,43 @@ import { contextBridge, createIpcRenderer } from 'electron-typescript-ipc';
 import { EVENT } from '../common/events';
 import type { Api } from '../common/api';
 import { webUtils } from 'electron';
+import path from 'node:path';
 
 const ipcRenderer = createIpcRenderer<Api>();
 
 const api: Api = {
   invoke: {
-    getFilePath:              (file: File) => webUtils.getPathForFile(file),
-    getPosixFilePath:         (file: File) => webUtils.getPathForFile(file),
-    
-    requestConfigUpdate:      async () => await ipcRenderer.invoke(EVENT.CONFIG_REQUEST_UPDATE),
-    loadNewConfig:            async () => await ipcRenderer.invoke(EVENT.CONFIG_LOAD_NEW),
-    removeUserConfig:         async () => await ipcRenderer.invoke(EVENT.CONFIG_REMOVE),
+    loadSystemConfig:         () => ipcRenderer.invoke(EVENT.CONFIG_LOAD_SYSTEM),
+    loadNewConfig:            () => ipcRenderer.invoke(EVENT.CONFIG_LOAD_NEW),
+    removeConfig:         () => ipcRenderer.invoke(EVENT.CONFIG_REMOVE),
 
     acceptTermsAndConditions: () => ipcRenderer.send(EVENT.ACCEPT_TERMS_AND_CONDITIONS),
-    preProcessFileOpenDialog: () => ipcRenderer.send(EVENT.PREPROCESSING_START_DIALOGUE),
-    fileDropped:              (fileName: string) => ipcRenderer.send(EVENT.PREPROCESSING_START_DROP, fileName),
+    validateFileOpenDialogue: () => ipcRenderer.send(EVENT.VALIDATION_START_DIALOGUE),
+    validateFileDropped:      (fileName: string) => ipcRenderer.send(EVENT.VALIDATION_START_DROP, fileName),
     processFile:              (fileName: string) => ipcRenderer.send(EVENT.PROCESSING_START, fileName),
+
+    encryptFile:              (fileName: string) => ipcRenderer.send(EVENT.ENCRYPTION_START, fileName),
+
     openOutputFile:           (fileName: string) => ipcRenderer.send(EVENT.OPEN_OUTPUT_FILE, fileName),
+    revealInDirectory:        (filePath: string) => ipcRenderer.send(EVENT.REVEAL_IN_DIRECTORY, filePath),
+
+    getFilePath:              (file: File) => webUtils.getPathForFile(file),
+    getPosixFilePath:         (file: File) => {
+      const p = webUtils.getPathForFile(file);
+      return p ? path.posix.normalize(p.replace(/\\/g, '/')) : undefined;
+    },
+
+    unsubscribe: (event: EVENT, handler: (...args: any[]) => void) => ipcRenderer.removeListener(event, handler),
 
     quit: () => ipcRenderer.send(EVENT.QUIT)
   },
   on: {
     // if unexpected errors occur this gets triggered
     error:               (listener) => ipcRenderer.on(EVENT.ERROR, listener),
-    configChanged:       (listener) => ipcRenderer.on(EVENT.CONFIG_CHANGED, listener),
     processingDone:      (listener) => ipcRenderer.on(EVENT.PROCESSING_FINISHED, listener),
-    preprocessingDone:   (listener) => ipcRenderer.on(EVENT.PREPROCESSING_FINISHED, listener),
+    validationDone:      (listener) => ipcRenderer.on(EVENT.VALIDATION_FINISHED, listener),
     processingCancelled: (listener) => ipcRenderer.on(EVENT.WORKFLOW_CANCELLED, listener),
+    encryptionDone:      (listener) => ipcRenderer.on(EVENT.ENCRYPTION_FINISHED, listener),
   }
 }
 

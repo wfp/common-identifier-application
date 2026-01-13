@@ -19,27 +19,25 @@
 import type { ConfigStore } from '@wfp/common-identifier-algorithm-shared';
 import log from "electron-log/main";
 
-import type { IRequestConfigUpdate } from '../../../common/types';
+import type { IRemoveConfig } from '../../../common/types';
 
-const ipcLog = log.scope("ipc:requestConfigUpdate"); 
+const ipcLog = log.scope("ipc:removeConfig"); 
 
-export function requestConfigUpdate(configStore: ConfigStore): IRequestConfigUpdate {
-  ipcLog.info('App requesting config update');
+// Removes the user configuration and falls back to the built-in default
+export function removeConfig(configStore: ConfigStore): IRemoveConfig {
+  ipcLog.info('Attempting to remove configuration file');
+
+  const loadError = configStore.removeUserConfig();
+
+  if (loadError) ipcLog.error('Error removing user configuration: ', loadError);
+  else ipcLog.info('User configuration removed, reverted to built-in default');
 
   const config = configStore.getConfig();
   if (config === undefined) {
     ipcLog.error(`Config undefined -- Unable to read current or backup configuration file: ${configStore.getConfigFilePath()} || ${configStore.getBackupConfigFilePath()}`);
-    throw new Error(`Unable to read configuration file:
-      ${configStore.getConfigFilePath()} || 
-      ${configStore.getBackupConfigFilePath()}`
-    );
+    throw new Error(`Unable to read configuration file: ${configStore.getConfigFilePath()} || ${configStore.getBackupConfigFilePath()}`);
   }
-  ipcLog.info('Returning current configuration to renderer process');
-  return {
-    config,
-    isBackup: configStore.isUsingBackupConfig,
-    lastUpdated: configStore.lastUpdated,
-    error: configStore.loadError,
-    hasAcceptedTermsAndConditions: configStore.hasAcceptedTermsAndConditions(),
-  };
+  if (!loadError) return { status: "success", config, lastUpdated: configStore.lastUpdated };
+
+  return { status: "failed", error: loadError };
 }

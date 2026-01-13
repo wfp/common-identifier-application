@@ -17,30 +17,27 @@
 ************************************************************************ */
 import log from 'electron-log/renderer';
 import type {
-  IRequestConfigUpdate,
+  ILoadSystemConfig,
   ILoadNewConfig,
-  IRemoveUserConfig,
-  IPreProcessingDone,
+  IRemoveConfig,
+  IValidationDone,
   IProcessingDone,
+  IEncryptionDone,
 } from '../../common/types';
 import { EVENT } from '../../common/events';
+import type { Api } from '../../common/api';
 
 const logger = log.scope('renderer:ipc');
 
-function hasElectron(): boolean {
-  return typeof (window as any).electronAPI === 'object';
-}
-
-function logNoElectron(label: string) {
-  logger.warn(`Cannot call ${label} - Electron API not available`);
+function assertElectron(win: Window, label: string): asserts win is Window & { electronAPI: Api } {
+  if (typeof (win as any).electronAPI !== 'object') {
+    logger.warn(`Cannot call ${label} - Electron API not available`);
+    throw new Error(`Electron API not available - cannot call ${label}`);
+  }
 }
 
 async function invoke<T>(label: string, fn: () => Promise<T>): Promise<T> {
-  if (!hasElectron()) {
-    logNoElectron(label);
-    // @ts-expect-error intentioal undefined return
-    return undefined;
-  }
+  assertElectron(window, label);
   try { return await fn() }
   catch (err) {
     logger.error(`Invoke(${label}) failed:`, err);
@@ -49,59 +46,69 @@ async function invoke<T>(label: string, fn: () => Promise<T>): Promise<T> {
 }
 
 // INVOKES
-export const requestConfigUpdate = async (): Promise<IRequestConfigUpdate> => {
-  logger.debug(`Invoke: ${EVENT.CONFIG_REQUEST_UPDATE}`); 
-  return invoke(EVENT.CONFIG_REQUEST_UPDATE, () => (window as any).electronAPI.invoke.requestConfigUpdate());
+export const loadSystemConfig = async (): Promise<ILoadSystemConfig> => {
+  logger.debug(`Invoke: ${EVENT.CONFIG_LOAD_SYSTEM}`);
+  return invoke(EVENT.CONFIG_LOAD_SYSTEM, () => window.electronAPI.invoke.loadSystemConfig());
 }
 
 export const loadNewConfig = async (): Promise<ILoadNewConfig> => {
-  logger.debug(`Invoke: ${EVENT.CONFIG_REQUEST_UPDATE}`);
-  return invoke(EVENT.CONFIG_LOAD_NEW, () => (window as any).electronAPI.invoke.loadNewConfig());
+  logger.debug(`Invoke: ${EVENT.CONFIG_LOAD_NEW}`);
+  return invoke(EVENT.CONFIG_LOAD_NEW, () => window.electronAPI.invoke.loadNewConfig());
 }
 
-export const removeUserConfig = async (): Promise<IRemoveUserConfig> => {
-  logger.debug(`Invoke: ${EVENT.CONFIG_REQUEST_UPDATE}`);
-  return invoke(EVENT.CONFIG_REMOVE, () => (window as any).electronAPI.invoke.removeUserConfig());
+export const removeConfig = async (): Promise<IRemoveConfig> => {
+  logger.debug(`Invoke: ${EVENT.CONFIG_REMOVE}`);
+  return invoke(EVENT.CONFIG_REMOVE, () => window.electronAPI.invoke.removeConfig());
 }
 
-export const fileDropped = async (filePath: string): Promise<void> => {
-  logger.debug(`Invoke: ${EVENT.CONFIG_REQUEST_UPDATE}`);
-  return invoke(EVENT.PREPROCESSING_START_DROP, () => (window as any).electronAPI.invoke.fileDropped(filePath));
+export const validateFileDropped = async (filePath: string): Promise<void> => {
+  logger.debug(`Invoke: ${EVENT.VALIDATION_START_DROP}`);
+  return invoke(EVENT.VALIDATION_START_DROP, async () => window.electronAPI.invoke.validateFileDropped(filePath));
 }
 
-export const preProcessFileOpenDialog = async (): Promise<void> => {
-  logger.debug(`Invoke: ${EVENT.CONFIG_REQUEST_UPDATE}`);
-  return invoke(EVENT.PREPROCESSING_START_DIALOGUE, () => (window as any).electronAPI.invoke.preProcessFileOpenDialog());
+export const validateFileOpenDialogue = async (): Promise<void> => {
+  logger.debug(`Invoke: ${EVENT.VALIDATION_START_DIALOGUE}`);
+  return invoke(EVENT.VALIDATION_START_DIALOGUE, async () => window.electronAPI.invoke.validateFileOpenDialogue());
 }
 
 export const processFile = async (filePath: string): Promise<void> => {
-  logger.debug(`Invoke: ${EVENT.CONFIG_REQUEST_UPDATE}`);
-  return invoke(EVENT.PROCESSING_START, () => (window as any).electronAPI.invoke.processFile(filePath));
+  logger.debug(`Invoke: ${EVENT.PROCESSING_START}`);
+  return invoke(EVENT.PROCESSING_START, async () => window.electronAPI.invoke.processFile(filePath));
+}
+
+export const encryptFile = async (filePath: string): Promise<void> => {
+  logger.debug(`Invoke: ${EVENT.ENCRYPTION_START}`);
+  return invoke(EVENT.ENCRYPTION_START, async () => window.electronAPI.invoke.encryptFile(filePath));
 }
 
 export const openOutputFile = async (filePath: string): Promise<void> => {
-  logger.debug(`Invoke: ${EVENT.CONFIG_REQUEST_UPDATE}`);
-  return invoke(EVENT.OPEN_OUTPUT_FILE, () => (window as any).electronAPI.invoke.openOutputFile(filePath));
+  logger.debug(`Invoke: ${EVENT.OPEN_OUTPUT_FILE}`);
+  return invoke(EVENT.OPEN_OUTPUT_FILE, async () => window.electronAPI.invoke.openOutputFile(filePath));
+}
+
+export const revealInDirectory = async (dirPath: string): Promise<void> => {
+  logger.debug(`Invoke: ${EVENT.REVEAL_IN_DIRECTORY}`);
+  return invoke(EVENT.REVEAL_IN_DIRECTORY, async () => window.electronAPI.invoke.revealInDirectory(dirPath));
 }
 
 export const acceptTermsAndConditions = async (): Promise<void> => {
-  logger.debug(`Invoke: ${EVENT.CONFIG_REQUEST_UPDATE}`);
-  return invoke(EVENT.ACCEPT_TERMS_AND_CONDITIONS, () => (window as any).electronAPI.invoke.acceptTermsAndConditions());
+  logger.debug(`Invoke: ${EVENT.ACCEPT_TERMS_AND_CONDITIONS}`);
+  return invoke(EVENT.ACCEPT_TERMS_AND_CONDITIONS, async () => window.electronAPI.invoke.acceptTermsAndConditions());
 }
 
 export const quit = async (): Promise<void> => {
-  logger.debug(`Invoke: ${EVENT.CONFIG_REQUEST_UPDATE}`);
-  return invoke(EVENT.QUIT, () => (window as any).electronAPI.invoke.quit());
+  logger.debug(`Invoke: ${EVENT.QUIT}`);
+  return invoke(EVENT.QUIT, async () => window.electronAPI.invoke.quit());
 }
 
 export const getFilePath = async (file: File): Promise<string | undefined> => {
-  logger.debug(`Invoke: ${EVENT.CONFIG_REQUEST_UPDATE}`);
-  return invoke("GET_FILE_PATH", () => (window as any).electronAPI.invoke.getFilePath(file));
+  logger.debug(`Invoke: ${EVENT.GET_FILE_PATH}`);
+  return invoke(EVENT.GET_FILE_PATH, async () => window.electronAPI.invoke.getFilePath(file));
 }
 
 export const getPosixFilePath = async (file: File): Promise<string | undefined> => {
-  logger.debug(`Invoke: ${EVENT.CONFIG_REQUEST_UPDATE}`);
-  return invoke("GET_POSIX_FILE_PATH", () => (window as any).electronAPI.invoke.getPosixFilePath(file));
+  logger.debug(`Invoke: ${EVENT.GET_POSIX_FILE_PATH}`);
+  return invoke(EVENT.GET_POSIX_FILE_PATH, async () => window.electronAPI.invoke.getPosixFilePath(file));
 }
 
 
@@ -109,70 +116,45 @@ export const getPosixFilePath = async (file: File): Promise<string | undefined> 
 type Unsubscribe = () => void;
 
 export const on = {
-  preprocessingDone(handler: (_evt: unknown, value: IPreProcessingDone) => void): Unsubscribe {
-    if (!hasElectron()) {
-      logNoElectron(EVENT.PREPROCESSING_FINISHED);
-      return () => {};
-    }
-    const api = (window as any).electronAPI.on;
-    api.preprocessingDone(handler);
-    return () => api.off?.preprocessingDone?.(handler) ?? (window as any).electronAPI.removeListener?.('preprocessingDone', handler);
+  validationDone(handler: (_evt: unknown, value: IValidationDone) => void): Unsubscribe {
+    window.electronAPI.on.validationDone(handler);
+    return () => window.electronAPI.invoke.unsubscribe(EVENT.VALIDATION_FINISHED, handler);
   },
 
   processingDone(handler: (_evt: unknown, value: IProcessingDone) => void): Unsubscribe {
-    if (!hasElectron()) {
-      logNoElectron(EVENT.PROCESSING_FINISHED);
-      return () => {};
-    }
-    const api = (window as any).electronAPI.on;
-    api.processingDone(handler);
-    return () => api.off?.processingDone?.(handler) ?? (window as any).electronAPI.removeListener?.('processingDone', handler);
+    window.electronAPI.on.processingDone(handler);
+    return () => window.electronAPI.invoke.unsubscribe(EVENT.PROCESSING_FINISHED, handler);
   },
 
-  configChanged(handler: (_evt: unknown, payload: { config: any; isBackup: boolean }) => void): Unsubscribe {
-    if (!hasElectron()) {
-      logNoElectron(EVENT.CONFIG_CHANGED);
-      return () => {};
-    }
-    const api = (window as any).electronAPI.on;
-    api.configChanged(handler);
-    return () => api.off?.configChanged?.(handler) ?? (window as any).electronAPI.removeListener?.('configChanged', handler);
+  encryptionDone(handler: (_evt: unknown, value: IEncryptionDone) => void): Unsubscribe {
+    window.electronAPI.on.encryptionDone(handler);
+    return () => window.electronAPI.invoke.unsubscribe(EVENT.ENCRYPTION_FINISHED, handler);
   },
 
   processingCancelled(handler: (_evt: unknown) => void): Unsubscribe {
-    if (!hasElectron()) {
-      logNoElectron(EVENT.WORKFLOW_CANCELLED);
-      return () => {};
-    }
-    const api = (window as any).electronAPI.on;
-    api.processingCancelled(handler);
-    return () => api.off?.processingCancelled?.(handler) ?? (window as any).electronAPI.removeListener?.('processingCancelled', handler);
+    window.electronAPI.on.processingCancelled(handler);
+    return () => window.electronAPI.invoke.unsubscribe(EVENT.WORKFLOW_CANCELLED, handler);
   },
 
   error(handler: (_evt: unknown, message: string) => void): Unsubscribe {
-    if (!hasElectron()) {
-      logNoElectron(EVENT.ERROR);
-      return () => {};
-    }
-    const api = (window as any).electronAPI.on;
-    api.error(handler);
-    return () => api.off?.error?.(handler) ?? (window as any).electronAPI.removeListener?.('error', handler);
+    window.electronAPI.on.error(handler);
+    return () => window.electronAPI.invoke.unsubscribe(EVENT.ERROR, handler);
   },
 };
 
 export type Subscriptions = {
-  preprocessingDone?: (_evt: unknown, value: IPreProcessingDone) => void;
+  validationDone?: (_evt: unknown, value: IValidationDone) => void;
   processingDone?: (_evt: unknown, value: IProcessingDone) => void;
-  configChanged?: (_evt: unknown, payload: { config: any; isBackup: boolean }) => void;
+  encryptionDone?: (_evt: unknown, value: IEncryptionDone) => void;
   processingCancelled?: (_evt: unknown) => void;
   error?: (_evt: unknown, message: string) => void;
 };
 
 export function registerSubscriptions(handlers: Subscriptions): Unsubscribe[] {
   const unsubs: Unsubscribe[] = [];
-  if (handlers.preprocessingDone) unsubs.push(on.preprocessingDone(handlers.preprocessingDone));
+  if (handlers.validationDone) unsubs.push(on.validationDone(handlers.validationDone));
   if (handlers.processingDone) unsubs.push(on.processingDone(handlers.processingDone));
-  if (handlers.configChanged) unsubs.push(on.configChanged(handlers.configChanged));
+  if (handlers.encryptionDone) unsubs.push(on.encryptionDone(handlers.encryptionDone));
   if (handlers.processingCancelled) unsubs.push(on.processingCancelled(handlers.processingCancelled));
   if (handlers.error) unsubs.push(on.error(handlers.error));
   return unsubs;

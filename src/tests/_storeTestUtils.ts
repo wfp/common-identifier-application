@@ -15,10 +15,19 @@
 *  You should have received a copy of the GNU Affero General Public License
 *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ************************************************************************ */
+import { afterEach, beforeEach } from 'vitest';
 import { useAppStore } from '../store';
 
-const initial = useAppStore.getState();
+beforeEach(() => {
+  const initialState = useAppStore.getInitialState()
+  useAppStore.setState(initialState, true);
+});
 
-export const resetStore = () => useAppStore.setState(initial, true);
+
+afterEach(() => {
+  (window as any).electronAPI = undefined;
+});
+  
+
 export const getState = () => useAppStore.getState();
-export const setState = (next: Partial<typeof initial>) => useAppStore.setState({ ...useAppStore.getState(), ...next });
+export const setState = (next: any) => useAppStore.setState((state) => ({ ...state, ...next }));

@@ -19,9 +19,10 @@ import { useAppStore } from '..';
 import * as ipc from '../../ipc/intercom-bridge';
 
 export const boot = async () => {
-  const r = await ipc.requestConfigUpdate();
+  const r = await ipc.loadSystemConfig();
   useAppStore.getState().boot(r);
 }
 
 export const quit = async () => await ipc.quit();
 export const openOutputFile = async (filePath: string) => await ipc.openOutputFile(filePath);
+export const revealInDirectory = async (dirPath: string) => await ipc.revealInDirectory(dirPath);

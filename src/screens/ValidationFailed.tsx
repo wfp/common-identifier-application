@@ -18,12 +18,11 @@
 
 import { keepOutputColumns } from '../util';
 import BottomButtons from '../components/BottomButtons';
-import FileInfo from '../components/FileInfo';
 import PreviewTable from '../components/PreviewTable';
-import type { IValidationFailed } from '../../common/types';
 import { useTranslation } from 'react-i18next';
-import { startPreprocessing } from '../store/actions/workflow.action';
+import { startValidation } from '../store/actions/workflow.action';
 import { openOutputFile } from '../store/actions/system.action';
+import { useAppStore } from '../store';
 
 function OpenErrorListButton({ errorFilePath }: { errorFilePath: string}) {
   const { t } = useTranslation();
@@ -38,14 +37,18 @@ function OpenErrorListButton({ errorFilePath }: { errorFilePath: string}) {
   );
 }
 
-function ValidationFailed({
-  config, document, inputFilePath, errorFilePath, isMappingDocument,
-}: Omit<IValidationFailed, "screen">) {
+function ValidationFailed() {
+  // TODO: provide some sensible fallback values for these props, they may be undefined;
+  const errorFilePath = useAppStore(s => s.errorFilePath) ?? "" 
+  const config = useAppStore(s => s.config);
+  const document = useAppStore(s => s.document) ?? { data: [], name: "" };
+  const inputFilePath = useAppStore(s => s.inputFilePath) ?? "";
+  const isMappingDocument = useAppStore(s => s.isMappingDocument);
 
   const { t } = useTranslation();
 
   // on retry we simply re-submit the same path
-  const retryFileLoad = () => startPreprocessing(inputFilePath);
+  const retryFileLoad = () => startValidation(inputFilePath);
 
   // Add the row number to the list of regular error columns for display
   let columnsConfig = config.data.destination_errors.columns;
@@ -64,17 +67,15 @@ function ValidationFailed({
     columnsConfig,
   );
 
-  // The file invalid message differs between mapping & assistance documents
-  const fileIsNotValidMessage = t("validationFailed title");
   return (
     <div className="ValidationFailed appScreen">
-      <FileInfo filePath={inputFilePath} helpText={t("validationFailed fileInfo")} />
+      <h2 className="titleText">{t("validationFailed title")}</h2>
 
       <PreviewTable tableData={document.data} columnsConfig={errorColumns} />
 
       <div className="validationResult error">
         <div className="validationState">
-          {fileIsNotValidMessage}
+          {t("validationFailed summaryTitle")}
           <div className="help">{t("validationFailed subtitle")}</div>
         </div>
 
@@ -83,7 +84,7 @@ function ValidationFailed({
 
       <BottomButtons
         l_content={t("validationFailed leftButton")}
-        l_onClick={() => startPreprocessing()}
+        l_onClick={() => startValidation()}
         r_onClick={retryFileLoad}
         r_content={t("validationFailed rightButton")}
       />

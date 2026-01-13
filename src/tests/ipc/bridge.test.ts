@@ -22,13 +22,18 @@ describe('IPC bridge invokes', () => {
   beforeEach(() => {
     (window as any).electronAPI = {
       invoke: {
-        requestConfigUpdate: vi.fn().mockResolvedValue({ ok: true }),
+        loadSystemConfig: vi.fn().mockResolvedValue({ ok: true }),
         loadNewConfig: vi.fn().mockResolvedValue({ success: true }),
-        removeUserConfig: vi.fn().mockResolvedValue({ success: true }),
-        fileDropped: vi.fn().mockResolvedValue(undefined),
+        removeConfig: vi.fn().mockResolvedValue({ success: true }),
+
+        validateFileDropped: vi.fn().mockResolvedValue(undefined),
+        validateFileOpenDialogue: vi.fn().mockResolvedValue(undefined),
         processFile: vi.fn().mockResolvedValue(undefined),
-        preProcessFileOpenDialog: vi.fn().mockResolvedValue(undefined),
+        encryptFile: vi.fn().mockResolvedValue(undefined),
+
         openOutputFile: vi.fn().mockResolvedValue(undefined),
+        revealInDirectory: vi.fn().mockResolvedValue(undefined),
+
         acceptTermsAndConditions: vi.fn().mockResolvedValue(undefined),
         quit: vi.fn().mockResolvedValue(undefined),
         getFilePath: vi.fn().mockResolvedValue('/abs/file.csv'),
@@ -43,10 +48,10 @@ describe('IPC bridge invokes', () => {
     vi.restoreAllMocks();
   });
 
-  it('requestConfigUpdate forwards to preload and returns response', async () => {
-    const resp = await bridge.requestConfigUpdate();
+  it('loadSystemConfig forwards to preload and returns response', async () => {
+    const resp = await bridge.loadSystemConfig();
     expect(resp).toEqual({ ok: true });
-    expect((window as any).electronAPI.invoke.requestConfigUpdate).toHaveBeenCalled();
+    expect((window as any).electronAPI.invoke.loadSystemConfig).toHaveBeenCalled();
   });
 
   it('loadNewConfig forwards to preload and returns response', async () => {
@@ -55,14 +60,20 @@ describe('IPC bridge invokes', () => {
     expect((window as any).electronAPI.invoke.loadNewConfig).toHaveBeenCalled();
   });
 
-  it('fileDropped triggers invoke', async () => {
-    await bridge.fileDropped("some/path/file.csv");
-    expect((window as any).electronAPI.invoke.fileDropped).toHaveBeenCalled();
+  it('removeConfig forwards to preload and returns response', async () => {
+    const resp = await bridge.removeConfig();
+    expect(resp).toEqual({ success: true });
+    expect((window as any).electronAPI.invoke.removeConfig).toHaveBeenCalled();
   });
 
-  it('preProcessFileOpenDialog triggers invoke', async () => {
-    await bridge.preProcessFileOpenDialog();
-    expect((window as any).electronAPI.invoke.preProcessFileOpenDialog).toHaveBeenCalled();
+  it('validateFileDropped triggers invoke', async () => {
+    await bridge.validateFileDropped("some/path/file.csv");
+    expect((window as any).electronAPI.invoke.validateFileDropped).toHaveBeenCalled();
+  });
+
+  it('validateFileOpenDialogue triggers invoke', async () => {
+    await bridge.validateFileOpenDialogue();
+    expect((window as any).electronAPI.invoke.validateFileOpenDialogue).toHaveBeenCalled();
   });
 
   it('processFile triggers invoke', async () => {
@@ -70,9 +81,19 @@ describe('IPC bridge invokes', () => {
     expect((window as any).electronAPI.invoke.processFile).toHaveBeenCalled();
   });
 
+  it('encryptFile triggers invoke', async () => {
+    await bridge.encryptFile("some/path/file.csv");
+    expect((window as any).electronAPI.invoke.encryptFile).toHaveBeenCalled();
+  });  
+
   it('openOutputFile triggers invoke', async () => {
     await bridge.openOutputFile("some/path/file.csv");
     expect((window as any).electronAPI.invoke.openOutputFile).toHaveBeenCalled();
+  });
+
+  it('revealInDirectory triggers invoke', async () => {
+    await bridge.revealInDirectory("some/path/file.csv");
+    expect((window as any).electronAPI.invoke.revealInDirectory).toHaveBeenCalled();
   });
 
   it('acceptTermsAndConditions triggers invoke', async () => {
@@ -122,29 +143,25 @@ describe('IPC bridge events', () => {
 
   beforeEach(() => {
     listeners = {
-      preprocessingDone: [],
-      processingDone: [],
-      configChanged: [],
-      processingCancelled: [],
+      validationFinished: [],
+      processingFinished: [],
+      encryptionFinished: [],
+      workflowCancelled: [],
       error: [],
     };
 
     (window as any).electronAPI = {
-      invoke: {},
+      invoke: {
+        unsubscribe: (event: string, handler: Handler) => {
+          listeners[event] = listeners[event].filter(h => h !== handler);
+        }
+      },
       on: {
-        preprocessingDone: (h: Handler) => listeners.preprocessingDone.push(h),
-        processingDone:    (h: Handler) => listeners.processingDone.push(h),
-        configChanged:     (h: Handler) => listeners.configChanged.push(h),
-        processingCancelled: (h: Handler) => listeners.processingCancelled.push(h),
+        validationDone: (h: Handler) => listeners.validationFinished.push(h),
+        processingDone:    (h: Handler) => listeners.processingFinished.push(h),
+        encryptionDone:   (h: Handler) => listeners.encryptionFinished.push(h),
+        processingCancelled: (h: Handler) => listeners.workflowCancelled.push(h),
         error:             (h: Handler) => listeners.error.push(h),
-        // Optional "off" support if your preload exposes it:
-        off: {
-          preprocessingDone: (h: Handler) => listeners.preprocessingDone = listeners.preprocessingDone.filter(x => x !== h),
-          processingDone:    (h: Handler) => listeners.processingDone    = listeners.processingDone.filter(x => x !== h),
-          configChanged:     (h: Handler) => listeners.configChanged     = listeners.configChanged.filter(x => x !== h),
-          processingCancelled: (h: Handler) => listeners.processingCancelled = listeners.processingCancelled.filter(x => x !== h),
-          error:             (h: Handler) => listeners.error             = listeners.error.filter(x => x !== h),
-        },
       },
       __listeners: listeners,
     };
@@ -154,52 +171,38 @@ describe('IPC bridge events', () => {
     (window as any).electronAPI = undefined;
   });
 
-  it('on.preprocessingDone registers and unsubscribes', () => testBridgeUnsubscription(
-    bridge.on.preprocessingDone,
-    (...args) => listeners.preprocessingDone.forEach(fn => fn(args)),
-    () => listeners.preprocessingDone = [],
+  it('on.validationDone registers and unsubscribes', () => testBridgeUnsubscription(
+    bridge.on.validationDone,
+    (...args) => listeners.validationFinished.forEach(fn => fn(...args)),
+    () => listeners.validationFinished = [],
     [{}, { isValid: true, isMappingDocument: false, document: { name: "", data: []}, inputFilePath: 'in.csv', errorFilePath: '' }]
   ));
    
   it('on.processingDone registers and unsubscribes', () => testBridgeUnsubscription(
     bridge.on.processingDone,
-    (...args) => listeners.processingDone.forEach(fn => fn(args)),
-    () => listeners.processingDone = [],
+    (...args) => listeners.processingFinished.forEach(fn => fn(...args)),
+    () => listeners.processingFinished = [],
     [{}, { isMappingDocument: false, document: { name: "", data: []}, outputFilePath: 'out.csv', mappingFilePath: 'map.csv' }]
   ));
 
-  it('on.configChanged registers and unsubscribes', () => testBridgeUnsubscription(
-    bridge.on.configChanged,
-    (...args) => listeners.configChanged.forEach(fn => fn(args)),
-    () => listeners.configChanged = [],
-    [{}, { config: { key: 'value' }, isBackup: false }]
+  it('on.encryptionDone registers and unsubscribes', () => testBridgeUnsubscription(
+    bridge.on.encryptionDone,
+    (...args) => listeners.encryptionFinished.forEach(fn => fn(...args)),
+    () => listeners.encryptionFinished = [],
+    [{}, { encryptedFilePath: 'out.csv.gpg' }]
   ));
 
   it('on.processingCancelled registers and unsubscribes', () => testBridgeUnsubscription(
     bridge.on.processingCancelled,
-    (...args) => listeners.processingCancelled.forEach(fn => fn(args)),
-    () => listeners.processingCancelled = [],
+    (...args) => listeners.workflowCancelled.forEach(fn => fn(...args)),
+    () => listeners.workflowCancelled = [],
     [{}]
   ));
 
   it('on.error registers and unsubscribes', () => testBridgeUnsubscription(
     bridge.on.error,
-    (...args) => listeners.error.forEach(fn => fn(args)),
+    (...args) => listeners.error.forEach(fn => fn(...args)),
     () => listeners.error = [],
     [{}, "An error occurred"]
   ));
-});
-
-describe("IPC Bridge - handling no electron", () => {
-  it('invoke methods do not throw when electronAPI is missing', async () => {
-      (window as any).electronAPI = undefined;
-      await expect(bridge.requestConfigUpdate()).resolves.toBeUndefined();
-      await expect(bridge.quit()).resolves.toBeUndefined();
-    });
-
-    it('event registrations return no-op unsubscribes', () => {
-      const unsub = bridge.on.processingCancelled(() => {});
-      expect(typeof unsub).toBe('function');
-      expect(() => unsub()).not.toThrow();
-    });
 });

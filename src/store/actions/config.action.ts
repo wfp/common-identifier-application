@@ -30,8 +30,8 @@ export const loadNewConfig = async () => {
   useAppStore.getState().onLoadNewConfigDone(r);
 };
 
-export const removeUserConfig = async () => {
+export const removeConfig = async () => {
   useAppStore.getState().go(SCREENS.LOAD_NEW_CONFIG);
-  const r = await ipc.removeUserConfig();
-  useAppStore.getState().onRemoveUserConfigDone(r);
+  const r = await ipc.removeConfig();
+  useAppStore.getState().onRemoveConfigDone(r);
 };

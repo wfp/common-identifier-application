@@ -15,6 +15,8 @@
 *  You should have received a copy of the GNU Affero General Public License
 *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ************************************************************************ */
+import { Suspense, type ComponentType } from 'react';
+
 import { SCREENS } from '../common/screens';
 
 import Boot from './screens/Boot';
@@ -32,124 +34,46 @@ import ProcessingCancelled from './screens/ProcessingCancelled';
 import InvalidConfig from './screens/InvalidConfig';
 import WelcomeScreen from './screens/WelcomeScreen';
 import Navbar from './components/Navbar';
+import ProcessingSummary from './screens/ProcessingSummary';
 
 import { useAppStore, useConfig, useScreen } from './store';
 
 function App() {
-  let screen = null;
  
   const screenType = useScreen();
+  // const screenType: SCREENS = SCREENS.PROCESSING_SUMMARY as SCREENS; // TEMP
   const config = useConfig();
 
-  const inputFilePath     = useAppStore((s) => s.inputFilePath);
-  const outputFilePath    = useAppStore((s) => s.outputFilePath);
-  const mappingFilePath   = useAppStore((s) => s.mappingFilePath);
-  const errorFilePath     = useAppStore((s) => s.errorFilePath);
-  const document          = useAppStore((s) => s.document);
-  const isMappingDocument = useAppStore((s) => s.isMappingDocument);
-  const errorMessage      = useAppStore((s) => s.errorMessage);
-  const isRuntimeError    = useAppStore((s) => s.isRuntimeError);
-  
-  switch (screenType) {
-    case SCREENS.ERROR: {
-      screen = (
-        <ErrorScreen errorMessage={errorMessage!} isRuntimeError={isRuntimeError!} config={config} />
-      );
-      break;
-    }
-
-    case SCREENS.BOOT: {
-      return <Boot />;
-    }
-
-    case SCREENS.WELCOME: {
-      screen = <WelcomeScreen config={config} />;
-      break;
-    }
-
-    case SCREENS.MAIN: {
-      screen = <MainScreen />;
-      break;
-    }
-
-    case SCREENS.INVALID_CONFIG: {
-      screen = <InvalidConfig errorMessage={errorMessage!} config={config} />;
-      break;
-    }
-
-    case SCREENS.LOAD_NEW_CONFIG: {
-      screen = <LoadNewConfig />;
-      break;
-    }
-
-    case SCREENS.CONFIG_CHANGE: {
-      screen = <ConfigChange />;
-      break;
-    }
-
-    case SCREENS.CONFIG_UPDATED: {
-      screen = <ConfigUpdated config={config} />;
-      break;
-    }
-
-    case SCREENS.FILE_LOADING: {
-      screen = <FileLoading inputFilePath={inputFilePath!} />;
-      break;
-    }
-
-    case SCREENS.VALIDATION_SUCCESS: {
-      screen = (
-        <ValidationSuccess
-          config={config}
-          document={document!}
-          inputFilePath={inputFilePath!}
-          isMappingDocument={isMappingDocument!}
-        />
-      );
-      break;
-    }
-
-    case SCREENS.VALIDATION_FAILED: {
-      screen = (
-        <ValidationFailed
-          config={config}
-          document={document!}
-          inputFilePath={inputFilePath!}
-          errorFilePath={errorFilePath!}
-          isMappingDocument={isMappingDocument!}
-        />
-      );
-      break;
-    }
-
-    case SCREENS.PROCESSING_IN_PROGRESS: {
-      screen = <ProcessingInProgress inputFilePath={inputFilePath} />;
-      break;
-    }
-
-    case SCREENS.PROCESSING_FINISHED: {
-      screen = (
-        <ProcessingFinished
-          config={config}
-          isMappingDocument={isMappingDocument!}
-          document={document!}
-          outputFilePath={outputFilePath!}
-          mappingFilePath={mappingFilePath!}
-        />
-      );
-      break;
-    }
-
-    case SCREENS.PROCESSING_CANCELLED: {
-      screen = <ProcessingCancelled />;
-      break;
-    }
+  const ScreenMap: Record<SCREENS, ComponentType<any>> = {  
+    [SCREENS.ERROR]: ErrorScreen,
+    [SCREENS.BOOT]: Boot,
+    [SCREENS.WELCOME]: WelcomeScreen,
+    [SCREENS.MAIN]: MainScreen,
+    [SCREENS.INVALID_CONFIG]: InvalidConfig,
+    [SCREENS.LOAD_NEW_CONFIG]: LoadNewConfig,
+    [SCREENS.CONFIG_CHANGE]: ConfigChange,
+    [SCREENS.CONFIG_UPDATED]: ConfigUpdated,
+    [SCREENS.FILE_LOADING]: FileLoading,
+    [SCREENS.VALIDATION_SUCCESS]: ValidationSuccess,
+    [SCREENS.VALIDATION_FAILED]: ValidationFailed,
+    [SCREENS.PROCESSING_IN_PROGRESS]: ProcessingInProgress,
+    [SCREENS.PROCESSING_FINISHED]: ProcessingFinished,
+    [SCREENS.PROCESSING_CANCELLED]: ProcessingCancelled,
+    [SCREENS.PROCESSING_SUMMARY]: ProcessingSummary,
   }
 
+  const Screen = ScreenMap[screenType];
+
+  if (screenType === SCREENS.BOOT) {
+    return <Boot />;
+  }
+  
   return (
     <>
       <Navbar config={config} screen={screenType} />
-      {screen}
+      <Suspense fallback={null}>
+        <Screen />
+      </Suspense>
     </>
   );
 }

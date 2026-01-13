@@ -17,7 +17,7 @@
 ************************************************************************ */
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { registerIpcSubscriptions } from '../../ipc/subscriptions';
-import { resetStore, getState } from '../_storeTestUtils';
+import { getState } from '../_storeTestUtils';
 import { SCREENS } from '../../../common/screens';
 
 type Handler = (...args: any[]) => void;
@@ -26,11 +26,10 @@ describe('IPC subscriptions update store', () => {
   let listeners: Record<string, Handler[]>;
 
   beforeEach(() => {
-    resetStore();
-
     listeners = {
-      preprocessingDone: [],
+      validationDone: [],
       processingDone: [],
+      encryptionDone: [],
       configChanged: [],
       processingCancelled: [],
       error: [],
@@ -39,9 +38,10 @@ describe('IPC subscriptions update store', () => {
     (window as any).electronAPI = {
       invoke: {},
       on: {
-        preprocessingDone: (h: Handler) => listeners.preprocessingDone.push(h),
+        validationDone: (h: Handler) => listeners.validationDone.push(h),
         processingDone:    (h: Handler) => listeners.processingDone.push(h),
         processingCancelled: (h: Handler) => listeners.processingCancelled.push(h),
+        encryptionDone:   (h: Handler) => listeners.encryptionDone.push(h),
         configChanged:     (h: Handler) => listeners.configChanged.push(h),
         error:             (h: Handler) => listeners.error.push(h),
       },
@@ -55,8 +55,8 @@ describe('IPC subscriptions update store', () => {
     (window as any).electronAPI = undefined;
   });
 
-  it('preprocessingDone → updates workflow and screen', () => {
-    listeners.preprocessingDone.forEach(fn =>
+  it('validationDone → updates workflow and screen', () => {
+    listeners.validationDone.forEach(fn =>
       fn({}, { isValid: true, isMappingDocument: false, document: {}, inputFilePath: 'in.csv', errorFilePath: '' })
     );
     const s = getState();
@@ -75,18 +75,22 @@ describe('IPC subscriptions update store', () => {
     expect(s.screen).toBe(SCREENS.PROCESSING_FINISHED);
   });
 
+  it('encryptionDone(success) → sets encryptedFilePath', () => {
+    listeners.encryptionDone.forEach(fn => fn({}, { encryptedFilePath: 'out.csv.gpg' }));
+    const s = getState();
+    expect(s.encryptedFilePath).toBe('out.csv.gpg');
+  });
+
+  it('encryptionDone(failure) → sets error messages', () => {
+    listeners.encryptionDone.forEach(fn => fn({}, { encryptedFilePath: '', error: 'Some error', errorCode: "GPG_GENERAL_ERRROR" }));
+    const s = getState();
+    expect(s.encryptErrorMessage).toMatch(/Some error \(code: GPG_GENERAL_ERRROR\)/);
+    expect(s.encryptedFilePath).toBeUndefined();
+  });
+
   it('processingCancelled → moves to PROCESSING_CANCELLED', () => {
     listeners.processingCancelled.forEach(fn => fn({}));
     expect(getState().screen).toBe(SCREENS.PROCESSING_CANCELLED);
-  });
-
-  it('configChanged → correct sets config', () => {
-    listeners.configChanged.forEach(fn => fn({}, { config: { key: "value" }, isBackup: false }));
-    const s = getState();
-    expect(s.config.data).toEqual({ key: "value" })
-    expect(s.config.isBackup).toBe(false)
-    expect(s.config.isInitial).toBe(false)
-    expect(s.config.lastUpdated).toBeInstanceOf(Date)
   });
 
   it('error → shows error in store', () => {

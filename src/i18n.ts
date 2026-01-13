@@ -36,4 +36,13 @@ i18n
     interpolation: { escapeValue: false }
   });
 
+// Development Only: hot module Replacement for translation files
+if (import.meta.hot) {
+  import.meta.hot.accept(['./locales/gb.json', './locales/es.json'], ([newEn, newEs]) => {
+    if (newEn) i18n.addResourceBundle('en', 'translation', newEn.default, true, true);
+    if (newEs) i18n.addResourceBundle('es', 'translation', newEs.default, true, true);
+    i18n.emit('languageChanged', i18n.language);
+  });
+}
+
 export default i18n;

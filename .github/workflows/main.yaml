@@ -48,7 +48,7 @@ jobs:
           NPM_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Run tests
-        run: npm run test:coverage
+        run: npm run test:ci
       
       - name: Report Coverage
         if: (!cancelled())

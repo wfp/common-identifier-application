@@ -15,19 +15,20 @@
 *  You should have received a copy of the GNU Affero General Public License
 *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ************************************************************************ */
-import type { ConfigState } from '../store/types';
 import { useState, useRef } from 'react';
 import BottomButtons from '../components/BottomButtons';
 import { useTranslation } from 'react-i18next';
 import { acceptTermsAndConditions } from '../store/actions/config.action';
 import { quit } from '../store/actions/system.action';
+import { useAppStore } from '../store';
 
 // Sets the maximum distance in pixels from the bottom of the Terms & Conditions
 // from which point we consider the TnC acceptable.
 const MAX_DISTANCE_FROM_BOTTOM_FOR_TOC_ACCEPTANCE = 32;
 
-function WelcomeScreen({ config }: { config: ConfigState}) {
+function WelcomeScreen() {
   const { t } = useTranslation();
+  const config = useAppStore(s => s.config);
 
   const termsAndConditionsHtml = config.data.messages!.terms_and_conditions;
 

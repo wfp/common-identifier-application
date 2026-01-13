@@ -15,7 +15,7 @@
 *  You should have received a copy of the GNU Affero General Public License
 *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ************************************************************************ */
-
+import { useAppStore } from "../store";
 import { useTranslation } from "react-i18next";
 
 // Returns the "base name" (the plain file name, the last component of the path, without any directories)
@@ -24,8 +24,10 @@ function baseFileName(filePath: string) {
   return splitName[splitName.length - 1];
 }
 
-function FileLoading({ inputFilePath } : {inputFilePath: string}) {
+function FileLoading() {
   const { t } = useTranslation()
+  const inputFilePath = useAppStore(s => s.inputFilePath);
+
   return (
     <div className="FileLoading appScreen progressIndicator">
       <div className="loaderWrapper">

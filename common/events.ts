@@ -18,22 +18,54 @@
 export enum EVENT {
   WORKFLOW_CANCELLED = 'workflowCancelled',
   
-  PREPROCESSING_START_DROP = 'preprocessingStartDrop',           // start preprocessing on dropped file
-  PREPROCESSING_START_DIALOGUE = 'preprocessingStartDialogue',   // start preprocessing on file selected from open file dialog
+  VALIDATION_START_DROP = 'validationStartDrop',           // start validation on dropped file
+  VALIDATION_START_DIALOGUE = 'validationStartDialogue',   // start validation on file selected from open file dialog
 
-  PREPROCESSING_FINISHED = 'preprocessingFinished',
+  VALIDATION_FINISHED = 'validationFinished',
 
   PROCESSING_START = 'processingStart',
   PROCESSING_FINISHED = 'processingFinished',
 
+  ENCRYPTION_START = 'encryptionStart',
+  ENCRYPTION_FINISHED = 'encryptionFinished',
+
   OPEN_OUTPUT_FILE = 'openOutputFile',
+  REVEAL_IN_DIRECTORY = 'revealInDirectory',
 
   ACCEPT_TERMS_AND_CONDITIONS = 'acceptTermsAndConditions',
-  CONFIG_REQUEST_UPDATE = 'configRequestUpdate',
+
+  CONFIG_LOAD_SYSTEM = 'configLoadSystem',
   CONFIG_LOAD_NEW = 'configLoadNew',
   CONFIG_REMOVE = 'configRemove',
-  CONFIG_CHANGED = 'configChanged',
+
+  GET_FILE_PATH = 'getFilePath',
+  GET_POSIX_FILE_PATH = 'getPosixFilePath',
 
   QUIT = 'quit',
   ERROR = 'error',
 }
+
+
+type EventRegistry = { [K in keyof typeof EVENT]: string };
+export const ALL_EVENTS = {
+  WORKFLOW_CANCELLED: 'event',
+  VALIDATION_START_DROP: 'event',
+  VALIDATION_START_DIALOGUE: 'event',
+  VALIDATION_FINISHED: 'event',
+  PROCESSING_START: 'event',
+  PROCESSING_FINISHED: 'event',
+  ENCRYPTION_START: 'event',
+  ENCRYPTION_FINISHED: 'event',
+  OPEN_OUTPUT_FILE: 'event',
+  REVEAL_IN_DIRECTORY: 'event',
+  ACCEPT_TERMS_AND_CONDITIONS: 'event',
+
+  GET_FILE_PATH: 'event',
+  GET_POSIX_FILE_PATH: 'event',
+  QUIT: 'event',
+  ERROR: 'event',
+
+  CONFIG_LOAD_SYSTEM: 'handle',
+  CONFIG_LOAD_NEW: 'handle',
+  CONFIG_REMOVE: 'handle',
+} satisfies EventRegistry;

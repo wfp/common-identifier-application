@@ -15,16 +15,16 @@
 *  You should have received a copy of the GNU Affero General Public License
 *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ************************************************************************ */
-
+import { useTranslation } from 'react-i18next';
 import { useAppStore } from '../store';
 import ErrorWrapper from '../components/ErrorWrapper';
-import type { ILoadConfigFailed } from '../../common/types';
 import { DeveloperInformation } from '../components/DeveloperInformation';
-import { useTranslation } from 'react-i18next';
-import { SCREENS } from 'common/screens';
 
-function Error({ config, isRuntimeError, errorMessage }: Omit<ILoadConfigFailed, "screen">) {
-  const backToMainScreen = () => useAppStore.getState().go(SCREENS.MAIN);
+function Error() {
+  const config = useAppStore(s => s.config);
+  const isRuntimeError = useAppStore(s => s.isRuntimeError) ?? false;
+  const errorMessage = useAppStore(s => s.errorMessage);
+  const backToMainScreen = () => useAppStore.getState().backToMain();
   const { t } = useTranslation();
 
   return (

@@ -25,7 +25,6 @@ export default defineConfig({
       reportOnFailure: true
     },
 
-    reporters: [ "default", "junit" ],
     outputFile: {
       junit: "reports/junit.xml"
     },

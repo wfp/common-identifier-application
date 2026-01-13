@@ -17,17 +17,17 @@
 ************************************************************************ */
 import type { StateCreator } from 'zustand';
 
-import type { BootPayload, LoadNewConfigResult, RemoveUserConfigResult } from '../types';
+import type { ILoadSystemConfig, ILoadNewConfig, IRemoveConfig } from '../../../common/types';
 import { SCREENS } from '../../../common/screens';
 import type { Store } from '..';
 
 
 export type SystemSlice = {
   booted: boolean;
-  boot: (payload: BootPayload) => void;
+  boot: (payload: ILoadSystemConfig) => void;
 
-  onLoadNewConfigDone: (result: LoadNewConfigResult) => void;
-  onRemoveUserConfigDone: (result: RemoveUserConfigResult) => void;
+  onLoadNewConfigDone: (result: ILoadNewConfig) => void;
+  onRemoveConfigDone: (result: IRemoveConfig) => void;
 
   showTermsAndConditions: () => void;
   acceptTermsAndConditions: () => void;
@@ -41,17 +41,16 @@ export const createSystemSlice: StateCreator<
 > = (set) => ({
   booted: false,
 
-  boot: ({ config, lastUpdated, isBackup, error, hasAcceptedTermsAndConditions }) => set(s => {
-    s.config.data = config;
-    s.config.lastUpdated = lastUpdated;
-    if (error) {
-      s.config.isBackup = false;
-      s.config.isInitial = true;
-      s.errorMessage = error;
+  boot: (result) => set(s => {
+    if (result.status === "failed") {
+      s.errorMessage = result.error;
       s.isRuntimeError = false;
       s.screen = SCREENS.INVALID_CONFIG;
       return;
     }
+    const { config, isBackup, lastUpdated, hasAcceptedTermsAndConditions } = result;
+    s.config.data = config;
+    s.config.lastUpdated = lastUpdated;
 
     s.config.isBackup = isBackup;
     s.config.isInitial = false;
@@ -61,49 +60,46 @@ export const createSystemSlice: StateCreator<
 
   }, false),
 
-  onLoadNewConfigDone: ({ success, cancelled, error, config, lastUpdated }) => set(s => {
-    if (cancelled) {
+  onLoadNewConfigDone: (result) => set(s => {
+    if (result.status === "cancelled") {
       // if initial load failed previously, stay on INVALID_CONFIG screen
       s.screen = s.booted ? SCREENS.MAIN : SCREENS.INVALID_CONFIG;
       return
     }
-    if (success) {
-      s.config.data = config;
+
+    if (result.status === "success") {
+      s.config.data = result.config;
       s.config.isBackup = false;
       s.config.isInitial = false;
-      s.config.lastUpdated = lastUpdated;
+      s.config.lastUpdated = result.lastUpdated;
       s.screen = SCREENS.CONFIG_UPDATED;
       return;
     }
-    if (!s.booted) {
-      s.config.data = config;
-      s.config.isBackup = false;
-      s.config.isInitial = true;
-      s.config.lastUpdated = lastUpdated;
-      s.errorMessage = `Error in the configuration file:\n${error ?? 'Unknown Error'}`;
+
+    if (result.status === "failed") {
+      // report error, stay on current config, route to error screen
+      s.errorMessage = `Error loading new configuration file:\n${result.error}`;
       s.isRuntimeError = false;
-      s.screen = SCREENS.INVALID_CONFIG;
+      s.screen = s.booted ? SCREENS.ERROR : SCREENS.INVALID_CONFIG;
       return;
-    } 
-    s.errorMessage = `Error in the configuration file:\n${error ?? 'Unknown Error'}`;
-    s.isRuntimeError = false;
-    s.screen = SCREENS.ERROR;
+    }
   }, false),
 
-  onRemoveUserConfigDone: ({ success, error, config, lastUpdated }) =>
-    set((s) => {
-      if (!success) {
-        s.errorMessage = `Error in the backup configuration file:\n${error}`;
-        s.isRuntimeError = false;
-        s.screen = SCREENS.ERROR;
-      } else {
-        s.config.data = config;
-        s.config.isBackup = true;
-        s.config.isInitial = false;
-        s.config.lastUpdated = lastUpdated;
-        s.screen = SCREENS.CONFIG_UPDATED;
-      }
-    }, false),
+  onRemoveConfigDone: (result) => set((s) => {
+    if (result.status === "failed") {
+      s.errorMessage = `Error removing user configuration:\n${result.error}`;
+      s.isRuntimeError = false;
+      s.screen = SCREENS.ERROR;
+      return;
+    }
+    else {
+      s.config.data = result.config;
+      s.config.isBackup = true;
+      s.config.isInitial = false;
+      s.config.lastUpdated = result.lastUpdated;
+      s.screen = SCREENS.CONFIG_UPDATED;
+    }
+  }, false),
 
   showTermsAndConditions: () => set((s) => {s.screen = SCREENS.WELCOME}, false),
   acceptTermsAndConditions: () => set((s) => {s.screen = SCREENS.MAIN}, false),

@@ -18,32 +18,29 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import * as workflowAction from '../../store/actions/workflow.action';
 import * as bridge from '../../ipc/intercom-bridge';
-import { resetStore, getState } from '../_storeTestUtils';
+import { getState } from '../_storeTestUtils';
 import { SCREENS } from '../../../common/screens';
 
 describe('workflow actions', () => {
-  beforeEach(() => {
-    resetStore();
-    vi.restoreAllMocks();
-  });
+  beforeEach(() => vi.restoreAllMocks());
 
-  it('startPreprocessing(file) calls fileDropped and updates store', async () => {
-    vi.spyOn(bridge, 'fileDropped').mockResolvedValue(undefined);
+  it('startValidation(file) calls fileDropped and updates store', async () => {
+    vi.spyOn(bridge, 'validateFileDropped').mockResolvedValue(undefined);
 
-    await workflowAction.startPreprocessing('in.csv');
+    await workflowAction.startValidation('in.csv');
 
-    expect(bridge.fileDropped).toHaveBeenCalledWith('in.csv');
+    expect(bridge.validateFileDropped).toHaveBeenCalledWith('in.csv');
     const s = getState();
     expect(s.inputFilePath).toBe('in.csv');
     expect(s.screen).toBe(SCREENS.FILE_LOADING);
   });
 
-  it('startPreprocessing() with no path opens dialog', async () => {
-    vi.spyOn(bridge, 'preProcessFileOpenDialog').mockResolvedValue(undefined);
+  it('startValidation() with no path opens dialog', async () => {
+    vi.spyOn(bridge, 'validateFileOpenDialogue').mockResolvedValue(undefined);
 
-    await workflowAction.startPreprocessing();
+    await workflowAction.startValidation();
 
-    expect(bridge.preProcessFileOpenDialog).toHaveBeenCalled();
+    expect(bridge.validateFileOpenDialogue).toHaveBeenCalled();
     expect(getState().screen).toBe(SCREENS.FILE_LOADING);
   });
 
@@ -54,5 +51,13 @@ describe('workflow actions', () => {
 
     expect(bridge.processFile).toHaveBeenCalledWith('in.csv');
     expect(getState().screen).toBe(SCREENS.PROCESSING_IN_PROGRESS);
+  });
+
+  it('startEncryption calls encryptFile', async () => {
+    vi.spyOn(bridge, 'encryptFile').mockResolvedValue(undefined);
+
+    await workflowAction.startEncryption('in.csv');
+
+    expect(bridge.encryptFile).toHaveBeenCalledWith('in.csv');
   });
 });

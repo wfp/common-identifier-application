@@ -24,6 +24,8 @@
   --color-interactive-01: #0087cb;
   --color-interactive-02: #005e8d;
   --color-inverse-01: #fff;
+  --color-accent-01: #f7b825;
+  --color-accent-02: #f7b825;
 
   --color-ui-01: #ffffff;
   --color-ui-02: #ebf1f4;
@@ -258,7 +260,6 @@ button {
 .cid-button-row {
   display: grid;
   justify-items: center;
-  /* text-align: center; */
   align-content: space-evenly;
 }
 
@@ -294,6 +295,25 @@ button {
   font-size: 1.125rem;
 }
 
+.cid-button-sm {
+  width: max(40%, 80px);
+}
+
+.cid-button-fit {
+  width: 100%;
+}
+
+
+.cid-button--pos-left {
+  grid-column: 1;
+  justify-self: center;
+}
+
+.cid-button--pos-right {
+  grid-column: 2;
+  justify-self: center;
+}
+
 .cid-button:disabled {
   cursor: not-allowed;
   opacity: 0.5;
@@ -308,13 +328,25 @@ button {
 .cid-button-secondary {
   background-color: transparent;
   border-color: var(--color-interactive-01);
-  color: var(--color-interactive-01);
+  color: var(--color-interactive-02);
+}
+
+.cid-button-tertiary {
+  background-color: transparent;
+  border-color: var(--color-text-01);
+  color: var(--color-text-01);
 }
 
 .cid-button-alert {
   background-color: var(--color-negative-02);
   border-color: transparent;
   color: var(--color-inverse-01);
+}
+
+.cid-button-danger {
+  background-color: transparent;
+  border-color: var(--color-negative-02);
+  color: var(--color-negative-02);
 }
 
 .cid-button-primary:hover,
@@ -326,6 +358,20 @@ button {
 .cid-button-secondary:focus {
   background-color: var(--color-interactive-02);
   border-color: var(--color-interactive-02);
+  color: var(--color-inverse-01);
+}
+
+.cid-button-tertiary:hover,
+.cid-button-tertiary:focus {
+  background-color: var(--color-text-02);
+  border-color: var(--color-text-02);
+  color: var(--color-inverse-01);
+}
+
+.cid-button-danger:hover,
+.cid-button-danger:focus {
+  background-color: var(--color-negative-03);
+  border-color: var(--color-negative-03);
   color: var(--color-inverse-01);
 }
 
@@ -347,6 +393,17 @@ button {
   margin-block-start: 0.5em;
   font-style: italic;
   color: var(--color-text-02);
+}
+
+.spinner {
+  display: inline-flex;
+  height: 60%;
+  aspect-ratio: 1;
+  border: 5px solid var(--color-text-03);
+  border-bottom-color: transparent;
+  border-radius: 50%;
+  box-sizing: border-box;
+  animation: rotation 1s linear infinite;
 }
 /*#endregion */
 
@@ -751,6 +808,7 @@ button {
   display: flex;
   align-items: flex-end;
   flex-direction: column;
+  gap: 5px;
   padding: 0.2em 1em;
 }
 
@@ -784,17 +842,26 @@ button {
 
 .ValidationSuccess {
   display: grid;
-  grid-template-rows: 4em 1fr 6em 5em 1em;
+  grid-template-rows: 6em 1fr 6em 5em 1em;
 }
 
 .ValidationFailed {
   display: grid;
-  grid-template-rows: 4em 1fr 6em 5em 1em;
+  grid-template-rows: 6em 1fr 6em 5em 1em;
 }
 
 .ProcessingFinished {
   display: grid;
-  grid-template-rows: 5.5em 1fr 8em;
+  /* grid-template-rows: 5.5em 1fr 8em; */
+  grid-template-rows: 6em 1fr 6em 5em 1em;
+}
+
+.ProcessingFinished .preview-table-wrapper {
+  grid-row: 2 / 4;
+}
+
+.ProcessingFinished .cid-button-row {
+  grid-row-start: 4;
 }
 
 .ProcessingCancelled {
@@ -893,3 +960,110 @@ button {
 }
 
 /*#endregion */
+
+/*#region processing-summary */
+.processing-summary {
+  display: grid;
+  grid-template-rows: 6em auto 5em 1em;
+}
+
+.processing-summary .card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  place-self: start center;
+  width: 100%;
+  max-width: 60em;
+  margin: 0 15% 0 15%;
+  padding: 16px;
+}
+
+.processing-summary .card h3 {
+  margin-top: 0;
+  text-align: left;
+}
+
+.processing-summary .file-row {
+  display: grid;
+  grid-template-columns: 3em auto 120px;
+  padding: 12px;
+  border: 1px solid var(--color-ui-03);
+  border-radius: 8px;
+  background: var(--color-ui-01);
+}
+.processing-summary .file-icon {
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-self: center;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  background: var(--color-ui-04);
+  color: var(--color-text-01);
+  font-weight: 700;
+  font-size: 14px;
+  padding: 4px;
+}
+
+.processing-summary .file-info {
+  align-self: center;
+  padding-left: 20px;
+  margin-right: 20px;
+  min-width: 0;
+}
+
+.processing-summary .file-name,
+.processing-summary .file-path {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  display: block;
+  min-width: 0;
+}
+
+.processing-summary .file-name {
+  font-weight: 600;
+  font-size: large;
+  line-height: 1.4;
+}
+
+.processing-summary .file-path {
+  color: var(--color-text-02);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 12px;
+}
+
+.processing-summary .card .cid-button-row {
+  gap: 12px;
+}
+
+.processing-summary .error-row {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  padding: 12px;
+  border-radius: 8px;
+  background: var(--color-negative-01);
+}
+
+.processing-summary .error-row .popover-arrow {
+	position: absolute;
+	top: -18px;
+	right: 60px;
+	border-left: 20px solid transparent;
+	border-right: 20px solid transparent;
+	border-bottom: 20px solid var(--color-negative-01);
+  width: 0;
+  height: 0;
+  
+}
+
+.processing-summary .error-text {
+  margin: 0;
+  color: var(--color-text-02);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 12px;
+}
+/*#endregion processing-summary*/

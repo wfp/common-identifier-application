@@ -1,9 +1,5 @@
 {
   "compilerOptions": {
-    "baseUrl": ".",
-    "paths": {
-      "@/*": [ "./src/*" ]
-    },
     "types": [
       "./common/selected-algo.d.ts",
       "vite/client"
@@ -34,6 +30,6 @@
   
     "jsx": "react-jsx",
   },
-  "include": [ "src/**/*.tsx", "electron/**/*.ts", "common/**/*.ts", "tests/**/*.ts" ],
+  "include": [ "src/**/*.tsx", "electron/**/*.ts", "common/**/*.ts", "src/tests/**/*.ts" ],
   "exclude": [ "node_modules", "dist", "dist-electon", "tmp", "**/tmp" ]
 }

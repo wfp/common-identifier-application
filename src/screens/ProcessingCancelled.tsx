@@ -18,10 +18,8 @@
 
 import { useTranslation } from 'react-i18next';
 import { useAppStore } from '../store';
-import { SCREENS } from 'common/screens';
 
 function ProcessingCancelled() {
-  const backToMainScreen = () => useAppStore.getState().go(SCREENS.MAIN);
   const { t } = useTranslation();
 
   return (
@@ -30,7 +28,7 @@ function ProcessingCancelled() {
       <div className="cid-button-row">
         <button
           className="cid-button cid-button-lg cid-button-primary"
-          onClick={backToMainScreen}
+          onClick={() => useAppStore.getState().backToMain()}
         >
           {t("processingCancelled confirm")}
         </button>

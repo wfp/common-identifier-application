@@ -17,28 +17,27 @@
 ************************************************************************ */
 import { describe, it, expect, beforeEach } from 'vitest';
 import { useAppStore } from '../../store';
-import { resetStore, getState } from '../_storeTestUtils';
+import { getState } from '../_storeTestUtils';
 import { SCREENS } from '../../../common/screens';
 
 const sampleDoc = {} as any; // minimal CidDocument stub
 
 describe('Workflow slice', () => {
-  beforeEach(resetStore);
 
-  it('startPreprocessing sets file and FILE_LOADING', () => {
-    useAppStore.getState().startPreprocessing('file.csv');
+  it('startValidation sets file and FILE_LOADING', () => {
+    useAppStore.getState().startValidation('file.csv');
     const s = getState();
     expect(s.inputFilePath).toBe('file.csv');
     expect(s.screen).toBe(SCREENS.FILE_LOADING);
   });
 
-  it('endPreprocessing(valid) keeps config intact and moves to VALIDATION_SUCCESS', () => {
+  it('endValidation(valid) keeps config intact and moves to VALIDATION_SUCCESS', () => {
     useAppStore.getState().boot({
-      config: { meta: { id: 'CID', version: '1.2.3', signature: 'abc' } } as any,
-      isBackup: false, lastUpdated: new Date(), error: undefined, hasAcceptedTermsAndConditions: true,
+      status: "success", config: { meta: { id: 'CID', version: '1.2.3', signature: 'abc' } } as any,
+      isBackup: false, lastUpdated: new Date(), hasAcceptedTermsAndConditions: true,
     });
 
-    useAppStore.getState().endPreprocessing({
+    useAppStore.getState().endValidation({
       isValid: true, isMappingDocument: false, document: sampleDoc,
       inputFilePath: 'file.csv', errorFilePath: '',
     });
@@ -49,17 +48,17 @@ describe('Workflow slice', () => {
   });
 
 
-  it('endPreprocessing(invalid) sets VALIDATION_FAILED and errorFilePath, preserves config', () => {
+  it('endValidation(invalid) sets VALIDATION_FAILED and errorFilePath, preserves config', () => {
     // Prepare a non-default config first, to ensure it doesn't get altered
     useAppStore.getState().boot({
+      status: "success",
       config: { meta: { id: 'CID', version: '1.2.3', signature: 'abc' } } as any,
       isBackup: false,
       lastUpdated: new Date(),
-      error: undefined,
       hasAcceptedTermsAndConditions: true,
     });
 
-    useAppStore.getState().endPreprocessing({
+    useAppStore.getState().endValidation({
       isValid: false,
       isMappingDocument: false,
       document: {} as any,
@@ -75,6 +74,40 @@ describe('Workflow slice', () => {
     expect(s.config.data.meta.id).toBe('CID');
   });
 
+  it('startProcessing sets file and PROCESSING_IN_PROGRESS', () => {
+    useAppStore.getState().startProcessing('file.csv');
+    const s = getState();
+    expect(s.inputFilePath).toBe('file.csv');
+    expect(s.screen).toBe(SCREENS.PROCESSING_IN_PROGRESS);
+  });
+
+  it('endProcessing updates store and moves to PROCESSING_FINISHED', () => {
+    useAppStore.getState().endProcessing({
+      isMappingDocument: true,
+      document: sampleDoc,
+      outputFilePath: 'out.csv',
+      mappingFilePath: 'map.csv',
+    });
+    const s = getState();
+    expect(s.isMappingDocument).toBe(true);
+    expect(s.document).toBe(sampleDoc);
+    expect(s.outputFilePath).toBe('out.csv');
+    expect(s.mappingFilePath).toBe('map.csv');
+    expect(s.screen).toBe(SCREENS.PROCESSING_FINISHED);
+  });
+
+  it('encryptionDone(success) → sets encryptedFilePath', () => {
+    useAppStore.getState().endEncryption({ encryptedFilePath: 'out.csv.gpg' });
+    const s = getState();
+    expect(s.encryptedFilePath).toBe('out.csv.gpg');
+  });
+
+  it('encryptionDone(failure) → sets error messages', () => {
+    useAppStore.getState().endEncryption({ encryptedFilePath: '', error: 'Some error', errorCode: "GPG_GENERAL_ERRROR" });
+    const s = getState();
+    expect(s.encryptErrorMessage).toMatch(/Some error \(code: GPG_GENERAL_ERRROR\)/);
+    expect(s.encryptedFilePath).toBeUndefined();
+  });
 
   it('backToMain() routes to MAIN from various screens', () => {
     const setAndAssert = (screen: SCREENS) => {
@@ -94,5 +127,28 @@ describe('Workflow slice', () => {
     const s = getState();
     expect(s.inputFilePath).toBeUndefined();
     expect(s.screen).toBe(SCREENS.PROCESSING_CANCELLED);
+  });
+
+  it("backToMain resets store state", () => {
+    useAppStore.setState({
+      inputFilePath: 'input.csv',
+      outputFilePath: 'output.csv',
+      mappingFilePath: 'mapping.csv',
+      encryptedFilePath: 'encrypted.cid',
+      errorFilePath: 'errors.csv',
+      document: sampleDoc,
+      isMappingDocument: true,
+      screen: SCREENS.PROCESSING_FINISHED,
+    });
+    useAppStore.getState().backToMain();
+    const s = getState();
+    expect(s.inputFilePath).toBeUndefined();
+    expect(s.outputFilePath).toBeUndefined();
+    expect(s.mappingFilePath).toBeUndefined();
+    expect(s.encryptedFilePath).toBeUndefined();
+    expect(s.errorFilePath).toBeUndefined();
+    expect(s.document).toBeUndefined();
+    expect(s.isMappingDocument).toBeUndefined();
+    expect(s.screen).toBe(SCREENS.MAIN);
   });
 });

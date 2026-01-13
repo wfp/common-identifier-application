@@ -18,15 +18,18 @@
 import type { StateCreator } from 'zustand';
 import log from 'electron-log/renderer';
 
-import type { UIState } from '../types';
 import { SCREENS } from '../../../common/screens';
 import type { Store } from '..';
 
 const logger = log.scope('renderer:store');
 
-export type UISlice = UIState & {
+export type UISlice = {
+  screen: SCREENS;
+  errorMessage?: string;
+  isRuntimeError?: boolean;
+
   go: (screen: SCREENS) => void;
-  showError: (mesage: string, isRuntime?: boolean) => void;
+  showError: (message: string, isRuntime?: boolean) => void;
   clearError: () => void;
 }
 

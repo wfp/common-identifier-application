@@ -16,17 +16,19 @@
 *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ************************************************************************ */
 import BottomButtons from '../components/BottomButtons';
-import FileInfo from '../components/FileInfo';
 import PreviewTable from '../components/PreviewTable';
 import { keepOutputColumns } from '../util';
-import type { IValidationSuccess } from '../../common/types';
 import { useTranslation } from 'react-i18next';
-import { startPreprocessing, startProcessing } from '../store/actions/workflow.action';
+import { startValidation, startProcessing } from '../store/actions/workflow.action';
 import { useAppStore } from '../store';
 
-function ValidationSuccess({ document, inputFilePath, isMappingDocument }: any) {
+function ValidationSuccess() {
     const { t } = useTranslation();
+    // TODO: provide sensible defaults for these props if undefined
     const config = useAppStore.getState().config;
+    const document = useAppStore(s => s.document) ?? { data: [], name: "" };
+    const inputFilePath = useAppStore(s => s.inputFilePath) ?? "";
+    const isMappingDocument = useAppStore(s => s.isMappingDocument);
 
     // The schema for displaying the table
     let columnsConfig = config.data.source.columns;
@@ -38,13 +40,13 @@ function ValidationSuccess({ document, inputFilePath, isMappingDocument }: any) 
 
     return (
       <div className="ValidationSuccess">
-        <FileInfo filePath={inputFilePath} helpText={t("validationSuccess fileInfo")} />
+        <h2 className="titleText">{t("validationSuccess title")}</h2>
 
         <PreviewTable tableData={document.data} columnsConfig={columnsConfig} />
 
         <div className="validationResult ok">
           <div className="validationState">
-            {t("validationSuccess title")}
+            {t("validationSuccess summaryTitle")}
             <div className="help">
               {isMappingDocument
                 ? t("validationSuccess subtitleMapping")
@@ -55,7 +57,7 @@ function ValidationSuccess({ document, inputFilePath, isMappingDocument }: any) 
 
         <BottomButtons
           l_content={t("validationSuccess leftButton")}
-          l_onClick={() => startPreprocessing()}
+          l_onClick={() => startValidation()}
           r_onClick={() => startProcessing(inputFilePath)}
           r_content={t("validationSuccess rightButton")}
         />

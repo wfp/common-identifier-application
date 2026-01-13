@@ -19,9 +19,9 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { startPreprocessing } from '../store/actions/workflow.action'; 
+import { startValidation } from '../store/actions/workflow.action'; 
 import { useAppStore } from '../store';
-import { SCREENS } from 'common/screens';
+import { SCREENS } from '../../common/screens';
 
 function MainScreen() {
   // is anything dragged over the screen?
@@ -69,7 +69,7 @@ function MainScreen() {
     } else {
       // when at least one file is dropped use the first one
       const filePath = window.electronAPI.invoke.getFilePath(droppedFiles[0]);
-      startPreprocessing(filePath);
+      startValidation(filePath);
     }
   }
 
@@ -103,7 +103,7 @@ function MainScreen() {
       <div className="region region-open-file">
         <button
           className="open-file cid-button cid-button-primary"
-          onClick={() => startPreprocessing()}
+          onClick={() => startValidation()}
         >
           {t("mainScreen openFile")}
         </button>

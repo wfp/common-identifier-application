@@ -25,17 +25,17 @@ const logger = log.scope('renderer:ipc');
 export function registerIpcSubscriptions() {
   logger.debug('Registering IPC Subscriptions');
   return registerSubscriptions({
-    preprocessingDone: (_e, value) => { 
-      logger.debug(`Event: ${EVENT.PREPROCESSING_FINISHED}`);
-      return useAppStore.getState().endPreprocessing(value)
+    validationDone: (_e, value) => { 
+      logger.debug(`Event: ${EVENT.VALIDATION_FINISHED}`);
+      return useAppStore.getState().endValidation(value)
     },
     processingDone: (_e, value) => {
       logger.debug(`Event: ${EVENT.PROCESSING_FINISHED}`);
       return useAppStore.getState().endProcessing(value)
     },
-    configChanged: (_e, { config, isBackup }) => {
-      logger.debug(`Event: ${EVENT.CONFIG_CHANGED}`);
-      return useAppStore.getState().setConfig(config, isBackup)
+    encryptionDone: (_e, value) => {
+      logger.debug(`Event: ${EVENT.ENCRYPTION_FINISHED}`);
+      return useAppStore.getState().endEncryption(value)
     },
     processingCancelled: () => {
       logger.debug(`Event: ${EVENT.WORKFLOW_CANCELLED}`);

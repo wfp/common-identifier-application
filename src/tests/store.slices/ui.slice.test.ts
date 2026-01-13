@@ -17,11 +17,10 @@
 ************************************************************************ */
 import { describe, it, expect, beforeEach } from 'vitest';
 import { useAppStore } from '../../store';
-import { resetStore, getState } from '../_storeTestUtils';
+import { getState } from '../_storeTestUtils';
 import { SCREENS } from '../../../common/screens';
 
 describe("store::slice::ui", () => {
-  beforeEach(resetStore);
 
   it('go() navigates to the correct screen', () => {
     useAppStore.getState().go(SCREENS.MAIN);

@@ -16,41 +16,59 @@
 *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ************************************************************************ */
 
-import { BrowserWindow } from 'electron';
+import { BrowserWindow, dialog } from 'electron';
 import log from "electron-log/main";
 
-import { preprocessFile as backendPreProcessFile } from '@wfp/common-identifier-algorithm-shared';
+import { preprocessFile } from '@wfp/common-identifier-algorithm-shared';
 import type { Config, ConfigStore } from '@wfp/common-identifier-algorithm-shared';
 import { EVENT } from '../../../common/events';
 
-
-const ipcLog = log.scope("ipc:preprocess"); 
+const ipcLog = log.scope("ipc:validate"); 
 
 const MAX_ROWS_TO_PREVIEW = 500;
 
-export async function preProcessFile(mainWindow: BrowserWindow, configStore: ConfigStore, filePath: string) {
-  ipcLog.info(`Dropped File: ${filePath}`);
+// TODO: Look at porting this operation to a utility worker
+
+async function handleFileDialogue(mainWindow: BrowserWindow, configStore: ConfigStore) {
+  const response = await dialog.showOpenDialog({
+    properties: ['openFile'],
+    filters: [{ name: 'CSV or XLSX files', extensions: ['csv', 'xlsx'] }],
+  });
+
+  if (!response.canceled) return response.filePaths[0];
+
+  ipcLog.warn('No file selected from dialogue, sending cancellation event.');
+  mainWindow.webContents.send(EVENT.WORKFLOW_CANCELLED, {});
+  return;
+}
+
+export async function validateFile(mainWindow: BrowserWindow, configStore: ConfigStore, filePath?: string) {
+  if (!filePath) {
+    ipcLog.info('No file path provided, showing dialogue window for selection.');
+    filePath = await handleFileDialogue(mainWindow, configStore);
+    if (!filePath) return;
+  }
+  else ipcLog.info(`File dropped: ${filePath}`);
 
   const config = configStore.getConfig() as Config.FileConfiguration;
 
   const { isValid, isMappingDocument, document, errorFilePath, inputFilePath } =
-    await backendPreProcessFile({ config, inputFilePath: filePath });
-  ipcLog.info('PREPROCESSING DONE');
+    await preprocessFile({ config, inputFilePath: filePath });
 
   // if this is error data, filter to only errors first.
   if (!isValid) {
     const errors = document.data.filter((r) => r.errors);
-    ipcLog.info(`${errors.length} validation errors found`);
+    ipcLog.info(`File validation complete, ${errors.length} validation errors found`);
     document.data = errors;
-  }
+  } else ipcLog.info('File validation complete, no validation errors found');
 
   // don't return large datasets back to the frontend, instead splice and send n rows
   if (document.data.length > MAX_ROWS_TO_PREVIEW) {
-    ipcLog.warn(`Input data array has ${document.data.length} rows, trimming for frontend preview`);
+    ipcLog.warn(`Input data array has ${document.data.length} rows, trimming to ${MAX_ROWS_TO_PREVIEW} for frontend preview`);
     document.data = document.data.slice(0, MAX_ROWS_TO_PREVIEW);
   }
 
-  mainWindow.webContents.send(EVENT.PREPROCESSING_FINISHED, {
+  mainWindow.webContents.send(EVENT.VALIDATION_FINISHED, {
     isValid,
     isMappingDocument,
     document,

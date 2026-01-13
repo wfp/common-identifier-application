@@ -28,6 +28,8 @@ export enum SCREENS {
   PROCESSING_FINISHED = 'ProcessingFinished',
   PROCESSING_CANCELLED = 'ProcessingCancelled',
 
+  PROCESSING_SUMMARY = 'ProcessingSummary',
+
   LOAD_NEW_CONFIG = 'LoadNewConfig',
   CONFIG_UPDATED = 'ConfigUpdated',
   ERROR = 'Error',

@@ -17,17 +17,12 @@
 ************************************************************************ */
 import type { StateCreator } from 'zustand';
 
-import type { ConfigState } from '../types';
+import type { BaseConfig } from '../../../common/types';
 import type { Store } from '..';
 
 export type ConfigSlice = {
-  config: {
-    isInitial: boolean;
-    isBackup: boolean;
-    lastUpdated: Date;
-    data: ConfigState["data"];
-  };
-  setConfig: (data: ConfigState["data"], isBackup: boolean) => void;
+  config: BaseConfig;
+  setConfig: (data: BaseConfig["data"], isBackup: boolean) => void;
   markInitial: (isInitial: boolean) => void;
 }
 

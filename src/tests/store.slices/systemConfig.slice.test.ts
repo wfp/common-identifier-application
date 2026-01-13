@@ -17,20 +17,18 @@
 ************************************************************************ */
 import { describe, it, expect, beforeEach } from 'vitest';
 import { useAppStore } from '../../store';
-import { resetStore, getState } from '../_storeTestUtils';
+import { getState } from '../_storeTestUtils';
 import { SCREENS } from '../../../common/screens';
 
 const sampleConfig = { meta: { id: 'CID', version: '1.2.3', signature: 'abc' } } as any;
 
 describe('System + Config slices', () => {
-  beforeEach(resetStore);
-
   it('boot(valid) updates config and routes to Welcome/Main', () => {
     useAppStore.getState().boot({
+      status: "success",
       config: sampleConfig,
       isBackup: false,
       lastUpdated: new Date(),
-      error: undefined,
       hasAcceptedTermsAndConditions: false,
     });
 
@@ -42,17 +40,11 @@ describe('System + Config slices', () => {
   });
 
   it('boot(error) routes to INVALID_CONFIG and sets message', () => {
-    useAppStore.getState().boot({
-      config: sampleConfig,
-      isBackup: false,
-      lastUpdated: new Date(),
-      error: 'Bad config',
-      hasAcceptedTermsAndConditions: false,
-    });
+    useAppStore.getState().boot({ status: "failed", error: 'Bad config' });
 
     const s = getState();
     expect(s.screen).toBe(SCREENS.INVALID_CONFIG);
-    expect(s.config.data.meta.id).toBe('CID');
+    expect(s.config.data.meta.id).toBe("UNKNOWN"); // intitial config
     expect(s.config.isInitial).toBe(true);
     expect(s.errorMessage).toMatch(/Bad config/);
     expect(s.isRuntimeError).toBe(false);
@@ -60,8 +52,7 @@ describe('System + Config slices', () => {
 
   it('onLoadNewConfigDone(success) updates config and routes to CONFIG_UPDATED', () => {
     useAppStore.getState().onLoadNewConfigDone({
-      success: true,
-      cancelled: false,
+      status: "success",
       config: sampleConfig,
       lastUpdated: new Date(),
     });
@@ -73,72 +64,42 @@ describe('System + Config slices', () => {
     expect(s.config.isInitial).toBe(false);
   });
 
-  it('onLoadNewConfigDone(cancelled) routes to INVALID_CONFIG if not booted', () => {
-      useAppStore.getState().onLoadNewConfigDone({
-      success: false,
-      cancelled: true,
-      config: sampleConfig,
-      lastUpdated: new Date(),
-    });
-    const s = getState();
-    expect(s.screen).toBe(SCREENS.INVALID_CONFIG);
-  });
-
   it('onLoadNewConfigDone(cancelled) routes to MAIN without changes', () => {
     useAppStore.getState().boot({
+      status: "success",
       config: sampleConfig,
       isBackup: false,
       lastUpdated: new Date(),
-      error: undefined,
       hasAcceptedTermsAndConditions: false,
     });
-    useAppStore.getState().onLoadNewConfigDone({
-      success: false,
-      cancelled: true,
-      config: sampleConfig,
-      lastUpdated: new Date(),
-    });
+    useAppStore.getState().onLoadNewConfigDone({ status: "cancelled" });
     const s = getState();
     expect(s.screen).toBe(SCREENS.MAIN);
+    expect(s.config.data).toMatchObject(sampleConfig); // no change
   });
 
   it('onLoadNewConfigDone(error) without BOOT routes to INVALID_CONFIG', () => {
-    useAppStore.getState().onLoadNewConfigDone({
-      success: false,
-      cancelled: false,
-      config: sampleConfig,
-      error: 'Invalid config',
-      lastUpdated: new Date(),
-    });
+    useAppStore.getState().onLoadNewConfigDone({ status: "failed", error: "Invalid config" });
     const s = getState();
     expect(s.screen).toBe(SCREENS.INVALID_CONFIG);
+    expect(s.config.data.meta.id).toBe("UNKNOWN"); // still on initial config
   });
 
   it('onLoadNewConfigDone(error) after BOOT routes to ERROR', () => {
     useAppStore.getState().boot({
+      status: "success",
       config: sampleConfig,
       isBackup: false,
       lastUpdated: new Date(),
-      error: undefined,
       hasAcceptedTermsAndConditions: false,
     });
-    useAppStore.getState().onLoadNewConfigDone({
-      success: false,
-      cancelled: false,
-      config: sampleConfig,
-      error: 'Invalid config',
-      lastUpdated: new Date(),
-    });
+    useAppStore.getState().onLoadNewConfigDone({ status: "failed", error: "Invalid config" });
     const s = getState();
     expect(s.screen).toBe(SCREENS.ERROR);
   });
 
-  it('onRemoveUserConfigDone(success) updates config', () => {
-    useAppStore.getState().onRemoveUserConfigDone({
-      success: true,
-      config: sampleConfig,
-      lastUpdated: new Date(),
-    });
+  it('onRemoveConfigDone(success) updates config', () => {
+    useAppStore.getState().onRemoveConfigDone({ status: "success", config: sampleConfig, lastUpdated: new Date() });
     const s = getState();
     expect(s.screen).toBe(SCREENS.CONFIG_UPDATED);
     expect(s.config.data.meta.id).toBe('CID');
@@ -146,21 +107,11 @@ describe('System + Config slices', () => {
     expect(s.config.isInitial).toBe(false);
   });
 
-  it('onRemoveUserConfigDone(error) keeps the old config and routes to ERROR', () => {
+  it('onRemoveConfigDone(error) keeps the old config and routes to ERROR', () => {
     // load new config
-    useAppStore.getState().onLoadNewConfigDone({
-      success: true,
-      cancelled: false,
-      config: sampleConfig,
-      lastUpdated: new Date(),
-    });
+    useAppStore.getState().onLoadNewConfigDone({ status: "success", config: sampleConfig, lastUpdated: new Date() });
     // attempt to replace with bad config, fallback should be the previous good one
-    useAppStore.getState().onRemoveUserConfigDone({
-      success: false,
-      config: sampleConfig,
-      error: 'Configuration error',
-      lastUpdated: new Date(),
-    });
+    useAppStore.getState().onRemoveConfigDone({ status: "failed", error: "Configuration error" });
     const s = getState();
     expect(s.screen).toBe(SCREENS.ERROR);
     expect(s.config.data.meta.id).toBe('CID'); // config should be unchanged if new one is bad

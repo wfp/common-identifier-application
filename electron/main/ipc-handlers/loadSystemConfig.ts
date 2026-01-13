@@ -19,34 +19,28 @@
 import type { ConfigStore } from '@wfp/common-identifier-algorithm-shared';
 import log from "electron-log/main";
 
-import type { IRemoveUserConfig } from '../../../common/types';
+import type { ILoadSystemConfig } from '../../../common/types';
 
-const ipcLog = log.scope("ipc:removeConfig"); 
+const ipcLog = log.scope("ipc:loadSystemConfig"); 
 
-// Removes the user configuration and falls back to the built-in default
-export function removeUserConfig(configStore: ConfigStore): IRemoveUserConfig {
-  ipcLog.info('Attempting to remove configuration file');
-
-  const loadError = configStore.removeUserConfig();
-
-  if (loadError) ipcLog.error('Error removing user configuration: ', loadError);
-  else ipcLog.info('User configuration removed, reverted to built-in default');
+// Really, this is called on boot only
+export function loadSystemConfig(configStore: ConfigStore): ILoadSystemConfig {
+  ipcLog.info('Loading config from store');
 
   const config = configStore.getConfig();
-  if (config === undefined) {
-    ipcLog.error(`Config undefined -- Unable to read current or backup configuration file: ${configStore.getConfigFilePath()} || ${configStore.getBackupConfigFilePath()}`);
-    throw new Error(`Unable to read configuration file: ${configStore.getConfigFilePath()} || ${configStore.getBackupConfigFilePath()}`);
-  }
-  if (!loadError) return {
-    success: true,
-    config,
-    lastUpdated: configStore.lastUpdated,
-  };
 
+  if (!config) {
+    const message = `No configuration found -- Unable to read current or backup configuration file: ${configStore.getConfigFilePath()} || ${configStore.getBackupConfigFilePath()}`;
+    ipcLog.error(message);
+    return { status: "failed", error: message };
+  }
+
+  ipcLog.info('Returning current configuration to renderer process');
   return {
-    success: false,
+    status: "success",
     config,
+    isBackup: configStore.isUsingBackupConfig,
     lastUpdated: configStore.lastUpdated,
-    error: loadError,
+    hasAcceptedTermsAndConditions: configStore.hasAcceptedTermsAndConditions(),
   };
 }

@@ -17,20 +17,22 @@
 ************************************************************************ */
 
 import { useTranslation } from "react-i18next";
+import { useAppStore } from '../store';
 
 function baseFileName(filePath: string) {
   const splitName = filePath.split(/[\\/]/);
   return splitName[splitName.length - 1];
 }
 
-function ProcessingInProgress({ inputFilePath } : {inputFilePath: string|undefined}) {
+function ProcessingInProgress() {
   const { t } = useTranslation();
+  const inputFilePath = useAppStore(s => s.inputFilePath) ?? "";
+
   return (
     <div className="ProcessingInProgress progressIndicator">
       <div className="loaderWrapper">
         <span className="loader"></span>
       </div>
-      {/* <div className="help">Processing the file...</div> */}
       <div className="help">
         {!inputFilePath || inputFilePath.length === 0 ? (
           <p>{t("processingInProgress noPath")}</p>

@@ -17,8 +17,10 @@
     "clean:app": "git clean -xdf dist-electron dist release algo_repo electron/main/algo coverage",
     "clean:all": "git clean -xdf dist-electron dist release algo_repo electron/main/algo coverage node_modules",
     "package": "electron-builder -p never",
-    "test": "vitest",
-    "test:coverage": "vitest --coverage"
+    "test": "vitest --run",
+    "test:coverage": "vitest --coverage --run",
+    "test:watch": "vitest --watch",
+    "test:ci": "vitest --coverage --reporter=junit --run"
   },
   "license": "AGPL-3.0-only",
   "devDependencies": {
@@ -43,7 +45,7 @@
     "vitest": "^4.0.16"
   },
   "dependencies": {
-    "@wfp/common-identifier-algorithm-shared": "^2.1.2",
+    "@wfp/common-identifier-algorithm-shared": "^2.1.3",
     "@wfp/common-identifier-algorithms": "^2.1.2",
     "date-fns": "^4.1.0",
     "electron-log": "^5.4.3",

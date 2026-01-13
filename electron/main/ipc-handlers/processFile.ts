@@ -29,7 +29,9 @@ import type { Config, ConfigStore } from '@wfp/common-identifier-algorithm-share
 import { makeHasher } from '@selected-algo';
 import { EVENT } from '../../../common/events';
 
-const ipcLog = log.scope("ipc:process"); 
+const ipcLog = log.scope("ipc:process");
+
+// TODO: Look at porting this operation to a utility worker
 
 const MAX_ROWS_TO_PREVIEW = 500;
 

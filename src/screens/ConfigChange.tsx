@@ -20,8 +20,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { useAppStore } from '../store';
-import { loadNewConfig, removeUserConfig } from '../store/actions/config.action';
-import { SCREENS } from 'common/screens';
+import { loadNewConfig, removeConfig } from '../store/actions/config.action';
 
 enum HANDLERS {
   NONE = 0,
@@ -30,7 +29,7 @@ enum HANDLERS {
 }
 
 export default function ConfigChange() {
-  const backToMainScreen = () => useAppStore.getState().go(SCREENS.MAIN);
+  const backToMainScreen = () => useAppStore.getState().backToMain();
   const { t } = useTranslation();
 
   const [handler, setHandler] = useState<HANDLERS>(HANDLERS.NONE);
@@ -84,7 +83,7 @@ export default function ConfigChange() {
             </button>
             <button
               className="cid-button cid-button-lg cid-button-primary"
-              onClick={removeUserConfig}
+              onClick={removeConfig}
             >
               {t("updateConfig default confirm")}
             </button>
