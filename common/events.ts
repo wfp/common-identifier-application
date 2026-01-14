@@ -41,6 +41,7 @@ export enum EVENT {
   GET_FILE_PATH = 'getFilePath',
   GET_POSIX_FILE_PATH = 'getPosixFilePath',
 
+  RESET = "reset",
   QUIT = 'quit',
   ERROR = 'error',
 }
@@ -62,6 +63,7 @@ export const ALL_EVENTS = {
 
   GET_FILE_PATH: 'event',
   GET_POSIX_FILE_PATH: 'event',
+  RESET: 'event',
   QUIT: 'event',
   ERROR: 'event',
 

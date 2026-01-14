@@ -96,6 +96,11 @@ export const acceptTermsAndConditions = async (): Promise<void> => {
   return invoke(EVENT.ACCEPT_TERMS_AND_CONDITIONS, async () => window.electronAPI.invoke.acceptTermsAndConditions());
 }
 
+export const reset = async (): Promise<void> => {
+  logger.debug(`Invoke: ${EVENT.RESET}`);
+  return invoke(EVENT.RESET, async () => window.electronAPI.invoke.reset());
+}
+
 export const quit = async (): Promise<void> => {
   logger.debug(`Invoke: ${EVENT.QUIT}`);
   return invoke(EVENT.QUIT, async () => window.electronAPI.invoke.quit());

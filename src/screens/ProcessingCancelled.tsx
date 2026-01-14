@@ -18,6 +18,7 @@
 
 import { useTranslation } from 'react-i18next';
 import { useAppStore } from '../store';
+import { backToMain } from '../store/actions/workflow.action';
 
 function ProcessingCancelled() {
   const { t } = useTranslation();
@@ -28,7 +29,7 @@ function ProcessingCancelled() {
       <div className="cid-button-row">
         <button
           className="cid-button cid-button-lg cid-button-primary"
-          onClick={() => useAppStore.getState().backToMain()}
+          onClick={backToMain}
         >
           {t("processingCancelled confirm")}
         </button>

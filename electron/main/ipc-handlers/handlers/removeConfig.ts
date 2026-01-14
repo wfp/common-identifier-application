@@ -19,7 +19,7 @@
 import type { ConfigStore } from '@wfp/common-identifier-algorithm-shared';
 import log from "electron-log/main";
 
-import type { IRemoveConfig } from '../../../common/types';
+import type { IRemoveConfig } from '../../../../common/types';
 
 const ipcLog = log.scope("ipc:removeConfig"); 
 

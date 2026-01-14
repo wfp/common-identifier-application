@@ -67,56 +67,9 @@ export interface BaseConfig {
   data: Config.FileConfiguration;
 }
 
-export interface BaseState {
-  screen: SCREENS;
-  config: BaseConfig;
-}
-
-export interface IBoot extends BaseState {
-    screen: SCREENS.INVALID_CONFIG | SCREENS.MAIN | SCREENS. WELCOME;
-    errorMessage?: string;
-}
-
-export interface ILoadConfigFinished extends BaseState {
-    screen: SCREENS.CONFIG_UPDATED | SCREENS.MAIN
-}
-
-export interface ILoadConfigFailed extends BaseState {
+export interface ILoadConfigFailed {
     screen: SCREENS.INVALID_CONFIG | SCREENS.ERROR
+    config: BaseConfig;
     errorMessage?: string;
     isRuntimeError: boolean;
-}
-
-
-export interface IValidationBegin extends BaseState {
-    screen: SCREENS.FILE_LOADING;
-    inputFilePath: string;
-}
-
-export interface IValidationSuccess extends BaseState {
-    screen: SCREENS.VALIDATION_SUCCESS;
-    document: CidDocument;
-    inputFilePath: string;
-    isMappingDocument: boolean;
-}
-
-export interface IValidationFailed extends BaseState {
-    screen: SCREENS.VALIDATION_FAILED;
-    document: CidDocument;
-    inputFilePath: string;
-    errorFilePath: string;
-    isMappingDocument: boolean;
-}
-
-export interface IProcessingBegin extends BaseState {
-    screen: SCREENS.PROCESSING_IN_PROGRESS;
-    inputFilePath: string;
-}
-
-export interface IProcessingFinished extends BaseState {
-    screen: SCREENS.PROCESSING_FINISHED;
-    isMappingDocument: boolean;
-    document: CidDocument;
-    outputFilePath: string;
-    mappingFilePath: string
 }

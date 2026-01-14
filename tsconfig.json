@@ -30,6 +30,6 @@
   
     "jsx": "react-jsx",
   },
-  "include": [ "src/**/*.tsx", "electron/**/*.ts", "common/**/*.ts", "src/tests/**/*.ts" ],
+  "include": [ "src/**/*.tsx", "electron/**/*.ts", "electron/**/*.mts", "common/**/*.ts", "src/tests/**/*.ts" ],
   "exclude": [ "node_modules", "dist", "dist-electon", "tmp", "**/tmp" ]
 }

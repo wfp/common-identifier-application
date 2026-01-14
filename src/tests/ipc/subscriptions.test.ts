@@ -30,7 +30,6 @@ describe('IPC subscriptions update store', () => {
       validationDone: [],
       processingDone: [],
       encryptionDone: [],
-      configChanged: [],
       processingCancelled: [],
       error: [],
     };
@@ -42,7 +41,6 @@ describe('IPC subscriptions update store', () => {
         processingDone:    (h: Handler) => listeners.processingDone.push(h),
         processingCancelled: (h: Handler) => listeners.processingCancelled.push(h),
         encryptionDone:   (h: Handler) => listeners.encryptionDone.push(h),
-        configChanged:     (h: Handler) => listeners.configChanged.push(h),
         error:             (h: Handler) => listeners.error.push(h),
       },
       __listeners: listeners,

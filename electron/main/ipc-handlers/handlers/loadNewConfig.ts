@@ -20,7 +20,7 @@ import { dialog } from 'electron';
 import log from "electron-log/main";
 import type { ConfigStore } from '@wfp/common-identifier-algorithm-shared';
 
-import type { ILoadNewConfig } from '../../../common/types';
+import type { ILoadNewConfig } from '../../../../common/types';
 
 const ipcLog = log.scope("ipc:loadNewConfig"); 
 

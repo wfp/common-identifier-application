@@ -25,6 +25,7 @@ describe('system actions', () => {
   beforeEach(() => vi.restoreAllMocks());
 
   it('boot requests config and calls reducer', async () => {
+    vi.spyOn(bridge, 'reset').mockResolvedValue(undefined);
     vi.spyOn(bridge, 'loadSystemConfig').mockResolvedValue({
       config: { meta: { id: 'CID', version: '1', signature: '' } },
       isBackup: false,
@@ -36,6 +37,7 @@ describe('system actions', () => {
     await systemAction.boot();
 
     expect(bridge.loadSystemConfig).toHaveBeenCalled();
+    expect(bridge.reset).toHaveBeenCalled();
     expect(getState().config.data.meta.id).toBe('CID');
     expect([SCREENS.MAIN, SCREENS.WELCOME]).toContain(getState().screen);
   });

@@ -19,12 +19,12 @@ import { useTranslation } from 'react-i18next';
 import { useAppStore } from '../store';
 import ErrorWrapper from '../components/ErrorWrapper';
 import { DeveloperInformation } from '../components/DeveloperInformation';
+import { backToMain } from '../store/actions/workflow.action';
 
 function Error() {
   const config = useAppStore(s => s.config);
   const isRuntimeError = useAppStore(s => s.isRuntimeError) ?? false;
   const errorMessage = useAppStore(s => s.errorMessage);
-  const backToMainScreen = () => useAppStore.getState().backToMain();
   const { t } = useTranslation();
 
   return (
@@ -41,7 +41,7 @@ function Error() {
       <div className="cid-button-row">
         <button
           className="cid-button cid-button-lg cid-button-alert"
-          onClick={backToMainScreen}
+          onClick={backToMain}
         >
           {t("error backButton")}
         </button>

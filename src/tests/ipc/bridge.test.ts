@@ -35,6 +35,7 @@ describe('IPC bridge invokes', () => {
         revealInDirectory: vi.fn().mockResolvedValue(undefined),
 
         acceptTermsAndConditions: vi.fn().mockResolvedValue(undefined),
+        reset: vi.fn().mockResolvedValue(undefined),
         quit: vi.fn().mockResolvedValue(undefined),
         getFilePath: vi.fn().mockResolvedValue('/abs/file.csv'),
         getPosixFilePath: vi.fn().mockResolvedValue('/abs/file.csv'),
@@ -99,6 +100,11 @@ describe('IPC bridge invokes', () => {
   it('acceptTermsAndConditions triggers invoke', async () => {
     await bridge.acceptTermsAndConditions();
     expect((window as any).electronAPI.invoke.acceptTermsAndConditions).toHaveBeenCalled();
+  });
+
+  it('reset triggers invoke', async () => {
+    await bridge.reset();
+    expect((window as any).electronAPI.invoke.reset).toHaveBeenCalled();
   });
 
   it('quit triggers invoke', async () => {

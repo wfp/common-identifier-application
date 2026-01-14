@@ -42,6 +42,7 @@ export type Api = GetApiType<
 
     encryptFile: (filePath: string) => void;
 
+    reset: () => void;
     unsubscribe: (event: EVENT, handler: (...args: any[]) => void) => void;
     quit: () => void;
   },

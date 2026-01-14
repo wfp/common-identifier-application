@@ -20,11 +20,11 @@ import { useTranslation } from 'react-i18next';
 
 import { SCREENS } from '../../common/screens';
 
-import { useAppStore } from '../store';
 import type { BaseConfig } from '../../common/types';
 
 import VersionInfo from './VersionInfo';
 import LanguageSelect from './LanguageSelect';
+import { backToMain } from '../store/actions/workflow.action';
 
 // returns a navbar based on the name of the screen
 function Navbar({ config, screen }: { config: BaseConfig; screen: SCREENS }) {
@@ -46,7 +46,7 @@ function Navbar({ config, screen }: { config: BaseConfig; screen: SCREENS }) {
       break;
     default:
       backButton = (
-        <a href="#" onClick={() => useAppStore.getState().backToMain()}>
+        <a href="#" onClick={() => backToMain()}>
           &larr; {t("navbar backButton")}
         </a>
       );

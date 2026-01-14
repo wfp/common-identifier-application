@@ -15,7 +15,6 @@
 *  You should have received a copy of the GNU Affero General Public License
 *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ************************************************************************ */
-
 import { contextBridge, createIpcRenderer } from 'electron-typescript-ipc';
 import { EVENT } from '../common/events';
 import type { Api } from '../common/api';
@@ -47,7 +46,7 @@ const api: Api = {
     },
 
     unsubscribe: (event: EVENT, handler: (...args: any[]) => void) => ipcRenderer.removeListener(event, handler),
-
+    reset: () => ipcRenderer.send(EVENT.RESET),
     quit: () => ipcRenderer.send(EVENT.QUIT)
   },
   on: {

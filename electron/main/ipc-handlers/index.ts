@@ -15,21 +15,32 @@
 *  You should have received a copy of the GNU Affero General Public License
 *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ************************************************************************ */
-import { shell, ipcMain, type BrowserWindow } from "electron";
+import { shell, ipcMain } from "electron";
+import type { BrowserWindow } from "electron";
 import log from "electron-log/main";
 import path from "node:path";
 
 import type { ConfigStore } from "@wfp/common-identifier-algorithm-shared";
 import { ALL_EVENTS, EVENT } from "../../../common/events";
 
-import { loadSystemConfig } from './loadSystemConfig';
-import { loadNewConfig } from './loadNewConfig';
-import { validateFile } from './validateFile';
-import { processFile } from './processFile';
-import { removeConfig } from './removeConfig';
-import { encryptFile } from "./encryptFile";
+import { loadSystemConfig } from './handlers/loadSystemConfig';
+import { loadNewConfig } from './handlers/loadNewConfig';
+import { validateFile } from './handlers/validateFile';
+import { processFile } from './handlers/processFile';
+import { removeConfig } from './handlers/removeConfig';
+import { encryptFile } from "./handlers/encryptFile";
+import { WorkerManager } from "./workers";
+import type { ValidatePayload, ValidateResult } from "./workers/validateFileWorker";
+import type { ProcessPayload, ProcessResult } from "./workers/processFileWorker";
+import type { EncryptPayload, EncryptResult } from "./workers/encryptFileWorker";
 
 const ipcLog = log.scope("ipc");
+
+const managers = {
+  validate: new WorkerManager<ValidatePayload, ValidateResult>("validateFileWorker"),
+  process: new WorkerManager<ProcessPayload, ProcessResult>("processFileWorker"),
+  encrypt: new WorkerManager<EncryptPayload, EncryptResult>("encryptFileWorker"),
+}
 
 export function registerIpcHandlers(app: Electron.App, mainWindow: BrowserWindow, configStore: ConfigStore) {
   ipcLog.info("Registering IPC Handlers");
@@ -47,27 +58,25 @@ export function registerIpcHandlers(app: Electron.App, mainWindow: BrowserWindow
   // Handle dropping of files / begin preprocessing
   ipcMain.on(EVENT.VALIDATION_START_DROP, (_, filePath: string) => {
     ipcLog.debug(`Received event on channel: ${EVENT.VALIDATION_START_DROP}`);
-    return withErrorReporting(() => validateFile(mainWindow, configStore, filePath));
+    return withErrorReporting(() => validateFile(mainWindow, managers.validate, configStore, filePath));
   });
 
   // open and process a file using an open file dialog
   ipcMain.on(EVENT.VALIDATION_START_DIALOGUE, (_) => {
     ipcLog.debug(`Received event on channel: ${EVENT.VALIDATION_START_DIALOGUE}`);
-    return withErrorReporting(() => validateFile(mainWindow, configStore));
+    return withErrorReporting(() => validateFile(mainWindow, managers.validate, configStore));
   });
 
   // Start processing the file
   ipcMain.on(EVENT.PROCESSING_START, (_, filePath: string) => {
     ipcLog.debug(`Received event on channel: ${EVENT.PROCESSING_START}`);
-    return withErrorReporting(() => processFile(mainWindow, configStore, filePath));
+    return withErrorReporting(() => processFile(mainWindow, managers.process, configStore, filePath));
   });
 
   // Start file encryption
   ipcMain.on(EVENT.ENCRYPTION_START, (_, filePath: string) => {
     ipcLog.debug(`Received event on channel: ${EVENT.ENCRYPTION_START}`);
-    // TODO: investigate using utility workers or other mechanism to run heavy encryption process in a different process.
-    //       Using setImmediate for now since it is just the 1-time cold-start of GPG that takes some time (few seconds).
-    return setImmediate(() => withErrorReporting(() => encryptFile(mainWindow, configStore, filePath)));
+    return withErrorReporting(() => encryptFile(mainWindow, managers.encrypt, configStore, filePath));
   });
 
   // config related events need to be initialised before the renderer since
@@ -104,6 +113,12 @@ export function registerIpcHandlers(app: Electron.App, mainWindow: BrowserWindow
   ipcMain.on(EVENT.REVEAL_IN_DIRECTORY, (_, filePath: string) => {
     ipcLog.debug(`Received event on channel: ${EVENT.REVEAL_IN_DIRECTORY}`);
     shell.showItemInFolder(path.normalize(filePath));
+  });
+
+  // terminate any running workers - this function is called when routing back to MAIN from any workflow
+  ipcMain.on(EVENT.RESET, (_) => {
+    ipcLog.debug(`Received event on channel: ${EVENT.RESET}`);
+    Object.values(managers).forEach((man) => man.cancelAll());
   });
 
   // quit when receiving the 'quit' signal

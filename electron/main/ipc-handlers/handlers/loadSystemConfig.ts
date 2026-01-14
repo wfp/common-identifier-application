@@ -19,7 +19,7 @@
 import type { ConfigStore } from '@wfp/common-identifier-algorithm-shared';
 import log from "electron-log/main";
 
-import type { ILoadSystemConfig } from '../../../common/types';
+import type { ILoadSystemConfig } from '../../../../common/types';
 
 const ipcLog = log.scope("ipc:loadSystemConfig"); 
 

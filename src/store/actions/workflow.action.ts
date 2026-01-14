@@ -18,6 +18,11 @@
 import { useAppStore } from '..'
 import * as ipc from '../../ipc/intercom-bridge';
 
+export const backToMain = async () => {
+  useAppStore.getState().backToMain();
+  await ipc.reset();
+}
+
 export const startValidation = async (filePath?: string) => {
   useAppStore.getState().startValidation(filePath);
   if (filePath) await ipc.validateFileDropped(filePath);

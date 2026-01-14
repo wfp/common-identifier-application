@@ -21,6 +21,7 @@ import { useTranslation } from 'react-i18next';
 
 import { useAppStore } from '../store';
 import { loadNewConfig, removeConfig } from '../store/actions/config.action';
+import { backToMain } from '../store/actions/workflow.action';
 
 enum HANDLERS {
   NONE = 0,
@@ -29,7 +30,6 @@ enum HANDLERS {
 }
 
 export default function ConfigChange() {
-  const backToMainScreen = () => useAppStore.getState().backToMain();
   const { t } = useTranslation();
 
   const [handler, setHandler] = useState<HANDLERS>(HANDLERS.NONE);
@@ -51,7 +51,7 @@ export default function ConfigChange() {
           <div className="cid-button-row cid-button-row-horiz">
             <button
               className="cid-button cid-button-lg cid-button-secondary"
-              onClick={backToMainScreen}
+              onClick={backToMain}
             >
               {t("updateConfig load cancel")}
             </button>
@@ -77,7 +77,7 @@ export default function ConfigChange() {
           <div className="cid-button-row cid-button-row-horiz">
             <button
               className="cid-button cid-button-lg cid-button-secondary"
-              onClick={backToMainScreen}
+              onClick={backToMain}
             >
               {t("updateConfig default cancel")}
             </button>

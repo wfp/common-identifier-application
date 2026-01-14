@@ -19,8 +19,9 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { openOutputFile, revealInDirectory } from "../store/actions/system.action";
 import { useAppStore } from "../store";
-import { startValidation, startEncryption } from "../store/actions/workflow.action";
+import { startValidation, startEncryption, backToMain } from "../store/actions/workflow.action";
 import BottomButtons from "../components/BottomButtons";
+import { reset } from "../ipc/intercom-bridge";
 
 const getFileName = (filePath: string) => filePath.split(/[/\\]/).pop() || "";
 const getFileType = (filePath: string) => filePath.split('.').pop()?.toUpperCase() || "file";
@@ -58,8 +59,11 @@ export const ProcessingSummary = () => {
 
       <BottomButtons
         l_content={t("processingSummary leftButton")}
-        l_onClick={() => startValidation()}
-        r_onClick={() => useAppStore.getState().backToMain()}
+        l_onClick={() => {
+          reset();
+          startValidation()
+        }}
+        r_onClick={backToMain}
         r_content={t("processingSummary rightButton")}
       />
 
