@@ -36,67 +36,45 @@ This is a fully typescript backend application with an optional ElectronJS front
 - Customisable, performant, and robust data validation
 - Shiny Microsoft Windows frontend
 
-### Feature Roadmap
-
-- [ ] More algorithms
-- [x] Performance improvements
-- [ ] Support for non-SHA256 hashing implementations
-- [ ] Overhaul of validation logic for stricter type checking
-- [ ] Better Windows Code Signing (FE only)
-- [ ] OSX & Linux support (FE only)
-- [ ] Further pluggable elements into processing pipeline
-  - [ ] Download from / point to source files in remote locations
-  - [ ] Encryption of output files using PGP
-  - [ ] Direct upload of files to target system
 
 ### Getting Started
 
 ```bash
 git clone https://github.com/wfp/common-identifier-application.git
 
-# clone the relevant algorithm subdirectory into src/main
-# unfortunately this is a little complex with the current git tooling
-git clone --filter=blob:none --no-checkout --depth 1 https://github.com/wfp/common-identifier-algorithms algo_repo
-cd algo_repo
-git sparse-checkout init --no-cone
-git sparse-checkout set algorithms/<algo_name> # this is the name of the subdirectory containing the algorithm code
-git checkout
-cp -r algorithms/<algo_name> ../electron/main/algo
-cd ../ && rm -r algo_repo # or "rm algo_repo -r -fo" on Windows
-
 # main application
-cd ../../
 npm install
 # npm install -g tsx (if not already installed)
-tsx scripts/activate-algo.ts <algo_name>
-npm run build
-npm run start
+
+tsx scripts/activate-algorithm.ts --algorithm-name <algorithm-name>
+npm run dev
+
+# to build the application
+npm run build --algorithm-name <algorithm-name> --algorithm-id <algorithm-id> --package
 ```
 
-Unit tests for the algorithm (shared and algorithm-specific) are written using the JEST test framework. Run the test suite:
+Unit tests for the algorithm (shared and algorithm-specific) are written using the Vitest test framework. Run the test suite:
 
 ```bash
-# the `--experimental-vm-modules` node option is required to load the ES module code
-# for the frontend tests
-export NODE_OPTIONS="$NODE_OPTIONS --experimental-vm-modules"
+# Now both backend and frontend tests can be run
+npm run test
 
-# Now both backend and frontend tests can be run, add the --coverage flag for coverage
-npx jest
+npm run test:coverage
 ```
 
-The application uses the `debug` package for logging. To log every CommonID-related message to set the environment variable `DEBUG` to `CID:*` - to see only specific log lines refine the `CID:*` pattern. For example to run the application for development with every CommonID component logging to the console:
+The backend engine uses the `debug` package for logging, the main and renderer processes use `electron-log`. To log every CommonID-related message to set the environment variable `DEBUG` to `cid:*` - to see only specific log lines refine the `cid:*` pattern. For example to run the application for development with every CommonID component logging to the console:
 
 ```
-DEBUG=CID:* npm run dev
+DEBUG=cid:* npm run dev
 ```
 
 All logging lines are prefixed with `CID:` (for CommonID), and should look like the following:
 
 ```
-  CID:loadConfig CONFIG HASH: 3b4b6ab8a68202ebcf3221d5c1a728b7 +33ms
-  CID:loadSaltFile Attempting to load salt file from ... +0ms
-  CID:loadSaltFile SALT FILE looks OK +1ms
-  CID:ConfigStore Backup config validation success - using it as config +34ms
+  cid::engine::loadConfig CONFIG HASH: 3b4b6ab8a68202ebcf3221d5c1a728b7 +33ms
+  cid::engine::loadSaltFile Attempting to load salt file from ... +0ms
+  cid::engine::loadSaltFile SALT FILE looks OK +1ms
+  cid::engine::ConfigStore Backup config validation success - using it as config +34ms
 ```
 
 ## 🚀 Usage
@@ -121,9 +99,7 @@ There are three ways to use this application:
  ┣ 📂common                   # shared components and types for BE and FE
  ┣ 📂electron                 # 
  ┃ ┣ 📂main                   # 
- ┃ ┃ ┣ 📂algo                 # the selected algorithm for this application
  ┃ ┃ ┣ 📂ipc-handlers         # the interface functions between frontend and backend         
- ┃ ┃ ┣ 📜active_algorithm.ts  # a declaration of which algo to use - see scripts/activate-algo.js                 
  ┃ ┃ ┣ 📜index.ts             # setup of the app window and registration of API handlers     
  ┃ ┃ ┗ 📜util.ts              # general utils for initial app launch     
  ┃ ┗ 📜preload.mts            # expose API components to the render process       
