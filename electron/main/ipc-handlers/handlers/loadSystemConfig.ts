@@ -24,7 +24,7 @@ import type { ILoadSystemConfig } from '../../../../common/types';
 const ipcLog = log.scope("ipc:loadSystemConfig"); 
 
 // Really, this is called on boot only
-export function loadSystemConfig(configStore: ConfigStore): ILoadSystemConfig {
+export function loadSystemConfig(configStore: ConfigStore): Partial<ILoadSystemConfig> {
   ipcLog.info('Loading config from store');
 
   const config = configStore.getConfig();
@@ -41,6 +41,5 @@ export function loadSystemConfig(configStore: ConfigStore): ILoadSystemConfig {
     config,
     isBackup: configStore.isUsingBackupConfig,
     lastUpdated: configStore.lastUpdated,
-    hasAcceptedTermsAndConditions: configStore.hasAcceptedTermsAndConditions(),
   };
 }

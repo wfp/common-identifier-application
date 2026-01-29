@@ -23,6 +23,7 @@ import type {
   IValidationDone,
   IProcessingDone,
   IEncryptionDone,
+  UserData,
 } from '../../common/types';
 import { EVENT } from '../../common/events';
 import type { Api } from '../../common/api';
@@ -76,9 +77,9 @@ export const processFile = async (filePath: string): Promise<void> => {
   return invoke(EVENT.PROCESSING_START, async () => window.electronAPI.invoke.processFile(filePath));
 }
 
-export const encryptFile = async (filePath: string): Promise<void> => {
+export const encryptFile = async (filePath: string, signingKey: string): Promise<void> => {
   logger.debug(`Invoke: ${EVENT.ENCRYPTION_START}`);
-  return invoke(EVENT.ENCRYPTION_START, async () => window.electronAPI.invoke.encryptFile(filePath));
+  return invoke(EVENT.ENCRYPTION_START, async () => window.electronAPI.invoke.encryptFile(filePath, signingKey));
 }
 
 export const openOutputFile = async (filePath: string): Promise<void> => {
@@ -94,6 +95,16 @@ export const revealInDirectory = async (dirPath: string): Promise<void> => {
 export const acceptTermsAndConditions = async (): Promise<void> => {
   logger.debug(`Invoke: ${EVENT.ACCEPT_TERMS_AND_CONDITIONS}`);
   return invoke(EVENT.ACCEPT_TERMS_AND_CONDITIONS, async () => window.electronAPI.invoke.acceptTermsAndConditions());
+}
+
+export const getUserData = async (): Promise<UserData> => {
+  logger.debug(`Invoke: ${EVENT.GET_USER_DATA}`);
+  return invoke(EVENT.GET_USER_DATA, async () => window.electronAPI.invoke.getUserData());
+}
+
+export const setUserData = async (userData: UserData): Promise<void> => {
+  logger.debug(`Invoke: ${EVENT.SET_USER_DATA}`);
+  return invoke(EVENT.SET_USER_DATA, async () => window.electronAPI.invoke.setUserData(userData));
 }
 
 export const reset = async (): Promise<void> => {

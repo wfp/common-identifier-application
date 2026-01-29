@@ -22,6 +22,7 @@ import { useTranslation } from 'react-i18next';
 import { useAppStore } from '../store';
 import { loadNewConfig, removeConfig } from '../store/actions/config.action';
 import { backToMain } from '../store/actions/workflow.action';
+import { SCREENS } from '../../common/screens';
 
 enum HANDLERS {
   NONE = 0,
@@ -31,6 +32,7 @@ enum HANDLERS {
 
 export default function ConfigChange() {
   const { t } = useTranslation();
+  const encryptionEnabled = useAppStore(s => !!s.config.data.post_processing?.encryption) || false;
 
   const [handler, setHandler] = useState<HANDLERS>(HANDLERS.NONE);
 
@@ -99,15 +101,24 @@ export default function ConfigChange() {
           <h3 className="titleText">{t("updateConfig title")}</h3>
 
           <div className="cid-button-row cid-button-row-vert">
+            { encryptionEnabled
+                ? <button
+                  className="cid-button cid-button-lg cid-button-primary"
+                  onClick={() => useAppStore.getState().go(SCREENS.INPUT_USER_DATA)}
+                  >
+                    {t("updateConfig updateUserDataButton")}
+                  </button>
+                : null
+            }
             <button
-              className="cid-button cid-button-lg cid-button-primary"
+              className="cid-button cid-button-lg cid-button-tertiary"
               onClick={setHandlerOnClick(HANDLERS.LOAD_NEW_CONFIG)}
             >
               {t("updateConfig loadButton")}
             </button>
             <div className="cid-button-with-helptext">
               <button
-                className="cid-button cid-button-lg cid-button-secondary"
+                className="cid-button cid-button-lg cid-button-danger"
                 onClick={setHandlerOnClick(HANDLERS.REMOVE_USER_CONFIG)}
                 >
                 {t("updateConfig defaultButton")}

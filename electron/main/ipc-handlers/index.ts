@@ -33,6 +33,8 @@ import { WorkerManager } from "./workers";
 import type { ValidatePayload, ValidateResult } from "./workers/validateFileWorker";
 import type { ProcessPayload, ProcessResult } from "./workers/processFileWorker";
 import type { EncryptPayload, EncryptResult } from "./workers/encryptFileWorker";
+import type { UserData } from "../../../common/types";
+import type { UserDataManager } from "../userDataManager";
 
 const ipcLog = log.scope("ipc");
 
@@ -42,7 +44,7 @@ const managers = {
   encrypt: new WorkerManager<EncryptPayload, EncryptResult>("encryptFileWorker"),
 }
 
-export function registerIpcHandlers(app: Electron.App, mainWindow: BrowserWindow, configStore: ConfigStore) {
+export function registerIpcHandlers(app: Electron.App, mainWindow: BrowserWindow, configStore: ConfigStore, userDataStore: UserDataManager) {
   ipcLog.info("Registering IPC Handlers");
   const withErrorReporting = async (delegate: CallableFunction) => {
     // catch errors that bubble up es exceptions and convert them to rejections
@@ -74,16 +76,24 @@ export function registerIpcHandlers(app: Electron.App, mainWindow: BrowserWindow
   });
 
   // Start file encryption
-  ipcMain.on(EVENT.ENCRYPTION_START, (_, filePath: string) => {
+  ipcMain.on(EVENT.ENCRYPTION_START, (_, filePath: string, signingKey: string) => {
     ipcLog.debug(`Received event on channel: ${EVENT.ENCRYPTION_START}`);
-    return withErrorReporting(() => encryptFile(mainWindow, managers.encrypt, configStore, filePath));
+    return withErrorReporting(() => encryptFile(mainWindow, managers.encrypt, configStore, filePath, signingKey));
   });
 
   // config related events need to be initialised before the renderer since
   // the app makes a loadSystemConfig call on boot.
   ipcMain.handle(EVENT.CONFIG_LOAD_SYSTEM, () => {
     ipcLog.debug(`Received event on channel: ${EVENT.CONFIG_LOAD_SYSTEM}`);
-    return withErrorReporting(() => loadSystemConfig(configStore));
+    return withErrorReporting(() => {
+      const systemConfig = loadSystemConfig(configStore)
+      return {
+        ...systemConfig,
+        hasAcceptedTermsAndConditions: userDataStore.hasAcceptedTermsAndConditions(configStore.currentSignature()),
+        hasUpdatedUserData: userDataStore.hasUpdatedConfig(),
+        userData: userDataStore.getConfig(),
+      }
+    });
   });
 
   ipcMain.handle(EVENT.CONFIG_LOAD_NEW, () => {
@@ -99,11 +109,23 @@ export function registerIpcHandlers(app: Electron.App, mainWindow: BrowserWindow
   // mark the terms and conditions accepted
   ipcMain.on(EVENT.ACCEPT_TERMS_AND_CONDITIONS, (_) => {
     ipcLog.debug(`Received event on channel: ${EVENT.ACCEPT_TERMS_AND_CONDITIONS}`);
-    configStore.acceptTermsAndConditions();
+    userDataStore.updateTermsAndConditions(configStore.currentSignature());
+  });
+
+  // update user data to store new params
+  ipcMain.on(EVENT.SET_USER_DATA, (_, userData: UserData) => {
+    ipcLog.debug(`Received event on channel: ${EVENT.SET_USER_DATA}`);
+    userDataStore.updateConfig(userData);
+  });
+
+  // return the user data from config store
+  ipcMain.on(EVENT.GET_USER_DATA, (_) => {
+    ipcLog.debug(`Received event on channel: ${EVENT.GET_USER_DATA}`);
+    return withErrorReporting(() => userDataStore.getConfig());
   });
 
   // open a file with the OS default app
-  ipcMain.on(EVENT.OPEN_OUTPUT_FILE, async (_, filePath: any) => {
+  ipcMain.on(EVENT.OPEN_OUTPUT_FILE, async (_, filePath: string) => {
     ipcLog.debug(`Received event on channel: ${EVENT.OPEN_OUTPUT_FILE}`);
     const error = await shell.openPath(filePath);
     if (error) ipcLog.error(`Failed to open file ${filePath}: ${error}`);

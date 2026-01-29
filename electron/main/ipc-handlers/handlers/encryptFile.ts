@@ -29,7 +29,7 @@ const ipcLog = log.scope("ipc:encryptFile");
 type WM = WorkerManager<EncryptPayload, EncryptResult>
 
 // Encrypts the specified file
-export async function encryptFile(win: BrowserWindow, manager: WM, configStore: ConfigStore, filePath: string): Promise<void> {
+export async function encryptFile(win: BrowserWindow, manager: WM, configStore: ConfigStore, filePath: string, signingKey: string): Promise<void> {
   ipcLog.info('Attempting to encrypt file:', filePath);
 
   const config = configStore.getConfig() as Config.FileConfiguration;
@@ -43,7 +43,7 @@ export async function encryptFile(win: BrowserWindow, manager: WM, configStore: 
   
   const outputPath = path.join(path.dirname(filePath), `ENCRYPTED-${path.basename(filePath)}.gpg`);
 
-  manager.spawn({ config, inputPath: filePath, outputPath }, (message) => {
+  manager.spawn({ config, inputPath: filePath, outputPath, signingKey }, (message) => {
     if (message.status === "cancelled") {
       ipcLog.info('Encryption worker reported cancellation.');
       return; // NO-OP: renderer process already informed of cancellation

@@ -36,5 +36,6 @@ export const startProcessing = async (filePath: string) => {
 
 export const startEncryption = async (filePath: string) => {
   useAppStore.getState().startEncryption(filePath);
-  await ipc.encryptFile(filePath);
+  const signingKey = useAppStore.getState().userData?.signingKey || "";
+  await ipc.encryptFile(filePath, signingKey);
 };

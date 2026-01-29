@@ -17,7 +17,7 @@
 ************************************************************************ */
 
 import type { GetApiType } from "electron-typescript-ipc";
-import type { IEncryptionDone, ILoadNewConfig, IValidationDone, IProcessingDone, IRemoveConfig, ILoadSystemConfig } from "./types";
+import type { IEncryptionDone, ILoadNewConfig, IValidationDone, IProcessingDone, IRemoveConfig, ILoadSystemConfig, UserData } from "./types";
 import type { EVENT } from "./events";
 
 // TODO: actual return types for these functions
@@ -27,6 +27,8 @@ export type Api = GetApiType<
     loadNewConfig: () => Promise<ILoadNewConfig>;       // open dialogue to load new config
     removeConfig: () => Promise<IRemoveConfig>;         // remove user config, revert to default (backup)
 
+    getUserData: () => Promise<UserData>;
+    setUserData: (userData: UserData) => void;
     acceptTermsAndConditions: () => void;
 
     getFilePath: (file: File) => string | undefined;
@@ -40,7 +42,7 @@ export type Api = GetApiType<
     openOutputFile: (filePath: string) => void;
     revealInDirectory: (filePath: string) => void;
 
-    encryptFile: (filePath: string) => void;
+    encryptFile: (filePath: string, signingKey: string) => void;
 
     reset: () => void;
     unsubscribe: (event: EVENT, handler: (...args: any[]) => void) => void;

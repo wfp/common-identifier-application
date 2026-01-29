@@ -34,7 +34,7 @@ describe('Workflow slice', () => {
   it('endValidation(valid) keeps config intact and moves to VALIDATION_SUCCESS', () => {
     useAppStore.getState().boot({
       status: "success", config: { meta: { id: 'CID', version: '1.2.3', signature: 'abc' } } as any,
-      isBackup: false, lastUpdated: new Date(), hasAcceptedTermsAndConditions: true,
+      isBackup: false, lastUpdated: new Date(), hasAcceptedTermsAndConditions: true, hasUpdatedUserData: true
     });
 
     useAppStore.getState().endValidation({
@@ -56,6 +56,7 @@ describe('Workflow slice', () => {
       isBackup: false,
       lastUpdated: new Date(),
       hasAcceptedTermsAndConditions: true,
+      hasUpdatedUserData: true
     });
 
     useAppStore.getState().endValidation({

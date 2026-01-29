@@ -18,12 +18,12 @@
 import { type Config, GpgWrapper } from '@wfp/common-identifier-algorithm-shared';
 import { createWorker } from './baseWorker';
 
-export type EncryptPayload = { config: Config.FileConfiguration, inputPath: string, outputPath: string };
+export type EncryptPayload = { config: Config.FileConfiguration, inputPath: string, outputPath: string, signingKey: string };
 export type EncryptResult = 
   | { success: true; encryptedFilePath: string }
   | { success: false; error: string; code?: string };
 
-createWorker<EncryptPayload, EncryptResult>(async ({ config, inputPath, outputPath }) => {
+createWorker<EncryptPayload, EncryptResult>(async ({ config, inputPath, outputPath, signingKey }) => {
   console.log("Encryption worker started for file:", inputPath);
   console.debug(`Encryption config: ${JSON.stringify(config.post_processing!.encryption)}`);
   const gpg = new GpgWrapper({
@@ -36,9 +36,8 @@ createWorker<EncryptPayload, EncryptResult>(async ({ config, inputPath, outputPa
   const encryptResult = await gpg.encryptFile({
     inputPath,
     outputPath,
-    recipient: config.post_processing!.encryption!.recipient,
-    // TODO: get the signing key from the user via the UI, pass it into this function.
-    // signer: options?.signer,
+    recipients: [config.post_processing!.encryption!.recipient, signingKey],
+    signer: signingKey,
   });
 
   if (!encryptResult.success) {

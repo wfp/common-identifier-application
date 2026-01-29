@@ -58,6 +58,6 @@ describe('workflow actions', () => {
 
     await workflowAction.startEncryption('in.csv');
 
-    expect(bridge.encryptFile).toHaveBeenCalledWith('in.csv');
+    expect(bridge.encryptFile).toHaveBeenCalledWith('in.csv', ""); // empty signing key
   });
 });

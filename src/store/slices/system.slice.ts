@@ -17,13 +17,17 @@
 ************************************************************************ */
 import type { StateCreator } from 'zustand';
 
-import type { ILoadSystemConfig, ILoadNewConfig, IRemoveConfig } from '../../../common/types';
+import type { ILoadSystemConfig, ILoadNewConfig, IRemoveConfig, UserData } from '../../../common/types';
 import { SCREENS } from '../../../common/screens';
 import type { Store } from '..';
 
 
 export type SystemSlice = {
   booted: boolean;
+  userData?: UserData;
+  hasAcceptedTermsAndConditions: boolean;
+  hasUpdatedUserData: boolean;
+
   boot: (payload: ILoadSystemConfig) => void;
 
   onLoadNewConfigDone: (result: ILoadNewConfig) => void;
@@ -31,6 +35,8 @@ export type SystemSlice = {
 
   showTermsAndConditions: () => void;
   acceptTermsAndConditions: () => void;
+
+  onSetUserData: (userData: UserData) => void;
 }
 
 export const createSystemSlice: StateCreator<
@@ -40,6 +46,9 @@ export const createSystemSlice: StateCreator<
   SystemSlice
 > = (set) => ({
   booted: false,
+  userData: {},
+  hasAcceptedTermsAndConditions: false,
+  hasUpdatedUserData: false,
 
   boot: (result) => set(s => {
     if (result.status === "failed") {
@@ -48,7 +57,7 @@ export const createSystemSlice: StateCreator<
       s.screen = SCREENS.INVALID_CONFIG;
       return;
     }
-    const { config, isBackup, lastUpdated, hasAcceptedTermsAndConditions } = result;
+    const { config, isBackup, lastUpdated, hasAcceptedTermsAndConditions, hasUpdatedUserData, userData } = result;
     s.config.data = config;
     s.config.lastUpdated = lastUpdated;
 
@@ -56,7 +65,9 @@ export const createSystemSlice: StateCreator<
     s.config.isInitial = false;
 
     s.booted = true;
-    s.screen = hasAcceptedTermsAndConditions ? SCREENS.MAIN : SCREENS.WELCOME;
+    s.userData = userData;
+    const encryptionEnabled = !!s.config.data.post_processing?.encryption;
+    s.screen = !hasAcceptedTermsAndConditions ? SCREENS.WELCOME : encryptionEnabled && !hasUpdatedUserData ? SCREENS.INPUT_USER_DATA : SCREENS.MAIN;
 
   }, false),
 
@@ -102,5 +113,15 @@ export const createSystemSlice: StateCreator<
   }, false),
 
   showTermsAndConditions: () => set((s) => {s.screen = SCREENS.WELCOME}, false),
-  acceptTermsAndConditions: () => set((s) => {s.screen = SCREENS.MAIN}, false),
+  acceptTermsAndConditions: () => set((s) => {
+    // if config has encryption options and user app data does not contain signing keys,
+    // go to input user data screen, otherwise go to main.
+    const encryptionEnabled = !!s.config.data.post_processing?.encryption;
+    s.screen = encryptionEnabled && !s.hasUpdatedUserData ? SCREENS.INPUT_USER_DATA : SCREENS.MAIN;    
+  }, false),
+
+  onSetUserData: (userData) => set((s) => {
+    s.userData = userData;
+    s.screen = SCREENS.MAIN;
+  }, false),
 });

@@ -18,6 +18,7 @@
 export enum SCREENS {
   BOOT = 'Boot',
   WELCOME = 'Welcome',
+  INPUT_USER_DATA = 'InputUserData',
   MAIN = 'Main',
   FILE_LOADING = 'FileLoading',
 

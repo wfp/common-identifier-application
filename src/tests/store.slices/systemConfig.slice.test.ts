@@ -23,20 +23,73 @@ import { SCREENS } from '../../../common/screens';
 const sampleConfig = { meta: { id: 'CID', version: '1.2.3', signature: 'abc' } } as any;
 
 describe('System + Config slices', () => {
-  it('boot(valid) updates config and routes to Welcome/Main', () => {
+  it('boot(valid) updates config and routes to Main', () => {
     useAppStore.getState().boot({
       status: "success",
       config: sampleConfig,
       isBackup: false,
       lastUpdated: new Date(),
-      hasAcceptedTermsAndConditions: false,
+      hasAcceptedTermsAndConditions: true,
+      hasUpdatedUserData: true
     });
 
     const s = getState();
     expect(s.config.data.meta.id).toBe('CID');
     expect(s.config.isBackup).toBe(false);
     expect(s.config.isInitial).toBe(false);
-    expect([SCREENS.WELCOME, SCREENS.MAIN]).toContain(s.screen);
+    expect(s.screen).toBe(SCREENS.MAIN);
+  });
+
+  it('boot(valid) without userdata routes to Welcome', () => {
+    useAppStore.getState().boot({
+      status: "success",
+      config: sampleConfig,
+      isBackup: false,
+      lastUpdated: new Date(),
+      hasAcceptedTermsAndConditions: false,
+      hasUpdatedUserData: false
+    });
+
+    const s = getState();
+    expect(s.config.data.meta.id).toBe('CID');
+    expect(s.config.isBackup).toBe(false);
+    expect(s.config.isInitial).toBe(false);
+    expect(s.screen).toBe(SCREENS.WELCOME);
+  });
+
+  it('boot(valid) with userdata but no encryption routes to Main', () => {
+    useAppStore.getState().boot({
+      status: "success",
+      config: sampleConfig,
+      isBackup: false,
+      lastUpdated: new Date(),
+      hasAcceptedTermsAndConditions: true,
+      hasUpdatedUserData: false
+    });
+
+    const s = getState();
+    expect(s.config.data.meta.id).toBe('CID');
+    expect(s.config.isBackup).toBe(false);
+    expect(s.config.isInitial).toBe(false);
+    expect(s.screen).toBe(SCREENS.MAIN);
+  });
+
+  it('boot(valid) with userdata routes to InputUserData', () => {
+    const config: any = { ...sampleConfig, post_processing: { encryption: { recipient: "RECIPIENT"} } };
+    useAppStore.getState().boot({
+      status: "success",
+      config: config,
+      isBackup: false,
+      lastUpdated: new Date(),
+      hasAcceptedTermsAndConditions: true,
+      hasUpdatedUserData: false
+    });
+
+    const s = getState();
+    expect(s.config.data.meta.id).toBe('CID');
+    expect(s.config.isBackup).toBe(false);
+    expect(s.config.isInitial).toBe(false);
+    expect(s.screen).toBe(SCREENS.INPUT_USER_DATA);
   });
 
   it('boot(error) routes to INVALID_CONFIG and sets message', () => {
@@ -71,6 +124,7 @@ describe('System + Config slices', () => {
       isBackup: false,
       lastUpdated: new Date(),
       hasAcceptedTermsAndConditions: false,
+      hasUpdatedUserData: false
     });
     useAppStore.getState().onLoadNewConfigDone({ status: "cancelled" });
     const s = getState();
@@ -92,6 +146,7 @@ describe('System + Config slices', () => {
       isBackup: false,
       lastUpdated: new Date(),
       hasAcceptedTermsAndConditions: false,
+      hasUpdatedUserData: false
     });
     useAppStore.getState().onLoadNewConfigDone({ status: "failed", error: "Invalid config" });
     const s = getState();

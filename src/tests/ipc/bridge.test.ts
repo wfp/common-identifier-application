@@ -83,7 +83,7 @@ describe('IPC bridge invokes', () => {
   });
 
   it('encryptFile triggers invoke', async () => {
-    await bridge.encryptFile("some/path/file.csv");
+    await bridge.encryptFile("some/path/file.csv", "signingKey");
     expect((window as any).electronAPI.invoke.encryptFile).toHaveBeenCalled();
   });  
 

@@ -33,6 +33,8 @@ export enum EVENT {
   REVEAL_IN_DIRECTORY = 'revealInDirectory',
 
   ACCEPT_TERMS_AND_CONDITIONS = 'acceptTermsAndConditions',
+  SET_USER_DATA = "setUserData",
+  GET_USER_DATA = "getUserData",
 
   CONFIG_LOAD_SYSTEM = 'configLoadSystem',
   CONFIG_LOAD_NEW = 'configLoadNew',
@@ -60,6 +62,9 @@ export const ALL_EVENTS = {
   OPEN_OUTPUT_FILE: 'event',
   REVEAL_IN_DIRECTORY: 'event',
   ACCEPT_TERMS_AND_CONDITIONS: 'event',
+
+  GET_USER_DATA: 'handle',
+  SET_USER_DATA: 'event',
 
   GET_FILE_PATH: 'event',
   GET_POSIX_FILE_PATH: 'event',

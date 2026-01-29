@@ -19,6 +19,20 @@ import { SCREENS } from "./screens";
 import type { Config, CidDocument } from "@wfp/common-identifier-algorithm-shared";
 export type { Config, CidDocument } from '@wfp/common-identifier-algorithm-shared';
 
+export interface UserConfig {
+  termsAndConditions: { [key: string]: boolean };
+  hasUpdatedUserData: boolean;
+  userData: UserData;
+  window: {
+    fullscreen: boolean;
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  };
+}
+
+
 export type ILoadSystemConfig =
   | { status: "failed"; error: string; }
   | {
@@ -26,7 +40,9 @@ export type ILoadSystemConfig =
       config: Config.FileConfiguration;
       isBackup: boolean;
       lastUpdated: Date;
+      userData?: UserData;
       hasAcceptedTermsAndConditions: boolean;
+      hasUpdatedUserData: boolean;
     }
 
 export type ILoadNewConfig =
@@ -37,6 +53,11 @@ export type ILoadNewConfig =
 export type IRemoveConfig =
   | { status: "failed"; error: string; }
   | { status: "success"; config: Config.FileConfiguration; lastUpdated: Date; }
+
+export type UserData = {
+  language?: string;
+  signingKey?: string;
+};
 
 export type IValidationDone = {
   isValid: boolean;

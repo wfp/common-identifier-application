@@ -35,19 +35,20 @@ import InvalidConfig from './screens/InvalidConfig';
 import WelcomeScreen from './screens/WelcomeScreen';
 import Navbar from './components/Navbar';
 import ProcessingSummary from './screens/ProcessingSummary';
+import InputUserData from './screens/InputUserData';
 
 import { useAppStore, useConfig, useScreen } from './store';
 
 function App() {
  
   const screenType = useScreen();
-  // const screenType: SCREENS = SCREENS.PROCESSING_SUMMARY as SCREENS; // TEMP
   const config = useConfig();
 
   const ScreenMap: Record<SCREENS, ComponentType<any>> = {  
     [SCREENS.ERROR]: ErrorScreen,
     [SCREENS.BOOT]: Boot,
     [SCREENS.WELCOME]: WelcomeScreen,
+    [SCREENS.INPUT_USER_DATA]: InputUserData,
     [SCREENS.MAIN]: MainScreen,
     [SCREENS.INVALID_CONFIG]: InvalidConfig,
     [SCREENS.LOAD_NEW_CONFIG]: LoadNewConfig,

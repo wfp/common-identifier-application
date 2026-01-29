@@ -18,11 +18,17 @@
 import { useAppStore } from '..';
 import * as ipc from '../../ipc/intercom-bridge';
 import { SCREENS } from '../../../common/screens';
+import type { UserData } from '../../../common/types';
 
 export const acceptTermsAndConditions = async () => {
   await ipc.acceptTermsAndConditions();
   useAppStore.getState().acceptTermsAndConditions();
 }
+
+export const updateUserData = async (userData: UserData) => {
+  await ipc.setUserData(userData);
+  useAppStore.getState().onSetUserData(userData);
+};
 
 export const loadNewConfig = async () => {
   useAppStore.getState().go(SCREENS.LOAD_NEW_CONFIG);

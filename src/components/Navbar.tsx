@@ -40,6 +40,7 @@ function Navbar({ config, screen }: { config: BaseConfig; screen: SCREENS }) {
     case SCREENS.FILE_LOADING:
     case SCREENS.PROCESSING_IN_PROGRESS:
     case SCREENS.CONFIG_UPDATED:
+    case SCREENS.INPUT_USER_DATA:
     case SCREENS.WELCOME:
     case SCREENS.MAIN:
       backButton = <></>;

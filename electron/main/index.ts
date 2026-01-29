@@ -27,6 +27,7 @@ import type { ConfigStore } from '@wfp/common-identifier-algorithm-shared';
 import { deregisterIpcHandlers, registerIpcHandlers } from './ipc-handlers';
 import { ALGORITHM_ID } from '@selected-algo';
 import { registerLogHandlers } from './util';
+import { UserDataManager } from './userDataManager';
 
 // init logs and redirect debug output to file to capture engine logs
 registerLogHandlers();
@@ -49,9 +50,11 @@ const CONFIG_FILE_PATH = join(CONFIG_FILE_DIR, "config.json");          // the p
 const APP_CONFIG_FILE_PATH = join(CONFIG_FILE_DIR, "appconfig.json");   // the path of the application config file (containing config-independent settings)
 const BACKUP_CONFIG_FILE_PATH = join(ASSETS_DIR, 'config.backup.toml'); // the path to the fallback configuration file in the assets dir
 
-function createMainWindow(configStore: ConfigStore) {
+// TODO: move the appConfig logic into this application - the engine doesn't need to know about it, it is purely UI related.
+
+function createMainWindow(configStore: ConfigStore, userDataStore: UserDataManager) {
   // figure out the existing window configuration
-  const defaultWindow = configStore.appConfig.window;
+  const defaultWindow = userDataStore.getWindowBounds();
 
   const targetDisplay = screen.getDisplayMatching({
     x: defaultWindow.x, y: defaultWindow.y,
@@ -84,11 +87,15 @@ app.whenReady().then(async () => {
   mainLog.info("Starting application...");
   const { makeConfigStore } = await import('@wfp/common-identifier-algorithm-shared');
   
+  mainLog.debug("Retrieving user data from app config");
+  // load user data from app config
+  const userDataStore = new UserDataManager(APP_CONFIG_FILE_PATH);
+
+  
   mainLog.debug("Initialising config store");
   const configStore = makeConfigStore({
     filePaths: {
       config: CONFIG_FILE_PATH,
-      appConfig: APP_CONFIG_FILE_PATH,
       backupConfig: BACKUP_CONFIG_FILE_PATH,
     },
     algorithmId: ALGORITHM_ID,
@@ -98,15 +105,15 @@ app.whenReady().then(async () => {
   configStore.boot();
   mainLog.debug("Config store booted");
 
-  createWindow(configStore);
+  createWindow(configStore, userDataStore);
 });
 
-function createWindow(configStore: ConfigStore) {
+function createWindow(configStore: ConfigStore, userDataStore: UserDataManager) {
   mainLog.debug("Creating main window");
-  const mainWindow = createMainWindow(configStore);
+  const mainWindow = createMainWindow(configStore, userDataStore);
 
   mainLog.debug("Registering IPC handlers");
-  registerIpcHandlers(app, mainWindow, configStore);
+  registerIpcHandlers(app, mainWindow, configStore, userDataStore);
 
   if (process.env.VITE_DEV_SERVER_URL) {
     mainLog.debug("Development mode, loading from Vite url");
@@ -128,7 +135,7 @@ function createWindow(configStore: ConfigStore) {
   //       where it still launches off-screen.
   mainWindow.on('close', () => {
     const windowBounds = { ...mainWindow.getBounds(), fullscreen: mainWindow.isFullScreen() }
-    configStore.updateDisplayConfig(windowBounds);
+    userDataStore.updateWindowBounds(windowBounds);
   });
 
   return mainWindow;

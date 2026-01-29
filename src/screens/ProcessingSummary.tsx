@@ -19,17 +19,15 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { openOutputFile, revealInDirectory } from "../store/actions/system.action";
 import { useAppStore } from "../store";
-import { startValidation, startEncryption, backToMain } from "../store/actions/workflow.action";
+import { startEncryption, backToMain } from "../store/actions/workflow.action";
 import BottomButtons from "../components/BottomButtons";
-import { reset } from "../ipc/intercom-bridge";
 
 const getFileName = (filePath: string) => filePath.split(/[/\\]/).pop() || "";
-const getFileType = (filePath: string) => filePath.split('.').pop()?.toUpperCase() || "file";
 
 export const ProcessingSummary = () => {
 
   const { t } = useTranslation();
-  const encryptionEnabled = useAppStore(s => !!s.config.data.post_processing?.encryption) || false;
+  const encryptionEnabled = useAppStore(s => !!s.config.data.post_processing?.encryption) && !!useAppStore(s => s.userData?.signingKey) || false;
   const outputFilePath = useAppStore(s => s.outputFilePath);
   const mappingFilePath = useAppStore(s => s.mappingFilePath);
   const encryptedFilePath = useAppStore(s => s.encryptedFilePath);
@@ -40,29 +38,30 @@ export const ProcessingSummary = () => {
       <h2 className="titleText">{t("processingSummary title")}</h2>
 
       <section className="card" aria-labelledby="generated-files-title">
-        <h3 id="generated-files-title">{t("processingSummary fileList")}:</h3>
+        <div className="card-header">
+          <h3 id="generated-files-title">{t("processingSummary fileList")}:</h3>
+          <a href="#" onClick={e => {
+            e.preventDefault();
+            revealInDirectory(outputFilePath!);
+          }} aria-label={t("processingSummary openFolder")}>{t("processingSummary openFolder")}</a>
+        </div>
 
-        { outputFilePath ? <SummaryRow filePath={outputFilePath} showEncrypt={encryptionEnabled} /> : null }
+        { outputFilePath ? <SummaryRow filePath={outputFilePath} modality={ModalStyles.OUTPUT} showEncrypt={encryptionEnabled} encryptDone={!!encryptedFilePath || !!encryptError} /> : null }
         { encryptError ? <div className="error-row">
-            <div className="popover-arrow"></div>
             <p className="error-text"><strong>{t("processingSummary encryptionError")}: </strong>{encryptError}</p>
             <p className="error-text"><strong>{t("processingSummary errorAction")}: </strong>{t("processingSummary encryptManually")}</p>
           </div> : null }
 
-        { mappingFilePath ? <SummaryRow filePath={mappingFilePath} /> : null }
+        { mappingFilePath ? <SummaryRow filePath={mappingFilePath} modality={ModalStyles.MAPPING} /> : null }
 
         { encryptionEnabled && encryptedFilePath
-          ? <SummaryRow filePath={encryptedFilePath} showOpen={false} showReveal={true} />
+          ? <SummaryRow filePath={encryptedFilePath} modality={ModalStyles.ENCRYPTED} showOpen={false} showReveal={true} />
           : null
         }
       </section>
 
       <BottomButtons
-        l_content={t("processingSummary leftButton")}
-        l_onClick={() => {
-          reset();
-          startValidation()
-        }}
+        side="right"
         r_onClick={backToMain}
         r_content={t("processingSummary rightButton")}
       />
@@ -71,67 +70,60 @@ export const ProcessingSummary = () => {
   );
 }
 
+enum ModalStyles {
+  OUTPUT="output",
+  MAPPING="mapping",
+  ENCRYPTED="encrypted"
+}
+
 type SummaryRowProps = {
   filePath: string;
+  modality: ModalStyles;
   showOpen?: boolean;
   showReveal?: boolean;
   showEncrypt?: boolean;
+  encryptDone?: boolean;
 }
 
-const SummaryRow = ({ filePath, showOpen=true, showReveal=false, showEncrypt=false }: SummaryRowProps) => {
+const SummaryRow = ({ filePath, modality, showOpen=true, showReveal=false, showEncrypt=false, encryptDone=false }: SummaryRowProps) => {
   const [hasEncryptionStarted, setHasEncryptionStarted] = useState(false);
   const { t } = useTranslation();
 
   const fileName = getFileName(filePath);
-  const fileType = getFileType(filePath);
 
   return (
-    <div className="file-row" data-path={filePath}>
-      <div className="file-icon" aria-hidden="true">{fileType}</div>
+    <div className="file-row" data-modality={modality} data-path={filePath}>
+      <div className="tooltip-wrapper">
+        <div className={`modality-badge badge-${modality}`} aria-hidden="true">{modality}</div>
+        <span id={`${modality}-tooltip`} className="tooltip-text" role="tooltip">{t(`processingSummary ${modality}Tooltip`)}</span>
+      </div>
       <div className="file-info">
         <h3 className="file-name" title={fileName}>{fileName}</h3>
         <h4 className="file-path" title={filePath}>{filePath}</h4>
       </div>
       <div className="cid-button-row cid-button-row-vert">
-        { showOpen
-          ? <button
-            className="cid-button cid-button-fit cid-button-secondary"
-            data-action="open-excel"
-            aria-label={`Open ${fileName} in Excel`}
-            onClick={() => openOutputFile(filePath)}
-          >
-              {t("processingSummary openFile")}
-            </button>
-          : null
-        }
-        { showReveal
-          ? <button
-          className="cid-button cid-button-fit cid-button-tertiary"
-          data-action="reveal"
-          aria-label={`Reveal ${fileName} in folder`}
-          onClick={() => revealInDirectory(filePath)}
-        >
-          {t("processingSummary openFolder")}
-        </button>
-          : null
-        }
-
-        { showEncrypt
-          ? <button
+        { showOpen && <button className="cid-button cid-button-fit cid-button-secondary" onClick={() => openOutputFile(filePath)}>{t("processingSummary openFile")}</button> }
+        { showReveal && <button className="cid-button cid-button-fit cid-button-tertiary" onClick={() => revealInDirectory(filePath)}>{t("processingSummary openFolder")}</button> }
+        { modality === ModalStyles.OUTPUT && showEncrypt && !encryptDone && (
+          <button
             className="cid-button cid-button-fit cid-button-danger"
-            data-action="reveal"
-            aria-label={`Reveal ${fileName} in folder`}
+            data-action="encrypt"
+            aria-label={`Encrypt ${fileName}`}
             disabled={hasEncryptionStarted}
             onClick={() => {
               startEncryption(filePath);
               setHasEncryptionStarted(true);
             }}
           >
-            Encrypt
-          </button>
-          : null
-        }
-        
+            {
+            hasEncryptionStarted && !encryptDone
+              ? <div className="loaderWrapper">
+                  <span className="loader"></span>
+                </div>
+              : "Encrypt"
+            }
+            </button>
+        )}
       </div>
     </div>
   );

@@ -31,6 +31,7 @@
     }
   },
   "nsis": {
+    "deleteAppDataOnUninstall": true,
     "shortcutName": "Common Identifier Application",
     "uninstallDisplayName": "Common Identifier Application - ${version}"
   }

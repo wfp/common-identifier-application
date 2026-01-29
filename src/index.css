@@ -395,6 +395,31 @@ button {
   color: var(--color-text-02);
 }
 
+.cid-button .loader {
+  width: 20px;
+  height: 20px;
+}
+
+.cid-button-danger .loader {
+  border-color: var(--color-negative-02);
+  border-bottom-color: var(--color-ui-01);
+}
+
+.cid-button-primary:hover .loader {
+  border-color: var(--color-ui-01);
+  border-bottom-color: var(--color-interactive-02);
+}
+
+.cid-button-secondary:hover .loader {
+  border-color: var(--color-ui-01);
+  border-bottom-color: var(--color-interactive-02);
+}
+
+.cid-button-danger:hover .loader {
+  border-color: var(--color-ui-01);
+  border-bottom-color: var(--color-negative-03);
+}
+
 .spinner {
   display: inline-flex;
   height: 60%;
@@ -406,6 +431,47 @@ button {
   animation: rotation 1s linear infinite;
 }
 /*#endregion */
+
+/*#region tooltip */
+.tooltip-wrapper {
+  position: relative;
+  display: inline-flex;
+}
+
+.tooltip-text {
+  visibility: hidden;
+  position: absolute;
+  width: max-content;
+  top: 125%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: var(--color-ui-05);
+  color: #fff;
+  padding: 8px;
+  border-radius: 4px;
+  white-space: normal;
+  opacity: 0;
+  transition: opacity 1s ease;
+  z-index: 10;
+}
+
+.tooltip-wrapper:hover .tooltip-text,
+.tooltip-wrapper input:focus + .tooltip-text {
+  visibility: visible;
+  opacity: 1;
+}
+
+.tooltip-text::after {
+  content: "";
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent transparent var(--color-ui-05) transparent;
+}
+/*#endregion tooltip */
 
 /*#region Terms and conditions screen */
 
@@ -978,65 +1044,91 @@ button {
   padding: 16px;
 }
 
-.processing-summary .card h3 {
+.processing-summary .card-header {
   margin-top: 0;
-  text-align: left;
+  display: flex;
+  gap: 10px;
+}
+
+.processing-summary .card-header h3 {
+  margin-top: 0;
+  align-self: center;
 }
 
 .processing-summary .file-row {
   display: grid;
-  grid-template-columns: 3em auto 120px;
+  grid-template-columns: 80px 1fr 140px;
+  align-items: center;
+  gap: 16px;
   padding: 12px;
   border: 1px solid var(--color-ui-03);
   border-radius: 8px;
   background: var(--color-ui-01);
 }
-.processing-summary .file-icon {
-  width: 50px;
-  height: 50px;
+
+.processing-summary .modality-badge {
   display: flex;
-  align-self: center;
+  width: 100%;
   align-items: center;
   justify-content: center;
-  border-radius: 6px;
-  background: var(--color-ui-04);
-  color: var(--color-text-01);
-  font-weight: 700;
-  font-size: 14px;
-  padding: 4px;
+  height: 32px;
+  padding: 0 8px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
+
+.processing-summary .tooltip-wrapper {
+  /* align-content: end; */
+  width: 80px;
+}
+
+.processing-summary .tooltip-text {
+  width: max-content;
+  max-width: 30em;
+  left: 0;
+  transform: translateX(0);
+  font-size: 13px;
+  
+}
+
+.processing-summary .tooltip-text::after {
+  opacity: 0.1;
+  bottom: 100%;
+  left: 40px;
+}
+
+.badge-output { background: var(--color-ui-02); color: var(--color-interactive-01); border: 1px solid var(--color-interactive-01); }
+.badge-mapping { background: var(--color-ui-02); color: var(--color-positive-02); border: 1px solid var(--color-positive-02); }
+.badge-encrypted { background: var(--color-ui-02); color: var(--color-negative-02); border: 1px solid var(--color-negative-02); }
 
 .processing-summary .file-info {
-  align-self: center;
-  padding-left: 20px;
-  margin-right: 20px;
+  display: flex;
+  flex-direction: column;
   min-width: 0;
-}
-
-.processing-summary .file-name,
-.processing-summary .file-path {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-
-  display: block;
-  min-width: 0;
+  gap: 4px;
+  padding-left: 10px;
+  margin-right: 10px;
 }
 
 .processing-summary .file-name {
+  margin: 0;
+  font-size: 15px;
   font-weight: 600;
-  font-size: large;
-  line-height: 1.4;
+  color: var(--color-text-01);
 }
 
 .processing-summary .file-path {
+  margin-top: 2px;
+  font-size: 11px;
   color: var(--color-text-02);
-  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  font-size: 12px;
+  opacity: 0.7;
 }
 
 .processing-summary .card .cid-button-row {
-  gap: 12px;
+  gap: 4px;
 }
 
 .processing-summary .error-row {
@@ -1048,18 +1140,6 @@ button {
   background: var(--color-negative-01);
 }
 
-.processing-summary .error-row .popover-arrow {
-	position: absolute;
-	top: -18px;
-	right: 60px;
-	border-left: 20px solid transparent;
-	border-right: 20px solid transparent;
-	border-bottom: 20px solid var(--color-negative-01);
-  width: 0;
-  height: 0;
-  
-}
-
 .processing-summary .error-text {
   margin: 0;
   color: var(--color-text-02);
@@ -1067,3 +1147,49 @@ button {
   font-size: 12px;
 }
 /*#endregion processing-summary*/
+
+
+/*#region input user data */
+.input-user-data {
+  display: grid;
+  grid-template-rows: 6em auto 5em 1em;
+}
+
+.input-user-data .titleText {
+  font-size: 3em;
+}
+
+.input-user-data .user-data-form {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  width: 40em;
+  gap: 2em;
+  align-items: center;
+  place-content: start;
+  margin: 60px auto;
+}
+
+.input-user-data label {
+  font-weight: 700;
+  font-size: larger
+}
+
+.input-user-data input,
+.input-user-data select {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 100%;
+  height: 45px;
+  box-sizing: border-box;
+}
+
+.input-user-data .tooltip-text {
+  max-width: 380px;
+}
+
+.input-user-data .cid-button-row {
+  grid-row: 3;
+}
+/*#endregion input user data*/
+

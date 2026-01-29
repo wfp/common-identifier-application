@@ -20,21 +20,26 @@ import { EVENT } from '../common/events';
 import type { Api } from '../common/api';
 import { webUtils } from 'electron';
 import path from 'node:path';
+import type { UserData } from '../common/types';
 
 const ipcRenderer = createIpcRenderer<Api>();
 
 const api: Api = {
   invoke: {
-    loadSystemConfig:         () => ipcRenderer.invoke(EVENT.CONFIG_LOAD_SYSTEM),
-    loadNewConfig:            () => ipcRenderer.invoke(EVENT.CONFIG_LOAD_NEW),
-    removeConfig:         () => ipcRenderer.invoke(EVENT.CONFIG_REMOVE),
+    loadSystemConfig:         async () => ipcRenderer.invoke(EVENT.CONFIG_LOAD_SYSTEM),
+    loadNewConfig:            async () => ipcRenderer.invoke(EVENT.CONFIG_LOAD_NEW),
+    removeConfig:             async () => ipcRenderer.invoke(EVENT.CONFIG_REMOVE),
 
+    getUserData:              async () => ipcRenderer.invoke(EVENT.GET_USER_DATA),
+    setUserData:              (userData: UserData) => ipcRenderer.send(EVENT.SET_USER_DATA, userData),
+  
     acceptTermsAndConditions: () => ipcRenderer.send(EVENT.ACCEPT_TERMS_AND_CONDITIONS),
+
     validateFileOpenDialogue: () => ipcRenderer.send(EVENT.VALIDATION_START_DIALOGUE),
     validateFileDropped:      (fileName: string) => ipcRenderer.send(EVENT.VALIDATION_START_DROP, fileName),
     processFile:              (fileName: string) => ipcRenderer.send(EVENT.PROCESSING_START, fileName),
 
-    encryptFile:              (fileName: string) => ipcRenderer.send(EVENT.ENCRYPTION_START, fileName),
+    encryptFile:              (fileName: string, signingKey: string) => ipcRenderer.send(EVENT.ENCRYPTION_START, fileName, signingKey),
 
     openOutputFile:           (fileName: string) => ipcRenderer.send(EVENT.OPEN_OUTPUT_FILE, fileName),
     revealInDirectory:        (filePath: string) => ipcRenderer.send(EVENT.REVEAL_IN_DIRECTORY, filePath),
