@@ -25,21 +25,21 @@ jobs:
   BuildApplication:
     name: 2. Build Application
     runs-on: windows-latest
-  
+
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
         with:
           persist-credentials: false
-      
+
       - name: Setup node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: 24
 
       - name: Install dependencies
         run: |
-          npm install
+          npm ci
           npm install -g tsx
         env:
           NPM_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -51,7 +51,7 @@ jobs:
           repository: wfp/common-identifier-application-keys
           token: ${{ secrets.PAT_READ_KEYS }}
           path: salt-repo
-      
+
       - name: Fetch salt file
         shell: pwsh
         run: |
@@ -63,15 +63,15 @@ jobs:
 
       - name: Build and package application
         run: tsx scripts/build.ts --algorithm-name ${{ inputs.algorithm }} --algorithm-id ${{ inputs.algorithmId }} --package
-        continue-on-error: false
         env:
           VITE_LOCALE: ${{ inputs.locale }}
           AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
           AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
           AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
-      
+
       - name: Upload build artefacts
         uses: actions/upload-artifact@v4
         with:
           name: common-identifier-application-${{ inputs.algorithmId }}
+          if-no-files-found: error
           path: release/*/*-setup.exe
