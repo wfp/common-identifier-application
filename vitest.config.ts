@@ -10,14 +10,14 @@ export default defineConfig({
 
     include: [ "src/tests/**/*.{test,spec}.ts" ],
     exclude: [ "**/node_nodules/**", "**/dist/**", "**/dist-electron/**", "**/examples/**", "**/docs/**" ],
-    setupFiles: [ path.resolve(__dirname, "src/tests/_vitestSetup.ts") ],
+    setupFiles: [ path.resolve(import.meta.dirname, "src/tests/_vitestSetup.ts") ],
     globals: true,
 
     typecheck: {
       enabled: true,
       tsconfig: "./tsconfig.json"
     },
-    
+
     coverage: {
       provider: "v8",
       include: [ "src/**/*.ts" ], // TODO: worth doing tests for the electron/common modules?

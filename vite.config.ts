@@ -15,8 +15,8 @@ export default defineConfig(({ command }) => {
   return {
     resolve: {
       alias: {
-        '@': join(__dirname, 'src'),
-        'common': join(__dirname, 'common'),
+        '@': join(import.meta.dirname, 'src'),
+        'common': join(import.meta.dirname, 'common'),
         '@selected-algo': `@wfp/common-identifier-algorithms/${SELECTED_ALGORITHM}`
       }
     },
@@ -37,7 +37,7 @@ export default defineConfig(({ command }) => {
             build: {
               sourcemap: isServe ? 'inline' : false,
               minify: true,
-              rollupOptions: {
+              rolldownOptions: {
                 input: {
                   index: resolve('electron/main/index.ts'),
                   validateFileWorker: resolve('electron/main/ipc-handlers/workers/validateFileWorker.ts'),
