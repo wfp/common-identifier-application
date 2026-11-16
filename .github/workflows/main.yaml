@@ -5,6 +5,7 @@ on:
       - main
       - feat/*
       - fix/*
+      - chore/*
     tags:
       - 'v*'
     paths-ignore:
@@ -43,12 +44,12 @@ jobs:
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           persist-credentials: false
 
       - name: Setup node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: 24
 
@@ -66,7 +67,7 @@ jobs:
 
       - name: Publish JUnit Test Report
         if: (!cancelled()) && (success() || failure())
-        uses: mikepenz/action-junit-report@v5
+        uses: mikepenz/action-junit-report@v6
         with:
           report_paths: reports/junit.xml
           check_name: 'Vitest JUnit'
@@ -103,7 +104,7 @@ jobs:
 
     steps:
       - name: Download build artefacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           path: release-assets
 

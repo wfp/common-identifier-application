@@ -28,12 +28,12 @@ jobs:
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           persist-credentials: false
 
       - name: Setup node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: 24
 
@@ -46,7 +46,7 @@ jobs:
         continue-on-error: false
 
       - name: Clone salt file repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           repository: wfp/common-identifier-application-keys
           token: ${{ secrets.PAT_READ_KEYS }}
@@ -70,7 +70,7 @@ jobs:
           AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
 
       - name: Upload build artefacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: common-identifier-application-${{ inputs.algorithmId }}
           if-no-files-found: error
